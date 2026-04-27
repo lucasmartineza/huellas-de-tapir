@@ -268,7 +268,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 .tramo-panel {
   position:fixed; right:0; top:48px; bottom:78px; z-index:51;
   display:flex; flex-direction:row; align-items:flex-start;
-  pointer-events:none;
+  pointer-events:none; overflow:visible;
 }
 .tramo-toggle {
   width:22px; height:56px;
@@ -416,28 +416,28 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   <div class="save-bar" id="save-bar"></div>
   <div id="crosshair">
     <!-- Cyan ring with glow -->
-    <svg style="position:absolute;inset:0;width:72px;height:72px;" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
-      <defs><filter id="cg"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-      <circle cx="36" cy="36" r="33" fill="none" stroke="#00e5ff" stroke-width="5" opacity="0.25"/>
-      <circle cx="36" cy="36" r="33" fill="none" stroke="#00e5ff" stroke-width="1.8" filter="url(#cg)" opacity="0.95"/>
-      <!-- Diaphragm blades drawn in white -->
-      <g transform="translate(36,36)" fill="white" opacity="0.82">
-        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z"/>
-        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(60)"/>
-        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(120)"/>
-        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(180)"/>
-        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(240)"/>
-        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(300)"/>
-        <!-- Hexagonal aperture (dark center) -->
-        <polygon points="0,-7 6,-3.5 6,3.5 0,7 -6,3.5 -6,-3.5" fill="#060d14"/>
-        <!-- Inner ring -->
-        <circle r="7" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+    <svg style="position:absolute;inset:0;width:72px;height:72px;overflow:visible;" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+      <!-- Outer glow ring (thick, transparent) -->
+      <circle cx="36" cy="36" r="33" fill="none" stroke="#00e5ff" stroke-width="6" opacity="0.2"/>
+      <!-- Main cyan ring -->
+      <circle cx="36" cy="36" r="33" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.9"/>
+      <!-- Diaphragm blades in white -->
+      <g transform="translate(36,36)">
+        <path d="M0,-20 L9,-11 L3,-3 L-3,-3 L-9,-11 Z" fill="white" opacity="0.85"/>
+        <path d="M0,-20 L9,-11 L3,-3 L-3,-3 L-9,-11 Z" fill="white" opacity="0.85" transform="rotate(60)"/>
+        <path d="M0,-20 L9,-11 L3,-3 L-3,-3 L-9,-11 Z" fill="white" opacity="0.85" transform="rotate(120)"/>
+        <path d="M0,-20 L9,-11 L3,-3 L-3,-3 L-9,-11 Z" fill="white" opacity="0.85" transform="rotate(180)"/>
+        <path d="M0,-20 L9,-11 L3,-3 L-3,-3 L-9,-11 Z" fill="white" opacity="0.85" transform="rotate(240)"/>
+        <path d="M0,-20 L9,-11 L3,-3 L-3,-3 L-9,-11 Z" fill="white" opacity="0.85" transform="rotate(300)"/>
+        <!-- Dark hexagonal aperture center -->
+        <polygon points="0,-8 7,-4 7,4 0,8 -7,4 -7,-4" fill="#060d14"/>
+        <circle r="8" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
       </g>
-      <!-- Crosshair lines outside ring -->
-      <line x1="36" y1="1"  x2="36" y2="10" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-      <line x1="36" y1="62" x2="36" y2="71" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-      <line x1="1"  y1="36" x2="10" y2="36" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-      <line x1="62" y1="36" x2="71" y2="36" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+      <!-- Short crosshair lines -->
+      <line x1="36" y1="2"  x2="36" y2="12" stroke="white" stroke-width="1" opacity="0.6"/>
+      <line x1="36" y1="60" x2="36" y2="70" stroke="white" stroke-width="1" opacity="0.6"/>
+      <line x1="2"  y1="36" x2="12" y2="36" stroke="white" stroke-width="1" opacity="0.6"/>
+      <line x1="60" y1="36" x2="70" y2="36" stroke="white" stroke-width="1" opacity="0.6"/>
     </svg>
   </div>
   <div id="topbar">
