@@ -56,15 +56,11 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 #screen-map { display:none; position:fixed; inset:0; }
 #map-canvas { position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
 
-/* CROSSHAIR */
+/* DIAFRAGMA */
 #crosshair {
   position:absolute; top:50%; left:50%; z-index:20; pointer-events:none;
-  transform:translate(-50%,-50%); width:44px; height:44px;
+  transform:translate(-50%,-50%); width:72px; height:72px;
 }
-#crosshair::before { content:''; position:absolute; width:1px; height:100%; left:50%; top:0; background:rgba(255,255,255,0.7); }
-#crosshair::after  { content:''; position:absolute; height:1px; width:100%; top:50%; left:0; background:rgba(255,255,255,0.7); }
-.ch-ring { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:18px; height:18px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.6); }
-.ch-dot  { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:4px; height:4px; border-radius:50%; background:#fff; }
 
 #topbar {
   position:fixed; top:0; left:0; right:0; z-index:50;
@@ -269,6 +265,62 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   padding:13px; font-size:10px; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
 }
 
+.tramo-panel {
+  position:fixed; right:0; top:48px; bottom:78px; z-index:51;
+  display:flex; flex-direction:row; align-items:flex-start;
+  pointer-events:none;
+}
+.tramo-toggle {
+  width:22px; height:56px;
+  background:rgba(0,0,0,0.88);
+  border:1px solid #0a2530; border-right:none;
+  border-radius:8px 0 0 8px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; pointer-events:all;
+  color:#1a5a6a; align-self:flex-start; margin-top:12px;
+  flex-shrink:0;
+}
+.tramo-toggle:active { color:var(--cyan,#00e5ff); }
+.tramo-toggle svg { width:12px; height:12px; }
+.tramo-list-panel {
+  width:130px;
+  background:rgba(0,0,0,0.92);
+  border-left:1px solid #0a2530;
+  border-top:1px solid #0a2530;
+  border-bottom:1px solid #0a2530;
+  height:100%;
+  overflow-y:auto;
+  pointer-events:all;
+  transition:width 0.25s ease;
+  border-radius:0 0 0 0;
+}
+.tramo-list-panel.collapsed { width:0; overflow:hidden; border:none; }
+.tramo-panel-hdr {
+  padding:8px 10px 6px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px; color:#1a5a6a;
+  letter-spacing:2px; text-transform:uppercase;
+  border-bottom:1px solid #0a2530;
+}
+.tramo-panel-item {
+  padding:8px 10px;
+  border-bottom:1px solid #0a2530;
+  cursor:pointer;
+  transition:background 0.15s;
+}
+.tramo-panel-item:active { background:#001520; }
+.tramo-panel-item.active { background:#001a24; border-left:2px solid var(--cyan,#00e5ff); }
+.tramo-panel-name {
+  font-size:9px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; line-height:1.3;
+  overflow:hidden; text-overflow:ellipsis;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+}
+.tramo-panel-pts {
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px; color:#1a5a6a; margin-top:2px; letter-spacing:1px;
+}
+
 .toast {
   position:fixed; top:58px; left:50%; transform:translateX(-50%) translateY(-8px);
   background:#040c10; border:1px solid #0a2530; border-radius:30px;
@@ -362,7 +414,32 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 <div id="screen-map">
   <canvas id="map-canvas"></canvas>
   <div class="save-bar" id="save-bar"></div>
-  <div id="crosshair"><div class="ch-ring"></div><div class="ch-dot"></div></div>
+  <div id="crosshair">
+    <!-- Cyan ring with glow -->
+    <svg style="position:absolute;inset:0;width:72px;height:72px;" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="cg"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <circle cx="36" cy="36" r="33" fill="none" stroke="#00e5ff" stroke-width="5" opacity="0.25"/>
+      <circle cx="36" cy="36" r="33" fill="none" stroke="#00e5ff" stroke-width="1.8" filter="url(#cg)" opacity="0.95"/>
+      <!-- Diaphragm blades drawn in white -->
+      <g transform="translate(36,36)" fill="white" opacity="0.82">
+        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z"/>
+        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(60)"/>
+        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(120)"/>
+        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(180)"/>
+        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(240)"/>
+        <path d="M0,-20 L8,-12 L3,-3 L-3,-3 L-8,-12 Z" transform="rotate(300)"/>
+        <!-- Hexagonal aperture (dark center) -->
+        <polygon points="0,-7 6,-3.5 6,3.5 0,7 -6,3.5 -6,-3.5" fill="#060d14"/>
+        <!-- Inner ring -->
+        <circle r="7" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+      </g>
+      <!-- Crosshair lines outside ring -->
+      <line x1="36" y1="1"  x2="36" y2="10" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+      <line x1="36" y1="62" x2="36" y2="71" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+      <line x1="1"  y1="36" x2="10" y2="36" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+      <line x1="62" y1="36" x2="71" y2="36" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+    </svg>
+  </div>
   <div id="topbar">
     <span class="topbar-title">Huella de Tapir</span>
     <button class="gps-pill" id="gps-pill" onclick="centerGPS()">GPS</button>
@@ -381,6 +458,19 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
       </svg>
     </button>
   </div>
+  <!-- TRAMO PANEL -->
+  <div class="tramo-panel" id="tramo-panel">
+    <div class="tramo-toggle" id="tramo-toggle" onclick="toggleTramoPanel()">
+      <svg id="tramo-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </div>
+    <div class="tramo-list-panel" id="tramo-list-panel">
+      <div class="tramo-panel-hdr">TRAMOS</div>
+      <div id="tramo-panel-items"></div>
+    </div>
+  </div>
+
   <div id="bottombar">
     <button class="nav-btn" onclick="goHome()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -547,7 +637,7 @@ const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null,
 const STORE = 'tapir5';
 
 // ══ MAP ══
-const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{} };
+const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{}, following:true };
 
 // ══ STORAGE — IndexedDB for photos, localStorage for metadata ══
 const DB_NAME = 'tapir_db', DB_VER = 1, DB_STORE = 'photos';
@@ -818,6 +908,7 @@ function startMap() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
   fitAll();
+  buildTramoPanel();
   initTouch();
   startGPS();
   requestAnimationFrame(loop);
@@ -866,9 +957,11 @@ function draw() {
   // Draw each tramo
   ST.tramos.forEach(t => {
     if (t.route.length < 2) return;
+    const isActive = activeTramoIdx === ST.tramos.indexOf(t);
     ctx.beginPath();
     ctx.strokeStyle = t.color;
-    ctx.lineWidth = 4;
+    ctx.lineWidth = isActive ? 6 : 3;
+    ctx.globalAlpha = isActive ? 1.0 : (activeTramoIdx >= 0 ? 0.35 : 1.0);
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     const p0=proj(t.route[0][0],t.route[0][1]);
@@ -878,6 +971,7 @@ function draw() {
       ctx.lineTo(p.x,p.y);
     }
     ctx.stroke();
+    ctx.globalAlpha = 1.0;
 
     // Start/end flags
     const ssNum = 'SS' + (ST.tramos.indexOf(t) + 1);
@@ -987,11 +1081,12 @@ function onTM(e) {
   if (T.drag && e.touches.length===1) {
     const dx=e.touches[0].clientX-T.sx, dy=e.touches[0].clientY-T.sy;
     const cos=Math.cos(M.lat*Math.PI/180);
-    // Apply inverse rotation to pan correctly
     const c=Math.cos(-M.rot), s=Math.sin(-M.rot);
     const rdx=dx*c-dy*s, rdy=dx*s+dy*c;
     M.lat = T.lat0 + rdy/M.scale;
     M.lng = T.lng0 - rdx/(M.scale*cos);
+    // Disable follow when user manually pans
+    if(Math.abs(dx)>5||Math.abs(dy)>5){ M.following=false; updateFollowBtn(); }
   }
   if (T.pinch && e.touches.length===2) {
     const t0=e.touches[0],t1=e.touches[1];
@@ -1039,11 +1134,20 @@ function startGPS() {
     ST.gpsPos={lat:pos.coords.latitude,lng:pos.coords.longitude};
     const p=document.getElementById('gps-pill');
     p.textContent=Math.round(pos.coords.accuracy)+'m'; p.classList.add('on');
+    // Auto-follow: center map on GPS position
+    if(M.following){ M.lat=ST.gpsPos.lat; M.lng=ST.gpsPos.lng; }
   },()=>{},{enableHighAccuracy:true,maximumAge:3000,timeout:15000});
 }
 function centerGPS() {
-  if (ST.gpsPos) { M.lat=ST.gpsPos.lat; M.lng=ST.gpsPos.lng; }
-  else toast('Sin señal GPS');
+  if (ST.gpsPos) {
+    M.lat=ST.gpsPos.lat; M.lng=ST.gpsPos.lng;
+    M.following=true;
+    updateFollowBtn();
+  } else { toast('Sin señal GPS'); }
+}
+function updateFollowBtn() {
+  const btn=document.getElementById('btn-center');
+  if(btn) btn.style.color = M.following ? 'var(--cyan)' : 'var(--gray3,#1a5a6a)';
 }
 
 // ══ AUTO TRAMO DETECTION ══
@@ -1168,11 +1272,21 @@ function onPhoto(e) {
   const f=e.target.files[0]; if(!f) return;
   const r=new FileReader();
   r.onload=ev=>{
-    const data=ev.target.result;
-    document.getElementById('photo-prev').src=data;
-    document.getElementById('photo-preview-wrap').style.display='block';
-    document.getElementById('photo-opts-row').style.display='none';
-    if(ST.curPt) ST.curPt._photo=data;
+    const original=ev.target.result;
+    // Compress to 20% of original dimensions before storing
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      canvas.width  = Math.round(img.naturalWidth  * 0.2);
+      canvas.height = Math.round(img.naturalHeight * 0.2);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL('image/jpeg', 0.75);
+      document.getElementById('photo-prev').src=compressed;
+      document.getElementById('photo-preview-wrap').style.display='block';
+      document.getElementById('photo-opts-row').style.display='none';
+      if(ST.curPt) ST.curPt._photo=compressed;
+    };
+    img.src=original;
   };
   r.readAsDataURL(f); e.target.value='';
 }
@@ -1520,13 +1634,13 @@ async function genPDF(){
   ST.points.forEach(pt=>{const k=pt.tramo||'Sin tramo';if(!groups[k])groups[k]=[];groups[k].push(pt);});
   const orderedKeys=[...ST.tramos.map(t=>t.name).filter(n=>groups[n]),...Object.keys(groups).filter(k=>!ST.tramos.find(t=>t.name===k))];
 
-  // Generate tramo images first (async, one at a time to avoid OOM)
+  // Generate tramo images one at a time
   const tramoImgs={};
   for(const key of orderedKeys){
     const tramo=ST.tramos.find(t=>t.name===key);
     if(tramo){
-      await new Promise(r=>setTimeout(r,30)); // yield to browser
-      tramoImgs[key]=renderTramoImage(tramo, groups[key]||[], 900, 520);
+      await new Promise(r=>setTimeout(r,30));
+      tramoImgs[key]=renderTramoImage(tramo, groups[key]||[], 500, 290);
     }
   }
 
@@ -1788,6 +1902,57 @@ async function newSession(){
   await deleteAllPhotos();
   localStorage.removeItem(STORE);
   location.reload();
+}
+
+// ══ TRAMO PANEL ══
+let tramoPanelOpen = true;
+let activeTramoIdx = -1;
+
+function buildTramoPanel() {
+  const container = document.getElementById('tramo-panel-items');
+  if (!container) return;
+  container.innerHTML = ST.tramos.map((t, i) => {
+    const pts = ST.points.filter(p => p.tramo === t.name).length;
+    return `<div class="tramo-panel-item" id="tramo-item-${i}" onclick="selectTramo(${i})">
+      <div class="tramo-panel-name" style="color:${t.color}">${t.name}</div>
+      <div class="tramo-panel-pts">${pts} pto${pts!==1?'s':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectTramo(idx) {
+  activeTramoIdx = idx;
+  // Update active state
+  ST.tramos.forEach((t, i) => {
+    const el = document.getElementById('tramo-item-'+i);
+    if (el) el.className = 'tramo-panel-item' + (i===idx?' active':'');
+  });
+  // Fit map to tramo
+  const t = ST.tramos[idx];
+  if (!t || !t.route || t.route.length < 2) return;
+  const lats = t.route.map(p=>p[0]), lngs = t.route.map(p=>p[1]);
+  const minLat=Math.min(...lats), maxLat=Math.max(...lats);
+  const minLng=Math.min(...lngs), maxLng=Math.max(...lngs);
+  M.lat = (minLat+maxLat)/2; M.lng = (minLng+maxLng)/2;
+  const dLat=maxLat-minLat||0.01, dLng=maxLng-minLng||0.01;
+  const cos=Math.cos(M.lat*Math.PI/180);
+  const sw=M.W*0.75, sh=(M.H-140)*0.75;
+  M.scale = Math.min(sh/dLat, sw/(dLng*cos));
+  M.following = false;
+  updateFollowBtn();
+}
+
+function toggleTramoPanel() {
+  tramoPanelOpen = !tramoPanelOpen;
+  const panel = document.getElementById('tramo-list-panel');
+  const arrow = document.getElementById('tramo-arrow');
+  if (tramoPanelOpen) {
+    panel.classList.remove('collapsed');
+    arrow.innerHTML = '<polyline points="15 18 9 12 15 6"/>';
+  } else {
+    panel.classList.add('collapsed');
+    arrow.innerHTML = '<polyline points="9 18 15 12 9 6"/>';
+  }
 }
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
