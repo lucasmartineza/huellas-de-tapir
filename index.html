@@ -1052,7 +1052,7 @@ function initTouch() {
   c.addEventListener('mousemove',  e=>{ if(!T.drag) return; const dx=e.clientX-T.sx, dy=e.clientY-T.sy; const cos=Math.cos(M.lat*Math.PI/180); const rc=Math.cos(-M.rot), rs=Math.sin(-M.rot); M.lat=T.lat0+(dx*rs+dy*rc)/M.scale; M.lng=T.lng0-(dx*rc-dy*rs)/(M.scale*cos); });
   c.addEventListener('mouseup',    e=>{ T.drag=false; });
   c.addEventListener('mouseleave', e=>{ T.drag=false; });
-  c.addEventListener('wheel',      e=>{ e.preventDefault(); const f=e.deltaY>0?0.85:1.18; M.scale=Math.max(500,Math.min(500000,M.scale*f)); }, {passive:false});
+  c.addEventListener('wheel',      e=>{ e.preventDefault(); const f=e.deltaY>0?0.97:1.03; M.scale=Math.max(500,Math.min(500000,M.scale*f)); }, {passive:false});
 }
 
 function onTS(e) {
