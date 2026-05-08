@@ -52,9 +52,9 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 #load-status { font-size:9px; color:#1a5a6a; letter-spacing:1px; text-align:center; min-height:16px; font-family:'Share Tech Mono',monospace; }
 .load-hint { font-size:7px; color:#1a5a6a; letter-spacing:1px; text-transform:uppercase; text-align:center; font-family:'Share Tech Mono',monospace; line-height:1.9; }
 .roads-btn {
-  position:fixed; bottom:78px; right:10px; z-index:49;
+  position:fixed; top:7px; right:80px; z-index:52;
   background:rgba(0,0,0,0.88); border:1px solid #1a3a48;
-  border-radius:8px; padding:7px 10px;
+  border-radius:20px; padding:5px 10px;
   font-size:8px; font-weight:700; letter-spacing:1.5px;
   text-transform:uppercase; font-family:'Rajdhani',sans-serif;
   color:#4a8898; cursor:pointer; display:none;
@@ -62,6 +62,12 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 .roads-btn:active { background:#001520; color:#00e5ff; }
 .roads-btn.loading { color:#00e5ff; animation:btn-breathe 1s ease-in-out infinite; }
 .roads-btn.done { color:#00ffaa; border-color:#00ffaa33; }
+.roseta {
+  position:fixed; bottom:90px; right:12px; z-index:49;
+  width:52px; height:52px; pointer-events:all; cursor:pointer;
+  transform-origin:center;
+}
+.roseta:active { opacity:0.7; }
 .load-logo { width:90px; display:block; margin:0 auto; mix-blend-mode:screen; opacity:0.75; }
 
 #screen-map { display:none; position:fixed; inset:0; overflow:hidden; }
@@ -456,6 +462,28 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   </div>
 
   <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CARGAR CAMINOS</button>
+
+  <!-- ROSETA -->
+  <svg class="roseta" id="roseta" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" onclick="resetRot()" title="Reset Norte">
+    <!-- Outer ring -->
+    <circle cx="26" cy="26" r="24" fill="rgba(0,0,0,0.7)" stroke="#1a3a48" stroke-width="1"/>
+    <!-- Cardinal tick marks -->
+    <line x1="26" y1="4"  x2="26" y2="9"  stroke="#00e5ff" stroke-width="1.5"/>
+    <line x1="26" y1="43" x2="26" y2="48" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+    <line x1="4"  y1="26" x2="9"  y2="26" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+    <line x1="43" y1="26" x2="48" y2="26" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+    <!-- N arrow (points up = north, cyan) -->
+    <polygon points="26,8 29,22 26,19 23,22" fill="#00e5ff" opacity="0.95"/>
+    <!-- S arrow (points down, white faint) -->
+    <polygon points="26,44 29,30 26,33 23,30" fill="rgba(255,255,255,0.3)"/>
+    <!-- Cardinal labels -->
+    <text x="26" y="17" text-anchor="middle" fill="#00e5ff" font-size="7" font-family="monospace" font-weight="700">N</text>
+    <text x="26" y="39" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="6" font-family="monospace">S</text>
+    <text x="13" y="29" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="6" font-family="monospace">O</text>
+    <text x="39" y="29" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="6" font-family="monospace">E</text>
+    <!-- Center dot -->
+    <circle cx="26" cy="26" r="2.5" fill="#00e5ff" opacity="0.8"/>
+  </svg>
 
   <div id="bottombar">
     <button class="nav-btn" onclick="goHome()">
@@ -986,7 +1014,7 @@ function draw() {
 
   // OSM roads — grey, very faint
   if(ST.roads && ST.roads.length){
-    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=0.8; ctx.globalAlpha=1;
+    ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.lineWidth=1.2; ctx.globalAlpha=1;
     ST.roads.forEach(road => {
       if(road.length < 2) return;
       ctx.beginPath();
@@ -1036,6 +1064,10 @@ function draw() {
     if (t.start) drawFlag(t.start.lat, t.start.lng, true,  ssNum);
     if (t.end)   drawFlag(t.end.lat,   t.end.lng,   false, ssNum);
   });
+
+  // Rotate roseta to reflect map rotation
+  const rosEl = document.getElementById('roseta');
+  if(rosEl) rosEl.style.transform = 'rotate(' + (M.rot*180/Math.PI).toFixed(1) + 'deg)';
 
   // User points
   ST.points.forEach(pt => drawMarker(pt));
@@ -2034,10 +2066,10 @@ async function loadOSMRoads() {
   // Bounding box of all tramos + 0.05° buffer (~5km)
   const allLats = ST.tramos.flatMap(t => t.route.map(p=>p[0]));
   const allLngs = ST.tramos.flatMap(t => t.route.map(p=>p[1]));
-  const S = (Math.min(...allLats) - 0.05).toFixed(5);
-  const N = (Math.max(...allLats) + 0.05).toFixed(5);
-  const W = (Math.min(...allLngs) - 0.05).toFixed(5);
-  const E = (Math.max(...allLngs) + 0.05).toFixed(5);
+  const S = (Math.min(...allLats) - 0.18).toFixed(5);
+  const N = (Math.max(...allLats) + 0.18).toFixed(5);
+  const W = (Math.min(...allLngs) - 0.18).toFixed(5);
+  const E = (Math.max(...allLngs) + 0.18).toFixed(5);
 
   const query = `[out:json][timeout:25];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential)$"](${S},${W},${N},${E}););out geom;`;
   const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
