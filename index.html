@@ -412,7 +412,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   <div class="load-btns">
     <p id="load-status" class="load-hint">Cargá el KMZ de la organización<br>para comenzar el recce</p>
     <button class="btn-main" onclick="document.getElementById('kf').click()">CARGAR KMZ</button>
-    <input type="file" id="kf" accept=".kmz,.kml" style="display:none" onchange="onKMZ(event)">
+    <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
     <button class="btn-sec" id="btn-resume" style="display:none" onclick="resumeSession()">CONTINUAR SESIÓN</button>
   </div>
 
@@ -2199,7 +2199,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   <div class="load-btns">
     <p id="load-status" class="load-hint">Cargá el KMZ de la organización<br>para comenzar el recce</p>
     <button class="btn-main" onclick="document.getElementById('kf').click()">CARGAR KMZ</button>
-    <input type="file" id="kf" accept=".kmz,.kml" style="display:none" onchange="onKMZ(event)">
+    <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
     <button class="btn-sec" id="btn-resume" style="display:none" onclick="resumeSession()">CONTINUAR SESIÓN</button>
   </div>
 
