@@ -789,72 +789,80 @@ function simplify(pts, tolerance) {
 
 function parseTramos(text) {
   const doc = new DOMParser().parseFromString(text, 'text/xml');
-  const KML = 'http://www.opengis.net/kml/2.2';
+
   const nm = el => { const n=el.querySelector('name'); return n&&n.textContent?n.textContent.trim():''; };
   const coords = el => {
-    const c = el.querySelector('coordinates'); if(!c||!c.textContent) return [];
-    return c.textContent.trim().split(/\s+/).map(p=>{
+    const co = el.querySelector('coordinates'); if(!co||!co.textContent) return [];
+    return co.textContent.trim().split(/\s+/).map(p=>{
       const parts=p.split(','); if(parts.length<2) return null;
       const lng=parseFloat(parts[0]), lat=parseFloat(parts[1]);
       return isNaN(lat)||isNaN(lng) ? null : [lat,lng];
     }).filter(Boolean);
   };
 
-  const seen = new Set(); // deduplicate by bbox string
+  const allPM = [...doc.querySelectorAll('Placemark')];
+
+  // Separate lines and points
+  const lines  = allPM.filter(p => p.querySelector('LineString'));
+  const points = allPM.filter(p => p.querySelector('Point') && !p.querySelector('LineString'));
+
+  // Build point lookup by name
+  const ptByName = {};
+  points.forEach(p => { const n=nm(p); if(n) ptByName[n] = coords(p); });
+
+  const seen = new Set();
   const result = [];
 
-  doc.querySelectorAll('Folder').forEach(folder => {
-    const fname = nm(folder);
-    if (SKIP.has(fname)) return;
+  lines.forEach(pm => {
+    const name = nm(pm);
+    if (!name) return;
 
-    let route=[], start=null, end=null;
-    folder.querySelectorAll('Placemark').forEach(pm => {
-      const pmname = nm(pm);
-      const hasLine  = pm.querySelector('LineString') !== null;
-      const hasPoint = pm.querySelector('Point') !== null;
-      const c = coords(pm);
-      if (hasLine && c.length > 10 && c.length > route.length) route = c;
-      if (hasPoint && c.length > 0) {
-        const low = pmname.toLowerCase();
-        if      (low.includes('inicio')||low.includes('start')||low.includes('largada')||pmname.startsWith('LPE')) start={lat:c[0][0],lng:c[0][1],name:pmname};
-        else if (low.includes('final')||low.includes('fin')||low.includes('llegada')||low.includes('end')||pmname.startsWith('FPE')) end={lat:c[0][0],lng:c[0][1],name:pmname};
-      }
-    });
-
+    const route = coords(pm);
     if (route.length < 5) return;
 
-    // Deduplicate by bounding box
+    // Deduplicate
     const lats=route.map(p=>p[0]), lngs=route.map(p=>p[1]);
-    const bbox = { minLat:Math.min(...lats), maxLat:Math.max(...lats), minLng:Math.min(...lngs), maxLng:Math.max(...lngs) };
-    const bboxKey = bbox.minLat.toFixed(3)+bbox.maxLat.toFixed(3)+bbox.minLng.toFixed(3)+bbox.maxLng.toFixed(3);
+    const bbox={minLat:Math.min(...lats),maxLat:Math.max(...lats),minLng:Math.min(...lngs),maxLng:Math.max(...lngs)};
+    const bboxKey=bbox.minLat.toFixed(3)+bbox.maxLat.toFixed(3)+bbox.minLng.toFixed(3)+bbox.maxLng.toFixed(3);
     if (seen.has(bboxKey)) return;
     seen.add(bboxKey);
 
-    const isCron = /^PE\b/i.test(fname);
-    result.push({ name:fname, route, routeSimple:route, start, end, bbox, color:COLORS[result.length%COLORS.length], cron:isCron });
-  });
+    // Detect if cronometrado (PE = Prueba Especial)
+    const isCron = /^PE\b/i.test(name);
 
-  // Top-level named placemarks (Shakedown, etc)
-  const doc2 = doc.querySelector('Document');
-  if (doc2) {
-    [...doc2.children].filter(c=>c.tagName&&c.tagName.includes('Placemark')).forEach(pm=>{
-      const pmname = nm(pm);
-      if (!pmname || pmname.toLowerCase().includes('sin título')||pmname.toLowerCase().includes('inicio')||pmname.toLowerCase().includes('final')) return;
-      if (pm.querySelector('LineString')===null) return;
-      const c = coords(pm);
-      if (c.length < 5) return;
-      const lats=c.map(p=>p[0]),lngs=c.map(p=>p[1]);
-      const bbox={minLat:Math.min(...lats),maxLat:Math.max(...lats),minLng:Math.min(...lngs),maxLng:Math.max(...lngs)};
-      const bboxKey=bbox.minLat.toFixed(3)+bbox.maxLat.toFixed(3)+bbox.minLng.toFixed(3)+bbox.maxLng.toFixed(3);
-      if (seen.has(bboxKey)) return;
-      seen.add(bboxKey);
-      const isCron2 = /^PE\b/i.test(pmname);
-      result.push({name:pmname,route:c,routeSimple:c,start:null,end:null,bbox,color:COLORS[result.length%COLORS.length],cron:isCron2});
-    });
-  }
+    // Find matching start/end points
+    // Extract number from name: "PE 1/5/8" → "1", "PE 2" → "2"
+    const numMatch = name.match(/[\d]+/);
+    const num = numMatch ? numMatch[0] : null;
+    let start = null, end = null;
+
+    if (num) {
+      // Look for LPE and FPE with matching number
+      Object.keys(ptByName).forEach(pname => {
+        const plo = pname.toLowerCase();
+        const pnum = (pname.match(/[\d]+/) || [])[0];
+        if (pnum !== num) return;
+        if (pname.startsWith('LPE') || plo.includes('inicio') || plo.includes('largada') || plo.includes('start')) {
+          const c = ptByName[pname];
+          if (c && c.length) start = {lat:c[0][0], lng:c[0][1], name:pname};
+        }
+        if (pname.startsWith('FPE') || plo.includes('final') || plo.includes('llegada') || plo.includes('fin ') || plo.includes('end')) {
+          const c = ptByName[pname];
+          if (c && c.length) end = {lat:c[0][0], lng:c[0][1], name:pname};
+        }
+      });
+    }
+
+    // Fallback: use first/last route point
+    if (!start) start = {lat:route[0][0], lng:route[0][1], name:'S'};
+    if (!end)   end   = {lat:route[route.length-1][0], lng:route[route.length-1][1], name:'F'};
+
+    result.push({name, route, routeSimple:route, start, end, bbox, color:COLORS[result.length%COLORS.length], cron:isCron});
+  });
 
   return result;
 }
+
 
 function setStatus(m) { document.getElementById('load-status').textContent = m; }
 function resumeSession() { startMap(); }
