@@ -1060,9 +1060,20 @@ function draw() {
     ctx.globalAlpha = 1.0;
 
     // Start/end flags
-    const ssNum = 'SS' + (ST.tramos.indexOf(t) + 1);
-    if (t.start) drawFlag(t.start.lat, t.start.lng, true,  ssNum);
-    if (t.end)   drawFlag(t.end.lat,   t.end.lng,   false, ssNum);
+    // Derive LPE/FPE labels from tramo name
+    // PE 1/5/8 → LPE1, FPE1 | PE 4 / 7 → LPE4 | PSSE → LSSE, FSSE
+    let startLabel, endLabel;
+    const tname = t.name.trim();
+    if (/^PSSE/i.test(tname)) {
+      startLabel = 'LSSE'; endLabel = 'FSSE';
+    } else {
+      const numPart = tname.replace(/^PE\s*/i,'').trim(); // "1/5/8", "2", "4 / 7"
+      const firstNum = (numPart.match(/\d+/) || [''])[0];
+      startLabel = 'LPE' + firstNum;
+      endLabel   = 'FPE' + firstNum;
+    }
+    if (t.start) drawFlag(t.start.lat, t.start.lng, true,  startLabel);
+    if (t.end)   drawFlag(t.end.lat,   t.end.lng,   false, endLabel);
   });
 
   // Rotate roseta to reflect map rotation
