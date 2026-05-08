@@ -697,24 +697,32 @@ function deleteAllPhotos() {
 }
 
 function persist() {
-  const light = ST.tramos.map(t => ({
-    name:t.name, color:t.color, route:t.routeSimple,
-    start:t.start, end:t.end, bbox:t.bbox, cron:t.cron
-  }));
-  const pointsMeta = ST.points.map(p => {
-    const {photo, audio, ...rest} = p;
-    return {...rest, hasPhoto: !!photo, hasAudio: !!audio};
-  });
-  const data = { points:pointsMeta, nextN:ST.nextN, tramos:light, kmzName:ST.kmzName };
-  // Save to IndexedDB (primary - persistent) + localStorage (fallback)
-  openDB().then(d => {
-    const tx = d.transaction(META_STORE, 'readwrite');
-    tx.objectStore(META_STORE).put(data, 'session');
-  }).catch(e => console.warn('IDB persist error:', e));
   try {
+    const light = ST.tramos.map(t => ({
+      name:t.name, color:t.color, route:t.routeSimple,
+      start:t.start, end:t.end, bbox:t.bbox, cron:t.cron
+    }));
+    const pointsMeta = ST.points.map(p => {
+      const {photo, audio, ...rest} = p;
+      return {...rest, hasPhoto: !!photo, hasAudio: !!audio};
+    });
+    const data = { points:pointsMeta, nextN:ST.nextN, tramos:light, kmzName:ST.kmzName };
+    // localStorage first (synchronous, always works)
     localStorage.setItem(STORE, JSON.stringify(data));
-  } catch(e) {}
-  showSaveBar('✓ GUARDADO — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':''), false);
+    // IndexedDB async (more persistent, fire-and-forget)
+    try {
+      openDB().then(d => {
+        try {
+          const tx = d.transaction(META_STORE, 'readwrite');
+          tx.objectStore(META_STORE).put(data, 'session');
+        } catch(e) {}
+      }).catch(()=>{});
+    } catch(e) {}
+    showSaveBar('✓ GUARDADO — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':''), false);
+  } catch(e) {
+    console.warn('persist error:', e);
+    showSaveBar('⚠ ERROR AL GUARDAR', true);
+  }
 }
 
 function showSaveBar(msg, warn) {
@@ -2476,24 +2484,32 @@ function deleteAllPhotos() {
 }
 
 function persist() {
-  const light = ST.tramos.map(t => ({
-    name:t.name, color:t.color, route:t.routeSimple,
-    start:t.start, end:t.end, bbox:t.bbox, cron:t.cron
-  }));
-  const pointsMeta = ST.points.map(p => {
-    const {photo, audio, ...rest} = p;
-    return {...rest, hasPhoto: !!photo, hasAudio: !!audio};
-  });
-  const data = { points:pointsMeta, nextN:ST.nextN, tramos:light, kmzName:ST.kmzName };
-  // Save to IndexedDB (primary - persistent) + localStorage (fallback)
-  openDB().then(d => {
-    const tx = d.transaction(META_STORE, 'readwrite');
-    tx.objectStore(META_STORE).put(data, 'session');
-  }).catch(e => console.warn('IDB persist error:', e));
   try {
+    const light = ST.tramos.map(t => ({
+      name:t.name, color:t.color, route:t.routeSimple,
+      start:t.start, end:t.end, bbox:t.bbox, cron:t.cron
+    }));
+    const pointsMeta = ST.points.map(p => {
+      const {photo, audio, ...rest} = p;
+      return {...rest, hasPhoto: !!photo, hasAudio: !!audio};
+    });
+    const data = { points:pointsMeta, nextN:ST.nextN, tramos:light, kmzName:ST.kmzName };
+    // localStorage first (synchronous, always works)
     localStorage.setItem(STORE, JSON.stringify(data));
-  } catch(e) {}
-  showSaveBar('✓ GUARDADO — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':''), false);
+    // IndexedDB async (more persistent, fire-and-forget)
+    try {
+      openDB().then(d => {
+        try {
+          const tx = d.transaction(META_STORE, 'readwrite');
+          tx.objectStore(META_STORE).put(data, 'session');
+        } catch(e) {}
+      }).catch(()=>{});
+    } catch(e) {}
+    showSaveBar('✓ GUARDADO — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':''), false);
+  } catch(e) {
+    console.warn('persist error:', e);
+    showSaveBar('⚠ ERROR AL GUARDAR', true);
+  }
 }
 
 function showSaveBar(msg, warn) {
