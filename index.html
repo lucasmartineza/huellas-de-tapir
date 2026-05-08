@@ -1721,11 +1721,16 @@ async function genPDF(){
   if(btn){btn.textContent='GENERANDO...';btn.disabled=true;}
   // Small delay to let UI update
   await new Promise(r=>setTimeout(r,50));
-  const win=window.open('','_blank');
-  if(!win){
-    if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
-    toast('Permitir popups para exportar');return;
+  // Use in-app PDF viewer instead of popup window
+  const pdfScreen = document.getElementById('screen-pdf');
+  let pdfFrame = document.getElementById('pdf-iframe');
+  if(!pdfFrame){
+    pdfFrame = document.createElement('iframe');
+    pdfFrame.id = 'pdf-iframe';
+    pdfFrame.style.cssText = 'width:100%;height:100%;border:none;background:#0a0e14;flex:1;';
+    pdfScreen.appendChild(pdfFrame);
   }
+  const win = pdfFrame.contentWindow || pdfFrame.contentDocument;
 
   const groups={};
   ST.points.forEach(pt=>{const k=pt.tramo||'Sin tramo';if(!groups[k])groups[k]=[];groups[k].push(pt);});
@@ -1779,7 +1784,7 @@ async function genPDF(){
     </div>`;
   }).join('');
 
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Huella de Tapir</title>
+  pdfFrame.contentDocument.open(); pdfFrame.contentDocument.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Huella de Tapir</title>
     <style>
       *{box-sizing:border-box;}
       body{font-family:sans-serif;max-width:800px;margin:0 auto;padding:28px;background:#0a0e14;color:#c8dce8;}
@@ -1818,12 +1823,12 @@ async function genPDF(){
       <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.type==='both').length}</div><div class="stat-l">Ambos</div></div>
       <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.audio).length}</div><div class="stat-l">Con voz</div></div>
     </div>
-    <button onclick="window.print()" style="background:#00e5ff;color:#000;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:32px;letter-spacing:2px;">IMPRIMIR / GUARDAR PDF</button>
-    <button onclick="window.close()" style="background:transparent;color:#00e5ff;border:1px solid #00e5ff44;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:32px;margin-left:12px;letter-spacing:2px;">VOLVER A LA APP</button>
+    <button onclick="window.parent.document.getElementById('pdf-iframe').contentWindow.print()" style="background:#00e5ff;color:#000;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:32px;letter-spacing:2px;">IMPRIMIR / GUARDAR PDF</button>
     ${body}
   </body></html>`);
-  win.document.close();
+  pdfFrame.contentDocument.close();
   if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
+  openScreen('pdf');
 }
 
 
