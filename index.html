@@ -648,7 +648,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 <script>
 // ══ STATE ══
 const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false, roads:[] };
-const STORE = 'tapir5';
+const STORE = 'huellas_tapir_v1';
 
 // ══ MAP ══
 const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{} };
@@ -699,7 +699,7 @@ function persist() {
   try {
     const light = ST.tramos.map(t => ({
       name:t.name, color:t.color, route:t.routeSimple,
-      start:t.start, end:t.end, bbox:t.bbox
+      start:t.start, end:t.end, bbox:t.bbox, cron:t.cron
     }));
     const pointsMeta = ST.points.map(p => {
       const {photo, audio, ...rest} = p;
@@ -735,7 +735,7 @@ async function loadStored() {
     if (!d || !d.tramos || !d.tramos.length) return false;
     ST.nextN   = d.nextN   || 1;
     ST.kmzName = d.kmzName || '';
-    ST.tramos  = d.tramos.map(t => ({...t, route:t.route, routeSimple:t.route}));
+    ST.tramos  = d.tramos.map(t => ({...t, route:t.route, routeSimple:t.route, cron:t.cron!==false}));
     const pts  = d.points  || [];
     for (const p of pts) {
       if (p.hasPhoto) p.photo = await loadPhoto('photo_'+p.id);
@@ -1747,71 +1747,72 @@ async function genPDF(){
   }
 
   const body=orderedKeys.map(key=>{
-    const pts=groups[key];
-    const mapImg=tramoImgs[key] ? `<img src="${tramoImgs[key]}" class="tramo-map">` : '';
-
-    // Group photos in pairs for 2-up display
-    const ptsWithPhotos = pts.filter(p=>p.photo);
-    const cards=pts.map(pt=>{
+    const pts=groups[key].slice(0,10);
+    const mapImg=tramoImgs[key]?`<img src="${tramoImgs[key]}" style="width:100%;height:100%;object-fit:contain;display:block;">`:'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#336677;font-size:11px;letter-spacing:2px;">SIN MAPA</div>';
+    const rows=pts.map(pt=>{
       const col=pt.type==='photo'?'#00a0c8':pt.type==='video'?'#4488ff':pt.type==='both'?'#00cc88':'#556677';
-      const tl=pt.type==='photo'?'📷 Foto':pt.type==='video'?'🎬 Video':pt.type==='both'?'⭐ Foto+Video':'—';
-      const distHtml=(pt.distFromStart!==null&&pt.distFromStart!==undefined)
-        ?`<div class="dist-row"><span class="dist-pill">⬆ largada <b>${pt.distFromStart} km</b></span><span class="dist-pill">⬇ llegada <b>${pt.distToEnd} km</b></span></div>`:'';
-      const photoHtml=pt.photo?`<div class="photos"><img src="${pt.photo}"></div>`:'';
-      return `<div class="pt">
-        <div class="pt-hdr">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div class="pt-num" style="border-color:${col};color:${col};background:${col}18;">${pt.number}</div>
-            <div class="pt-title" style="color:${col};">${tl}</div>
-          </div>
-          <div class="pt-meta">${pt.lat.toFixed(6)}<br>${pt.lng.toFixed(6)}</div>
+      const tl=pt.type==='photo'?'FOTO':pt.type==='video'?'VIDEO':pt.type==='both'?'F+V':'—';
+      const dist=(pt.distFromStart!==null&&pt.distFromStart!==undefined)?`${pt.distFromStart}km ↓${pt.distToEnd}km`:'';
+      return `<div class="pt-row">
+        <div class="pt-badge" style="background:${col}22;border:1px solid ${col};color:${col};">${pt.number}</div>
+        <div class="pt-info">
+          <span class="pt-type" style="color:${col};">${tl}</span>
+          ${dist?`<span class="pt-dist">${dist}</span>`:''}
+          ${pt.notes?`<span class="pt-notes">${pt.notes}</span>`:''}
+          <span class="pt-coord">${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)}</span>
         </div>
-        ${distHtml}
-        ${pt.notes?`<div class="notes">${pt.notes}</div>`:''}
-        <div class="geo-row">
-          <a href="geo:${pt.lat.toFixed(6)},${pt.lng.toFixed(6)}" class="geo-link">📍 Abrir en Maps</a>
-          <span class="geo-coord">${pt.lat.toFixed(6)}, ${pt.lng.toFixed(6)}</span>
-        </div>
-        ${photoHtml}
-        ${pt.audio?`<div class="audio-badge">🎤 Nota de voz · ${fmt(pt.audioDur)}</div>`:''}
       </div>`;
     }).join('');
-
-    return `<div style="break-before:page;">
-      <div class="tramo-hdr">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
-      ${mapImg}
-      ${cards}
+    const photos=pts.filter(p=>p.photo).slice(0,10);
+    const photoGrid=photos.length?`<div class="photo-grid">${photos.map(pt=>`<div class="photo-cell"><img src="${pt.photo}"><div class="photo-num">#${pt.number}</div></div>`).join('')}</div>`:'';
+    return `<div class="tramo-page">
+      <div class="tramo-title">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
+      <div class="page-body">
+        <div class="map-half">${mapImg}</div>
+        <div class="info-half"><div class="pts-list">${rows}</div>${photoGrid}</div>
+      </div>
     </div>`;
   }).join('');
-
   pdfFrame.contentDocument.open(); pdfFrame.contentDocument.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Huella de Tapir</title>
     <style>
-      *{box-sizing:border-box;}
-      body{font-family:sans-serif;max-width:800px;margin:0 auto;padding:28px;background:#0a0e14;color:#c8dce8;}
-      h1{font-size:30px;margin:0;letter-spacing:4px;color:#00e5ff;text-transform:uppercase;}
-      h2{font-size:10px;color:#336677;font-weight:400;margin:4px 0 24px;letter-spacing:3px;text-transform:uppercase;}
-      .stats{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
-      .stat{background:#0f1a24;border:1px solid #1a3040;border-radius:8px;padding:12px 16px;}
-      .stat-n{font-size:24px;font-weight:700;color:#00e5ff;font-family:monospace;}
-      .stat-l{font-size:9px;color:#336677;text-transform:uppercase;letter-spacing:2px;}
-      .tramo-hdr{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00e5ff;border-bottom:2px solid #00e5ff44;padding-bottom:8px;margin:32px 0 16px;}
-      .tramo-map{width:100%;border-radius:8px;display:block;margin-bottom:20px;border:1px solid #1a3040;}
-      .pt{break-inside:avoid;border:1px solid #1a3040;border-radius:8px;padding:14px;margin-bottom:10px;background:#0d1520;}
-      .pt-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px;}
-      .pt-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:monospace;flex-shrink:0;border:2px solid;}
-      .pt-title{font-size:14px;font-weight:700;}
-      .pt-meta{text-align:right;font-size:10px;color:#336677;font-family:monospace;line-height:1.6;flex-shrink:0;}
-      .dist-row{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
-      .dist-pill{font-size:10px;background:#0a1a28;border:1px solid #1a3a50;border-radius:20px;padding:2px 10px;color:#4499bb;font-family:monospace;}
-      .dist-pill b{color:#00c8e0;}
-      .notes{font-size:13px;color:#8aacbc;margin-bottom:10px;line-height:1.5;}
-      .photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
-      .photos img{width:100%;border-radius:6px;display:block;object-fit:contain;background:#060d14;max-height:220px;}
-      .geo-row{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-      .geo-link{font-size:11px;color:#00a0c0;background:#0a1a28;padding:4px 10px;border-radius:6px;text-decoration:none;border:1px solid #1a3a50;}
-      .geo-coord{font-size:11px;color:#336677;font-family:monospace;user-select:all;}
-      .audio-badge{display:inline-block;font-size:10px;color:#336677;background:#0a1520;padding:3px 8px;border-radius:4px;border:1px solid #1a3040;margin-top:6px;}
-      @media print{button{display:none;}body{background:#0a0e14 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+      *{box-sizing:border-box;margin:0;padding:0;}
+      @page{size:A4 landscape;margin:10mm;}
+      body{font-family:sans-serif;background:#0a0e14;color:#c8dce8;padding:16px;}
+      h1{font-size:22px;letter-spacing:4px;color:#00e5ff;text-transform:uppercase;margin-bottom:4px;}
+      h2{font-size:9px;color:#336677;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;}
+      .stats{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+      .stat{background:#0f1a24;border:1px solid #1a3040;border-radius:8px;padding:10px 14px;}
+      .stat-n{font-size:20px;font-weight:700;color:#00e5ff;font-family:monospace;}
+      .stat-l{font-size:8px;color:#336677;text-transform:uppercase;letter-spacing:2px;}
+      /* One page per tramo */
+      .tramo-page{page-break-before:always;height:calc(100vh - 32px);display:flex;flex-direction:column;}
+      .tramo-page:first-child{page-break-before:avoid;}
+      .tramo-title{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00e5ff;border-bottom:1px solid #00e5ff44;padding-bottom:6px;margin-bottom:10px;flex-shrink:0;}
+      .page-body{display:flex;gap:12px;flex:1;min-height:0;}
+      /* Map: left half */
+      .map-half{flex:0 0 48%;background:#060d14;border:1px solid #1a3040;border-radius:8px;overflow:hidden;}
+      /* Info: right half */
+      .info-half{flex:1;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:hidden;}
+      /* Point rows */
+      .pts-list{display:flex;flex-direction:column;gap:5px;}
+      .pt-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid #0a2030;}
+      .pt-badge{min-width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:monospace;flex-shrink:0;}
+      .pt-info{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+      .pt-type{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+      .pt-dist{font-size:8px;color:#4499bb;font-family:monospace;}
+      .pt-notes{font-size:9px;color:#a0b8c8;font-style:italic;width:100%;}
+      .pt-coord{font-size:8px;color:#336677;font-family:monospace;width:100%;}
+      /* Photo grid */
+      .photo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;flex-shrink:0;}
+      .photo-cell{position:relative;aspect-ratio:4/3;background:#060d14;border:1px solid #1a3040;border-radius:4px;overflow:hidden;}
+      .photo-cell img{width:100%;height:100%;object-fit:cover;display:block;}
+      .photo-num{position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,0.7);color:#00e5ff;font-size:8px;font-family:monospace;font-weight:700;padding:1px 3px;border-radius:3px;}
+      @media print{
+        body{padding:0;}
+        .tramo-page{height:auto;page-break-inside:avoid;}
+        .page-body{height:160mm;}
+        .photo-grid{grid-template-columns:repeat(5,1fr);}
+      }
     </style>
   </head><body>
     <h1>Huella de Tapir</h1>
@@ -2006,6 +2007,11 @@ async function newSession(){
   localStorage.removeItem(STORE);
   location.reload();
 }
+
+// Save when app goes to background
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && ST.tramos.length) persist();
+});
 
 // ══ TRAMO PANEL ══
 let tramoPanelOpen = true;
