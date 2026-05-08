@@ -51,6 +51,17 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 .btn-sec:active { background:#001a2222; }
 #load-status { font-size:9px; color:#1a5a6a; letter-spacing:1px; text-align:center; min-height:16px; font-family:'Share Tech Mono',monospace; }
 .load-hint { font-size:7px; color:#1a5a6a; letter-spacing:1px; text-transform:uppercase; text-align:center; font-family:'Share Tech Mono',monospace; line-height:1.9; }
+.roads-btn {
+  position:fixed; bottom:78px; right:10px; z-index:49;
+  background:rgba(0,0,0,0.88); border:1px solid #1a3a48;
+  border-radius:8px; padding:7px 10px;
+  font-size:8px; font-weight:700; letter-spacing:1.5px;
+  text-transform:uppercase; font-family:'Rajdhani',sans-serif;
+  color:#4a8898; cursor:pointer; display:none;
+}
+.roads-btn:active { background:#001520; color:#00e5ff; }
+.roads-btn.loading { color:#00e5ff; animation:btn-breathe 1s ease-in-out infinite; }
+.roads-btn.done { color:#00ffaa; border-color:#00ffaa33; }
 .load-logo { width:90px; display:block; margin:0 auto; mix-blend-mode:screen; opacity:0.75; }
 
 #screen-map { display:none; position:fixed; inset:0; overflow:hidden; }
@@ -444,6 +455,8 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
     </div>
   </div>
 
+  <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CARGAR CAMINOS</button>
+
   <div id="bottombar">
     <button class="nav-btn" onclick="goHome()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -606,21 +619,25 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 
 <script>
 // ══ STATE ══
-const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false };
+const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false, roads:[] };
 const STORE = 'tapir5';
 
 // ══ MAP ══
 const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{} };
 
 // ══ STORAGE — IndexedDB for photos, localStorage for metadata ══
-const DB_NAME = 'tapir_db', DB_VER = 1, DB_STORE = 'photos';
+const DB_NAME = 'tapir_db', DB_VER = 2, DB_STORE = 'photos', ROADS_STORE = 'roads';
 let db = null;
 
 function openDB() {
   return new Promise((res, rej) => {
     if (db) return res(db);
     const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = e => e.target.result.createObjectStore(DB_STORE);
+    req.onupgradeneeded = e => {
+      const db2 = e.target.result;
+      if (!db2.objectStoreNames.contains(DB_STORE))   db2.createObjectStore(DB_STORE);
+      if (!db2.objectStoreNames.contains(ROADS_STORE)) db2.createObjectStore(ROADS_STORE);
+    };
     req.onsuccess = e => { db = e.target.result; res(db); };
     req.onerror   = e => rej(e);
   });
@@ -910,6 +927,13 @@ function startMap() {
   window.addEventListener('resize', resizeCanvas);
   fitAll();
   buildTramoPanel();
+  // Load saved OSM roads
+  loadRoads().then(roads => {
+    if(roads && roads.length){ ST.roads=roads; }
+  });
+  // Show roads button if online
+  const rb = document.getElementById('roads-btn');
+  if(rb){ rb.style.display = 'block'; if(ST.roads&&ST.roads.length){ rb.classList.add('done'); rb.textContent=ST.roads.length+' CAMINOS OK'; } }
   initTouch();
   startGPS();
   requestAnimationFrame(loop);
@@ -959,6 +983,18 @@ function draw() {
   const gs=40;
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
+
+  // OSM roads — grey, very faint
+  if(ST.roads && ST.roads.length){
+    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=0.8; ctx.globalAlpha=1;
+    ST.roads.forEach(road => {
+      if(road.length < 2) return;
+      ctx.beginPath();
+      const r0=proj(road[0][0],road[0][1]); ctx.moveTo(r0.x,r0.y);
+      for(let i=1;i<road.length;i++){const rp=proj(road[i][0],road[i][1]);ctx.lineTo(rp.x,rp.y);}
+      ctx.stroke();
+    });
+  }
 
   // Draw each tramo
   ST.tramos.forEach(t => {
@@ -1962,6 +1998,73 @@ function toggleTramoPanel() {
   document.getElementById('tramo-arrow').innerHTML = tramoPanelOpen
     ? '<polyline points="15 18 9 12 15 6"/>'
     : '<polyline points="9 18 15 12 9 6"/>';
+}
+
+// ══ OSM ROADS ══
+
+async function saveRoads(roads) {
+  try {
+    const d = await openDB();
+    const tx = d.transaction(ROADS_STORE, 'readwrite');
+    tx.objectStore(ROADS_STORE).put(roads, 'roads');
+    await new Promise((res,rej) => { tx.oncomplete=res; tx.onerror=rej; });
+  } catch(e) { console.warn('saveRoads error:', e); }
+}
+
+async function loadRoads() {
+  try {
+    const d = await openDB();
+    return new Promise((res) => {
+      const tx = d.transaction(ROADS_STORE, 'readonly');
+      const req = tx.objectStore(ROADS_STORE).get('roads');
+      req.onsuccess = () => res(req.result || []);
+      req.onerror   = () => res([]);
+    });
+  } catch(e) { return []; }
+}
+
+async function loadOSMRoads() {
+  const btn = document.getElementById('roads-btn');
+  if (!navigator.onLine) { toast('Sin conexión'); return; }
+  if (!ST.tramos.length) { toast('Cargá un KMZ primero'); return; }
+
+  btn.classList.add('loading');
+  btn.textContent = 'DESCARGANDO...';
+
+  // Bounding box of all tramos + 0.05° buffer (~5km)
+  const allLats = ST.tramos.flatMap(t => t.route.map(p=>p[0]));
+  const allLngs = ST.tramos.flatMap(t => t.route.map(p=>p[1]));
+  const S = (Math.min(...allLats) - 0.05).toFixed(5);
+  const N = (Math.max(...allLats) + 0.05).toFixed(5);
+  const W = (Math.min(...allLngs) - 0.05).toFixed(5);
+  const E = (Math.max(...allLngs) + 0.05).toFixed(5);
+
+  const query = `[out:json][timeout:25];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential)$"](${S},${W},${N},${E}););out geom;`;
+  const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+
+    // Convert OSM ways to array of coordinate arrays
+    const roads = (data.elements || [])
+      .filter(el => el.type === 'way' && el.geometry && el.geometry.length > 1)
+      .map(el => el.geometry.map(pt => [pt.lat, pt.lon]));
+
+    ST.roads = roads;
+    await saveRoads(roads);
+
+    btn.classList.remove('loading');
+    btn.classList.add('done');
+    btn.textContent = roads.length + ' CAMINOS OK';
+    toast(roads.length + ' caminos cargados');
+  } catch(e) {
+    btn.classList.remove('loading');
+    btn.textContent = 'CARGAR CAMINOS';
+    toast('Error al cargar caminos');
+    console.error(e);
+  }
 }
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
