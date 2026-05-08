@@ -1819,6 +1819,7 @@ async function genPDF(){
       <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.audio).length}</div><div class="stat-l">Con voz</div></div>
     </div>
     <button onclick="window.print()" style="background:#00e5ff;color:#000;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:32px;letter-spacing:2px;">IMPRIMIR / GUARDAR PDF</button>
+    <button onclick="window.close()" style="background:transparent;color:#00e5ff;border:1px solid #00e5ff44;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:32px;margin-left:12px;letter-spacing:2px;">VOLVER A LA APP</button>
     ${body}
   </body></html>`);
   win.document.close();
