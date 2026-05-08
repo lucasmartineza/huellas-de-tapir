@@ -788,74 +788,92 @@ function simplify(pts, tolerance) {
 }
 
 function parseTramos(text) {
-  const doc = new DOMParser().parseFromString(text, 'text/xml');
+  // Strip namespace prefixes for compatibility
+  let clean = text.replace(/<(\/?)\w+:/g,'<$1').replace(/\sxmlns[^=]*="[^"]*"/g,'').replace(/\s\w+:[\w-]+="[^"]*"/g,'');
+  const doc = new DOMParser().parseFromString(clean, 'text/xml');
 
-  const nm = el => { const n=el.querySelector('name'); return n&&n.textContent?n.textContent.trim():''; };
+  const nm = el => {
+    const n = el.querySelector('name');
+    return n && n.textContent ? n.textContent.trim() : '';
+  };
   const coords = el => {
-    const co = el.querySelector('coordinates'); if(!co||!co.textContent) return [];
-    return co.textContent.trim().split(/\s+/).map(p=>{
-      const parts=p.split(','); if(parts.length<2) return null;
-      const lng=parseFloat(parts[0]), lat=parseFloat(parts[1]);
-      return isNaN(lat)||isNaN(lng) ? null : [lat,lng];
+    const co = el.querySelector('coordinates');
+    if (!co || !co.textContent) return [];
+    return co.textContent.trim().split(/\s+/).map(p => {
+      const parts = p.split(',');
+      if (parts.length < 2) return null;
+      const lng = parseFloat(parts[0]), lat = parseFloat(parts[1]);
+      return isNaN(lat) || isNaN(lng) ? null : [lat, lng];
     }).filter(Boolean);
   };
 
   const allPM = [...doc.querySelectorAll('Placemark')];
-
-  // Separate lines and points
   const lines  = allPM.filter(p => p.querySelector('LineString'));
-  const points = allPM.filter(p => p.querySelector('Point') && !p.querySelector('LineString'));
+  const points = allPM.filter(p => p.querySelector('Point'));
 
-  // Build point lookup by name
+  // Build point lookup by name (trim whitespace)
   const ptByName = {};
-  points.forEach(p => { const n=nm(p); if(n) ptByName[n] = coords(p); });
+  points.forEach(p => {
+    const n = nm(p).trim();
+    if (n) ptByName[n] = coords(p);
+  });
 
-  const seen = new Set();
   const result = [];
 
   lines.forEach(pm => {
-    const name = nm(pm);
+    const name = nm(pm).trim();
     if (!name) return;
 
     const route = coords(pm);
-    if (route.length < 5) return;
+    if (route.length < 2) return;
 
-    // Deduplicate
-    const lats=route.map(p=>p[0]), lngs=route.map(p=>p[1]);
-    const bbox={minLat:Math.min(...lats),maxLat:Math.max(...lats),minLng:Math.min(...lngs),maxLng:Math.max(...lngs)};
-    const bboxKey=bbox.minLat.toFixed(3)+bbox.maxLat.toFixed(3)+bbox.minLng.toFixed(3)+bbox.maxLng.toFixed(3);
-    if (seen.has(bboxKey)) return;
-    seen.add(bboxKey);
+    // All lines are cronometrado in this clean KMZ
+    const isCron = true;
 
-    // Detect if cronometrado (PE = Prueba Especial)
-    const isCron = /^PE\b/i.test(name);
-
-    // Find matching start/end points
-    // Extract number from name: "PE 1/5/8" → "1", "PE 2" → "2"
-    const numMatch = name.match(/[\d]+/);
-    const num = numMatch ? numMatch[0] : null;
+    // Match points by name prefix
+    // PE 1/5/8 → look for LPE 1/5/8, FPE 1/5/8
+    // PSSE → look for LSSE, FSSE
     let start = null, end = null;
 
-    if (num) {
-      // Look for LPE and FPE with matching number
+    const isPSSE = /^PSSE/i.test(name);
+
+    if (isPSSE) {
+      // Super especial
       Object.keys(ptByName).forEach(pname => {
-        const plo = pname.toLowerCase();
-        const pnum = (pname.match(/[\d]+/) || [])[0];
-        if (pnum !== num) return;
-        if (pname.startsWith('LPE') || plo.includes('inicio') || plo.includes('largada') || plo.includes('start')) {
+        const n = pname.trim();
+        if (/^LSSE/i.test(n)) {
           const c = ptByName[pname];
-          if (c && c.length) start = {lat:c[0][0], lng:c[0][1], name:pname};
+          if (c && c.length) start = {lat:c[0][0], lng:c[0][1], name:n};
         }
-        if (pname.startsWith('FPE') || plo.includes('final') || plo.includes('llegada') || plo.includes('fin ') || plo.includes('end')) {
+        if (/^FSSE/i.test(n)) {
           const c = ptByName[pname];
-          if (c && c.length) end = {lat:c[0][0], lng:c[0][1], name:pname};
+          if (c && c.length) end = {lat:c[0][0], lng:c[0][1], name:n};
+        }
+      });
+    } else {
+      // Regular PE — extract suffix after "PE " and match LPE/FPE
+      const suffix = name.replace(/^PE\s*/i, '').trim(); // e.g. "1/5/8", "2", "3/6"
+      Object.keys(ptByName).forEach(pname => {
+        const n = pname.trim();
+        const ptSuffix = n.replace(/^[LF]PE\s*/i, '').trim();
+        if (ptSuffix !== suffix) return;
+        if (/^LPE/i.test(n)) {
+          const c = ptByName[pname];
+          if (c && c.length) start = {lat:c[0][0], lng:c[0][1], name:n};
+        }
+        if (/^FPE/i.test(n)) {
+          const c = ptByName[pname];
+          if (c && c.length) end = {lat:c[0][0], lng:c[0][1], name:n};
         }
       });
     }
 
-    // Fallback: use first/last route point
+    // Fallback to first/last route point
     if (!start) start = {lat:route[0][0], lng:route[0][1], name:'S'};
     if (!end)   end   = {lat:route[route.length-1][0], lng:route[route.length-1][1], name:'F'};
+
+    const lats = route.map(p=>p[0]), lngs = route.map(p=>p[1]);
+    const bbox = {minLat:Math.min(...lats),maxLat:Math.max(...lats),minLng:Math.min(...lngs),maxLng:Math.max(...lngs)};
 
     result.push({name, route, routeSimple:route, start, end, bbox, color:COLORS[result.length%COLORS.length], cron:isCron});
   });
