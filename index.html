@@ -816,8 +816,8 @@ function parseTramos(text) {
       if (hasLine && c.length > 10 && c.length > route.length) route = c;
       if (hasPoint && c.length > 0) {
         const low = pmname.toLowerCase();
-        if      (low.includes('inicio')||low.includes('start')||low.includes('largada')) start={lat:c[0][0],lng:c[0][1],name:pmname};
-        else if (low.includes('final')||low.includes('fin')||low.includes('llegada')||low.includes('end'))   end={lat:c[0][0],lng:c[0][1],name:pmname};
+        if      (low.includes('inicio')||low.includes('start')||low.includes('largada')||pmname.startsWith('LPE')) start={lat:c[0][0],lng:c[0][1],name:pmname};
+        else if (low.includes('final')||low.includes('fin')||low.includes('llegada')||low.includes('end')||pmname.startsWith('FPE')) end={lat:c[0][0],lng:c[0][1],name:pmname};
       }
     });
 
@@ -830,7 +830,8 @@ function parseTramos(text) {
     if (seen.has(bboxKey)) return;
     seen.add(bboxKey);
 
-    result.push({ name:fname, route, routeSimple:route, start, end, bbox, color:COLORS[result.length%COLORS.length] });
+    const isCron = /^PE\b/i.test(fname);
+    result.push({ name:fname, route, routeSimple:route, start, end, bbox, color:COLORS[result.length%COLORS.length], cron:isCron });
   });
 
   // Top-level named placemarks (Shakedown, etc)
@@ -847,7 +848,8 @@ function parseTramos(text) {
       const bboxKey=bbox.minLat.toFixed(3)+bbox.maxLat.toFixed(3)+bbox.minLng.toFixed(3)+bbox.maxLng.toFixed(3);
       if (seen.has(bboxKey)) return;
       seen.add(bboxKey);
-      result.push({name:pmname,route:c,routeSimple:c,start:null,end:null,bbox,color:COLORS[result.length%COLORS.length]});
+      const isCron2 = /^PE\b/i.test(pmname);
+      result.push({name:pmname,route:c,routeSimple:c,start:null,end:null,bbox,color:COLORS[result.length%COLORS.length],cron:isCron2});
     });
   }
 
@@ -936,11 +938,17 @@ function draw() {
   ST.tramos.forEach(t => {
     if (t.route.length < 2) return;
     const isActive = activeTramoIdx === ST.tramos.indexOf(t);
+    const isCron = t.cron !== false;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.globalAlpha = isActive ? 1.0 : (activeTramoIdx >= 0 ? 0.35 : 1.0);
+    // Opacity: cronometrado bright, enlace very faint
+    if(!isCron){
+      ctx.globalAlpha = isActive ? 0.35 : 0.1;
+    } else {
+      ctx.globalAlpha = isActive ? 1.0 : (activeTramoIdx >= 0 ? 0.4 : 1.0);
+    }
     // Glow layer when active
-    if(isActive){
+    if(isActive && isCron){
       ctx.beginPath();
       const p0g=proj(t.route[0][0],t.route[0][1]);
       ctx.moveTo(p0g.x,p0g.y);
@@ -950,8 +958,8 @@ function draw() {
       ctx.stroke();
     }
     ctx.beginPath();
-    ctx.strokeStyle = '#00e5ff';
-    ctx.lineWidth = isActive ? 5 : 2.5;
+    ctx.strokeStyle = isCron ? '#00e5ff' : 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = isActive ? 5 : (isCron ? 2.5 : 1);
     const p0=proj(t.route[0][0],t.route[0][1]);
     ctx.moveTo(p0.x,p0.y);
     for (let i=1;i<t.route.length;i++) {
