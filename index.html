@@ -1746,56 +1746,117 @@ async function genPDF(){
   if(!ST.points.length){toast('Sin puntos para exportar');return;}
   const btn=document.getElementById('btn-pdf-gen');
   if(btn){btn.textContent='GENERANDO...';btn.disabled=true;}
-  // Small delay to let UI update
   await new Promise(r=>setTimeout(r,50));
 
-
+  // Build tramo groups
   const groups={};
-  ST.points.forEach(pt=>{const k=pt.tramo||'Sin tramo';if(!groups[k])groups[k]=[];groups[k].push(pt);});
-  const orderedKeys=[...ST.tramos.map(t=>t.name).filter(n=>groups[n]),...Object.keys(groups).filter(k=>!ST.tramos.find(t=>t.name===k))];
+  const orderedKeys=[];
+  ST.points.forEach(pt=>{
+    const k=pt.tramo||'Sin tramo';
+    if(!groups[k]){groups[k]=[];orderedKeys.push(k);}
+    groups[k].push(pt);
+  });
 
-  // Generate tramo images one at a time
+  // Generate tramo map images (500x290)
   const tramoImgs={};
   for(const key of orderedKeys){
     const tramo=ST.tramos.find(t=>t.name===key);
     if(tramo){
       await new Promise(r=>setTimeout(r,30));
-      tramoImgs[key]=renderTramoImage(tramo, groups[key]||[], 500, 290);
+      tramoImgs[key]=renderTramoImage(tramo,groups[key]||[],500,290);
     }
   }
 
-  const body=orderedKeys.map(key=>{
-    const pts=groups[key].slice(0,10);
-    const mapImg=tramoImgs[key]?`<img src="${tramoImgs[key]}" style="width:100%;height:100%;object-fit:contain;display:block;">`:'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#336677;font-size:11px;">SIN MAPA</div>';
-    const photos=pts.filter(p=>p.photo).slice(0,10);
-    const n=photos.length;
-    const cols=n<=1?1:n<=2?2:n<=4?2:n<=6?3:5;
-    const photoGrid=n?`<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:4px;height:100%;">${photos.map(pt=>`<div style="position:relative;background:#060d14;border:1px solid #1a3040;border-radius:3px;overflow:hidden;"><img src="${pt.photo}" style="width:100%;height:100%;object-fit:cover;display:block;"><div style="position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,0.75);color:#00e5ff;font-size:8px;font-family:monospace;font-weight:700;padding:1px 4px;border-radius:2px;">#${pt.number}</div></div>`).join('')}</div>`:'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#336677;font-size:11px;">SIN FOTOS</div>';
-    return `<div style="page-break-before:always;height:calc(100vh - 20px);display:flex;flex-direction:column;padding:12px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00e5ff;border-bottom:1px solid #00e5ff33;padding-bottom:6px;margin-bottom:8px;flex-shrink:0;">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
-      <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;">
-        <div style="flex:1;min-height:0;background:#060d14;border:1px solid #1a3040;border-radius:6px;overflow:hidden;">${mapImg}</div>
-        <div style="flex:1;min-height:0;">${photoGrid}</div>
+  // Build per-tramo pages
+  const pages = orderedKeys.map(key=>{
+    const pts = groups[key].slice(0,10);
+    const mapImg = tramoImgs[key]
+      ? `<img src="${tramoImgs[key]}" style="width:100%;height:100%;object-fit:contain;display:block;">`
+      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#336677;font-size:12px;">SIN MAPA</div>';
+
+    const photos = pts.filter(p=>p.photo).slice(0,10);
+    const n = photos.length;
+    const cols = n<=1?1 : n<=2?2 : n<=4?2 : n<=6?3 : 5;
+    const rows = n<=1?1 : n<=2?1 : n<=4?2 : n<=6?2 : 2;
+    const photoGrid = n
+      ? `<div style="display:grid;grid-template-columns:repeat(${cols},1fr);grid-template-rows:repeat(${rows},1fr);gap:4px;width:100%;height:100%;">${
+          photos.map(pt=>`
+            <div style="position:relative;overflow:hidden;border-radius:3px;border:1px solid #1a3040;">
+              <img src="${pt.photo}" style="width:100%;height:100%;object-fit:cover;display:block;">
+              <div style="position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,0.75);color:#00e5ff;font-size:9px;font-family:monospace;font-weight:700;padding:1px 4px;border-radius:2px;">#${pt.number}</div>
+            </div>`).join('')
+        }</div>`
+      : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#336677;font-size:12px;">SIN FOTOS</div>';
+
+    const ptInfo = pts.map(pt=>{
+      const col = pt.type==='photo'?'#00a0c8':pt.type==='video'?'#4488ff':pt.type==='both'?'#00cc88':'#556677';
+      const tl = pt.type==='photo'?'FOTO':pt.type==='video'?'VIDEO':pt.type==='both'?'F+V':'—';
+      const dist = (pt.distFromStart!=null) ? `↑${pt.distFromStart}km ↓${pt.distToEnd}km` : '';
+      return `<div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0;border-bottom:1px solid #0a2030;">
+        <div style="min-width:22px;height:22px;border-radius:4px;background:${col}22;border:1px solid ${col};color:${col};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:monospace;flex-shrink:0;">${pt.number}</div>
+        <div style="font-size:9px;line-height:1.5;">
+          <span style="color:${col};font-weight:700;">${tl}</span>
+          ${dist?` <span style="color:#4499bb;font-family:monospace;">${dist}</span>`:''}
+          ${pt.notes?`<div style="color:#a0b8c8;font-style:italic;">${pt.notes}</div>`:''}
+          <div style="color:#336677;font-family:monospace;">${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)}</div>
+          <a href="geo:${pt.lat.toFixed(6)},${pt.lng.toFixed(6)}" style="color:#00e5ff;font-size:8px;">📍 Maps.me</a>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div style="page-break-before:always;width:100%;height:100vh;display:flex;flex-direction:column;padding:12px;box-sizing:border-box;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00e5ff;border-bottom:1px solid #00e5ff44;padding-bottom:6px;margin-bottom:8px;flex-shrink:0;">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
+      <div style="display:flex;gap:10px;flex:1;min-height:0;">
+        <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;">
+          <div style="flex:0 0 45%;background:#060d14;border:1px solid #1a3040;border-radius:6px;overflow:hidden;">${mapImg}</div>
+          <div style="flex:1;min-height:0;overflow:hidden;">${photoGrid}</div>
+        </div>
+        <div style="width:180px;flex-shrink:0;overflow-y:auto;">${ptInfo}</div>
       </div>
     </div>`;
   }).join('');
 
-  document.getElementById('pdf-content').innerHTML = `
+  // Open in new window for printing (does NOT close the app)
+  const win = window.open('','_blank','width=900,height=700');
+  if(!win){
+    if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
+    toast('Habilitá popups para exportar');
+    return;
+  }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Huella de Tapir - ${ST.kmzName}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    @page{size:A4 landscape;margin:6mm;}
+    body{background:#0a0e14;color:#c8dce8;font-family:sans-serif;}
+    .cover{padding:24px;}
+    h1{font-size:28px;letter-spacing:4px;color:#00e5ff;text-transform:uppercase;margin-bottom:4px;}
+    h2{font-size:10px;color:#336677;letter-spacing:2px;margin-bottom:16px;}
+    .stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .stat{background:#0f1a24;border:1px solid #1a3040;border-radius:6px;padding:8px 12px;}
+    .stat-n{font-size:18px;font-weight:700;color:#00e5ff;font-family:monospace;}
+    .stat-l{font-size:8px;color:#336677;text-transform:uppercase;letter-spacing:2px;}
+    .btn-row{display:flex;gap:10px;margin-bottom:8px;}
+    @media print{.btn-row{display:none;}}
+  </style>
+  </head><body>
+  <div class="cover">
     <h1>Huella de Tapir</h1>
     <h2>${ST.kmzName} · ${new Date().toLocaleDateString('es-AR',{year:'numeric',month:'long',day:'numeric'})}</h2>
     <div class="stats">
-      <div class="stat"><div class="stat-n">${ST.points.length}</div><div class="stat-l">Total</div></div>
+      <div class="stat"><div class="stat-n">${ST.points.length}</div><div class="stat-l">Puntos</div></div>
       <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.type==='photo').length}</div><div class="stat-l">Foto</div></div>
       <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.type==='video').length}</div><div class="stat-l">Video</div></div>
-      <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.type==='both').length}</div><div class="stat-l">Ambos</div></div>
-      <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.audio).length}</div><div class="stat-l">Con voz</div></div>
+      <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.photo).length}</div><div class="stat-l">Con foto</div></div>
     </div>
-    <button onclick="window.print()" style="background:#00e5ff;color:#000;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:32px;letter-spacing:2px;">IMPRIMIR / GUARDAR PDF</button>
-    <button onclick="window.close()" style="background:transparent;color:#00e5ff;border:1px solid #00e5ff44;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:32px;margin-left:12px;letter-spacing:2px;">VOLVER A LA APP</button>
-    ${body}
-  `;
+    <div class="btn-row">
+      <button onclick="window.print()" style="background:#00e5ff;color:#000;border:none;border-radius:6px;padding:10px 24px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:2px;">IMPRIMIR / GUARDAR PDF</button>
+      <button onclick="window.close()" style="background:transparent;color:#00e5ff;border:1px solid #00e5ff44;border-radius:6px;padding:10px 24px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:2px;">CERRAR</button>
+    </div>
+  </div>
+  ${pages}
+  </body></html>`);
+  win.document.close();
   if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
-  openScreen('pdf');
 }
 
 
