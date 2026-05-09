@@ -644,7 +644,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
       <div class="stat-row"><span class="stat-key">Ambos</span><span class="stat-val" id="e-bo">0</span></div>
       <div class="stat-row"><span class="stat-key">Con voz</span><span class="stat-val" id="e-au">0</span></div>
     </div>
-    <button class="btn-gen" id="btn-pdf-gen" onclick="genPDF()">GENERAR PDF</button>
+    <button class="btn-gen" id="btn-pdf-gen" onclick="window._pdfWin=window.open('about:blank','_blank','width=900,height=700');genPDF()">GENERAR PDF</button>
     <button class="btn-gen" onclick="genKMZ()" style="background:#00ffaa;margin-top:0;">EXPORTAR KMZ</button>
     <button class="btn-new" onclick="newSession()">NUEVA SESIÓN</button>
   </div>
@@ -1804,11 +1804,11 @@ async function genPDF(){
       </div>`;
     }).join('');
 
-    return `<div style="page-break-before:always;width:100%;height:100vh;display:flex;flex-direction:column;padding:12px;box-sizing:border-box;">
+    return `<div style="page-break-before:always;width:100%;height:190mm;display:flex;flex-direction:column;padding:12px;box-sizing:border-box;">
       <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00e5ff;border-bottom:1px solid #00e5ff44;padding-bottom:6px;margin-bottom:8px;flex-shrink:0;">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
       <div style="display:flex;gap:10px;flex:1;min-height:0;">
         <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;">
-          <div style="flex:0 0 45%;background:#060d14;border:1px solid #1a3040;border-radius:6px;overflow:hidden;">${mapImg}</div>
+          <div style="height:85mm;flex-shrink:0;background:#060d14;border:1px solid #1a3040;border-radius:6px;overflow:hidden;">${mapImg}</div>
           <div style="flex:1;min-height:0;overflow:hidden;">${photoGrid}</div>
         </div>
         <div style="width:180px;flex-shrink:0;overflow-y:auto;">${ptInfo}</div>
@@ -1816,9 +1816,11 @@ async function genPDF(){
     </div>`;
   }).join('');
 
-  // Open in new window for printing (does NOT close the app)
-  const win = window.open('','_blank','width=900,height=700');
-  if(!win){
+  // Window MUST be opened before any await - Safari blocks window.open after async
+  // This was already opened synchronously by the button click handler
+  const win = window._pdfWin;
+  window._pdfWin = null;
+  if(!win || win.closed){
     if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
     toast('Habilitá popups para exportar');
     return;
