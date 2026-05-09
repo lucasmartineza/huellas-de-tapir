@@ -661,7 +661,7 @@ const STORE = 'tapir5';
 const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{} };
 
 // ══ STORAGE — IndexedDB for photos, localStorage for metadata ══
-const DB_NAME = 'tapir_db', DB_VER = 3, DB_STORE = 'photos', ROADS_STORE = 'roads', META_STORE = 'meta';
+const DB_NAME = 'tapir_db', DB_VER = 4, DB_STORE = 'photos', ROADS_STORE = 'roads', META_STORE = 'meta';
 let db = null;
 
 function openDB() {
@@ -676,6 +676,7 @@ function openDB() {
     };
     req.onsuccess = e => { db = e.target.result; res(db); };
     req.onerror   = e => rej(e);
+    req.onblocked = () => { console.warn('IDB blocked - closing old connections'); };
   });
 }
 function savePhoto(id, dataUrl) {
