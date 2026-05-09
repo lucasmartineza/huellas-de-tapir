@@ -663,8 +663,9 @@ function openDB() {
     const req = indexedDB.open(DB_NAME, DB_VER);
     req.onupgradeneeded = e => {
       const db2 = e.target.result;
-      if (!db2.objectStoreNames.contains(DB_STORE))   db2.createObjectStore(DB_STORE);
+      if (!db2.objectStoreNames.contains(DB_STORE))    db2.createObjectStore(DB_STORE);
       if (!db2.objectStoreNames.contains(ROADS_STORE)) db2.createObjectStore(ROADS_STORE);
+      if (!db2.objectStoreNames.contains(META_STORE))  db2.createObjectStore(META_STORE);
     };
     req.onsuccess = e => { db = e.target.result; res(db); };
     req.onerror   = e => rej(e);
