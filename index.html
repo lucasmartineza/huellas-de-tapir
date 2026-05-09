@@ -654,7 +654,7 @@ const STORE = 'tapir5';
 const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{} };
 
 // ══ STORAGE — IndexedDB for photos, localStorage for metadata ══
-const DB_NAME = 'tapir_db', DB_VER = 3, DB_STORE = 'photos', ROADS_STORE = 'roads', META_STORE = 'meta';
+const DB_NAME = 'tapir_db', DB_VER = 2, DB_STORE = 'photos', ROADS_STORE = 'roads';
 let db = null;
 
 function openDB() {
@@ -663,9 +663,8 @@ function openDB() {
     const req = indexedDB.open(DB_NAME, DB_VER);
     req.onupgradeneeded = e => {
       const db2 = e.target.result;
-      if (!db2.objectStoreNames.contains(DB_STORE))    db2.createObjectStore(DB_STORE);
+      if (!db2.objectStoreNames.contains(DB_STORE))   db2.createObjectStore(DB_STORE);
       if (!db2.objectStoreNames.contains(ROADS_STORE)) db2.createObjectStore(ROADS_STORE);
-      if (!db2.objectStoreNames.contains(META_STORE))  db2.createObjectStore(META_STORE);
     };
     req.onsuccess = e => { db = e.target.result; res(db); };
     req.onerror   = e => rej(e);
@@ -710,10 +709,6 @@ function persist() {
       points:pointsMeta, nextN:ST.nextN, tramos:light, kmzName:ST.kmzName
     }));
     showSaveBar('✓ GUARDADO — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':''), false);
-    // Also save to IndexedDB (more persistent on iOS Safari)
-    openDB().then(d=>{
-      try{ const tx=d.transaction(META_STORE,'readwrite'); tx.objectStore(META_STORE).put(JSON.parse(localStorage.getItem(STORE)),'session'); }catch(e){}
-    }).catch(()=>{});
   } catch(e) {
     console.warn('persist error:', e);
     showSaveBar('⚠ ERROR AL GUARDAR', true);
@@ -736,18 +731,7 @@ async function persistPhoto(pt) {
 
 async function loadStored() {
   try {
-    // Try IndexedDB first (survives iOS Safari memory pressure)
-    let d = null;
-    try {
-      const idb = await openDB();
-      d = await new Promise(res=>{
-        const tx=idb.transaction(META_STORE,'readonly');
-        const r=tx.objectStore(META_STORE).get('session');
-        r.onsuccess=()=>res(r.result||null); r.onerror=()=>res(null);
-      });
-    } catch(e){}
-    // Fallback to localStorage
-    if(!d) d = JSON.parse(localStorage.getItem(STORE));
+    const d = JSON.parse(localStorage.getItem(STORE));
     if (!d || !d.tramos || !d.tramos.length) return false;
     ST.nextN   = d.nextN   || 1;
     ST.kmzName = d.kmzName || '';
@@ -761,7 +745,6 @@ async function loadStored() {
     return true;
   } catch(e) { console.warn('loadStored error:', e); return false; }
 }
-
 // ══ BOOT ══
 window.addEventListener('load', async () => {
   const had = await loadStored();
@@ -1759,25 +1742,35 @@ async function genPDF(){
   }
 
   const body=orderedKeys.map(key=>{
-    const pts=groups[key].slice(0,10);
-    const mapImg=tramoImgs[key]?`<img src="${tramoImgs[key]}" style="width:100%;height:100%;object-fit:contain;display:block;">`:'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#336677;font-size:11px;">SIN MAPA</div>';
-    const photos=pts.filter(p=>p.photo).slice(0,10);
-    const n=photos.length;
-    const cols=n<=1?1:n<=2?2:n<=4?2:n<=6?3:5;
-    const photoGrid=n?`<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:4px;height:100%;">${
-      photos.map(pt=>`<div style="position:relative;background:#060d14;border:1px solid #1a3040;border-radius:3px;overflow:hidden;">
-        <img src="${pt.photo}" style="width:100%;height:100%;object-fit:cover;display:block;">
-        <div style="position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,0.75);color:#00e5ff;font-size:8px;font-family:monospace;font-weight:700;padding:1px 4px;border-radius:2px;">#${pt.number}</div>
-      </div>`).join('')
-    }</div>`:'<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#336677;font-size:11px;">SIN FOTOS</div>';
-    return `<div style="page-break-before:always;height:calc(100vh - 24px);display:flex;flex-direction:column;padding:12px 12px 0 12px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00e5ff;border-bottom:1px solid #00e5ff33;padding-bottom:6px;margin-bottom:8px;flex-shrink:0;">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
-      <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;padding-bottom:12px;">
-        <div style="flex:1;min-height:0;background:#060d14;border:1px solid #1a3040;border-radius:6px;overflow:hidden;">${mapImg}</div>
-        <div style="flex:1;min-height:0;">${photoGrid}</div>
-      </div>
-    </div>`;
-  }).join('');
+    const pts=groups[key];
+    const mapImg=tramoImgs[key] ? `<img src="${tramoImgs[key]}" class="tramo-map">` : '';
+
+    // Group photos in pairs for 2-up display
+    const ptsWithPhotos = pts.filter(p=>p.photo);
+    const cards=pts.map(pt=>{
+      const col=pt.type==='photo'?'#00a0c8':pt.type==='video'?'#4488ff':pt.type==='both'?'#00cc88':'#556677';
+      const tl=pt.type==='photo'?'📷 Foto':pt.type==='video'?'🎬 Video':pt.type==='both'?'⭐ Foto+Video':'—';
+      const distHtml=(pt.distFromStart!==null&&pt.distFromStart!==undefined)
+        ?`<div class="dist-row"><span class="dist-pill">⬆ largada <b>${pt.distFromStart} km</b></span><span class="dist-pill">⬇ llegada <b>${pt.distToEnd} km</b></span></div>`:'';
+      const photoHtml=pt.photo?`<div class="photos"><img src="${pt.photo}"></div>`:'';
+      return `<div class="pt">
+        <div class="pt-hdr">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="pt-num" style="border-color:${col};color:${col};background:${col}18;">${pt.number}</div>
+            <div class="pt-title" style="color:${col};">${tl}</div>
+          </div>
+          <div class="pt-meta">${pt.lat.toFixed(6)}<br>${pt.lng.toFixed(6)}</div>
+        </div>
+        ${distHtml}
+        ${pt.notes?`<div class="notes">${pt.notes}</div>`:''}
+        <div class="geo-row">
+          <a href="geo:${pt.lat.toFixed(6)},${pt.lng.toFixed(6)}" class="geo-link">📍 Abrir en Maps</a>
+          <span class="geo-coord">${pt.lat.toFixed(6)}, ${pt.lng.toFixed(6)}</span>
+        </div>
+        ${photoHtml}
+        ${pt.audio?`<div class="audio-badge">🎤 Nota de voz · ${fmt(pt.audioDur)}</div>`:''}
+      </div>`;
+    }).join('');
 
     return `<div style="break-before:page;">
       <div class="tramo-hdr">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
@@ -1788,17 +1781,32 @@ async function genPDF(){
 
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Huella de Tapir</title>
     <style>
-      *{box-sizing:border-box;margin:0;padding:0;}
-      @page{size:A4 landscape;margin:8mm;}
-      body{font-family:sans-serif;background:#0a0e14;color:#c8dce8;}
-      h1{font-size:22px;letter-spacing:4px;color:#00e5ff;text-transform:uppercase;margin-bottom:4px;padding:20px 20px 0;}
-      h2{font-size:9px;color:#336677;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;padding:0 20px;}
-      .stats{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:0 20px;}
-      .stat{background:#0f1a24;border:1px solid #1a3040;border-radius:8px;padding:10px 14px;}
-      .stat-n{font-size:20px;font-weight:700;color:#00e5ff;font-family:monospace;}
-      .stat-l{font-size:8px;color:#336677;text-transform:uppercase;letter-spacing:2px;}
-      .btn-bar{padding:0 20px 20px;display:flex;gap:12px;}
-      @media print{body{padding:0;}.btn-bar{display:none;}}
+      *{box-sizing:border-box;}
+      body{font-family:sans-serif;max-width:800px;margin:0 auto;padding:28px;background:#0a0e14;color:#c8dce8;}
+      h1{font-size:30px;margin:0;letter-spacing:4px;color:#00e5ff;text-transform:uppercase;}
+      h2{font-size:10px;color:#336677;font-weight:400;margin:4px 0 24px;letter-spacing:3px;text-transform:uppercase;}
+      .stats{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+      .stat{background:#0f1a24;border:1px solid #1a3040;border-radius:8px;padding:12px 16px;}
+      .stat-n{font-size:24px;font-weight:700;color:#00e5ff;font-family:monospace;}
+      .stat-l{font-size:9px;color:#336677;text-transform:uppercase;letter-spacing:2px;}
+      .tramo-hdr{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00e5ff;border-bottom:2px solid #00e5ff44;padding-bottom:8px;margin:32px 0 16px;}
+      .tramo-map{width:100%;border-radius:8px;display:block;margin-bottom:20px;border:1px solid #1a3040;}
+      .pt{break-inside:avoid;border:1px solid #1a3040;border-radius:8px;padding:14px;margin-bottom:10px;background:#0d1520;}
+      .pt-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px;}
+      .pt-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:monospace;flex-shrink:0;border:2px solid;}
+      .pt-title{font-size:14px;font-weight:700;}
+      .pt-meta{text-align:right;font-size:10px;color:#336677;font-family:monospace;line-height:1.6;flex-shrink:0;}
+      .dist-row{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+      .dist-pill{font-size:10px;background:#0a1a28;border:1px solid #1a3a50;border-radius:20px;padding:2px 10px;color:#4499bb;font-family:monospace;}
+      .dist-pill b{color:#00c8e0;}
+      .notes{font-size:13px;color:#8aacbc;margin-bottom:10px;line-height:1.5;}
+      .photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+      .photos img{width:100%;border-radius:6px;display:block;object-fit:contain;background:#060d14;max-height:220px;}
+      .geo-row{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+      .geo-link{font-size:11px;color:#00a0c0;background:#0a1a28;padding:4px 10px;border-radius:6px;text-decoration:none;border:1px solid #1a3a50;}
+      .geo-coord{font-size:11px;color:#336677;font-family:monospace;user-select:all;}
+      .audio-badge{display:inline-block;font-size:10px;color:#336677;background:#0a1520;padding:3px 8px;border-radius:4px;border:1px solid #1a3040;margin-top:6px;}
+      @media print{button{display:none;}body{background:#0a0e14 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
     </style>
   </head><body>
     <h1>Huella de Tapir</h1>
@@ -1991,13 +1999,8 @@ async function newSession(){
   if(!confirm('⚠ ATENCIÓN\n\nEsto eliminará TODOS los puntos de esta sesión.\n¿Estás seguro?')) return;
   await deleteAllPhotos();
   localStorage.removeItem(STORE);
-  try{ const idb=await openDB(); const tx=idb.transaction(META_STORE,'readwrite'); tx.objectStore(META_STORE).delete('session'); }catch(e){}
   location.reload();
 }
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden' && ST.tramos.length) persist();
-});
 
 // ══ TRAMO PANEL ══
 let tramoPanelOpen = true;
