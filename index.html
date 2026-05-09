@@ -376,6 +376,11 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 
 #overlay { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.7); }
 #overlay.open { display:block; }
+@media print {
+  #screen-load, #screen-map, #screen-list, .scr-hdr, .roseta, #tramo-panel, #bottombar, #topbar, #side-btns, #roads-btn { display:none !important; }
+  #screen-pdf { display:block !important; position:static !important; }
+  #pdf-content { display:block !important; }
+}
 </style>
 </head>
 <body>
@@ -698,7 +703,7 @@ function deleteAllPhotos() {
   })).catch(()=>{});
 }
 
-function persist() {
+async function persist() {
   try {
     const light = ST.tramos.map(t => ({
       name:t.name, color:t.color, route:t.routeSimple,
@@ -708,12 +713,18 @@ function persist() {
       const {photo, audio, ...rest} = p;
       return {...rest, hasPhoto: !!photo, hasAudio: !!audio};
     });
-    localStorage.setItem(STORE, JSON.stringify({
-      points:pointsMeta, nextN:ST.nextN, tramos:light, kmzName:ST.kmzName
-    }));
+    const data = { points:pointsMeta, nextN:ST.nextN, tramos:light, kmzName:ST.kmzName };
+    // Primary: IndexedDB (not blocked by Safari ITP)
+    const idb = await openDB();
+    await new Promise((res, rej) => {
+      const tx = idb.transaction(META_STORE, 'readwrite');
+      tx.objectStore(META_STORE).put(data, 'session');
+      tx.oncomplete = res;
+      tx.onerror = rej;
+    });
+    // Also try localStorage as fallback
+    try { localStorage.setItem(STORE, JSON.stringify(data)); } catch(e) {}
     showSaveBar('✓ GUARDADO — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':''), false);
-    // IDB backup (fire and forget - never blocks)
-    try { openDB().then(d=>{ try{ d.transaction(META_STORE,'readwrite').objectStore(META_STORE).put(JSON.parse(localStorage.getItem(STORE)),'session'); }catch(e){} }).catch(()=>{}); } catch(e){}
   } catch(e) {
     console.warn('persist error:', e);
     showSaveBar('⚠ ERROR AL GUARDAR', true);
