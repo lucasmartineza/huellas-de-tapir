@@ -505,6 +505,10 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
         <span style="color:#4a8898;font-size:6.5px;letter-spacing:1px;">SE PONE</span>
       </div>
     </div>
+    <div style="padding:4px 10px;border-bottom:1px solid #0a2530;display:flex;align-items:center;gap:4px;">
+      <span style="color:#4a8898;font-size:7px;">📍</span>
+      <span id="wp-location" style="color:#4a8898;font-size:7px;letter-spacing:0.5px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</span>
+    </div>
     <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:2px 8px;border-bottom:1px solid #1a3040;">
       <span style="color:#4a8898;font-size:6.5px;"></span>
       <span style="color:#4a8898;font-size:6.5px;text-align:center;">°C</span>
@@ -2357,27 +2361,38 @@ function getDayOfYear() {
 }
 
 function calcSunTimes(lat, lng) {
-  const now  = new Date();
-  const JD   = now / 86400000 + 2440587.5;
-  const n    = JD - 2451545.0;
-  const L    = (280.46 + 0.9856474 * n) % 360;
-  const g    = ((357.528 + 0.9856003 * n) % 360) * Math.PI / 180;
-  const lam  = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2*g)) * Math.PI / 180;
-  const sinD = 0.39782 * Math.sin(lam);
-  const cosD = Math.cos(Math.asin(sinD));
-  const cosH = (Math.cos(90.833 * Math.PI/180) - sinD * Math.sin(lat * Math.PI/180))
-               / (cosD * Math.cos(lat * Math.PI/180));
-  if(cosH > 1 || cosH < -1) return null;
-  const H   = Math.acos(cosH) * 180 / Math.PI;
-  const RA  = (Math.atan2(-0.39782 * Math.sin(lam - Math.PI/180*282.634) * Math.cos(lam),
-               cosD) * 180 / Math.PI + 360) % 360 / 15;
-  const lngH = lng / 15;
-  const tzOff = now.getTimezoneOffset() / -60;
-  const rise = ((360 - H) / 15 - RA - lngH + 24) % 24 + tzOff;
-  const set  = (H / 15 - RA - lngH + 24) % 24 + tzOff;
-  const toD  = h => new Date(now.getFullYear(), now.getMonth(), now.getDate(),
-                             Math.floor(h), Math.round((h%1)*60));
-  return { rise: toD(rise), set: toD(set) };
+  // NOAA solar calculator algorithm — accurate to ~1 minute
+  const now = new Date();
+  const jd  = (now - new Date(1900, 0, 1)) / 86400000 + 2415020.5 + now.getHours()/24;
+  const t   = (jd - 2451545.0) / 36525.0;
+  const L0  = (280.46646 + t*(36000.76983 + t*0.0003032)) % 360;
+  const M   = (357.52911 + t*(35999.05029 - t*0.0001537)) * Math.PI/180;
+  const C   = (1.914602 - t*(0.004817 + 0.000014*t))*Math.sin(M)
+             + (0.019993 - 0.000101*t)*Math.sin(2*M)
+             + 0.000289*Math.sin(3*M);
+  const sunLon = (L0 + C) * Math.PI/180;
+  const omega  = (125.04 - 1934.136*t) * Math.PI/180;
+  const appLon = sunLon - (0.00569 + 0.00478*Math.sin(omega)) * Math.PI/180;
+  const eps    = (23.439291 - t*0.013004) * Math.PI/180;
+  const decl   = Math.asin(Math.sin(eps)*Math.sin(appLon));
+  const y      = Math.tan(eps/2)**2;
+  const L0r    = L0*Math.PI/180;
+  const eot    = (y*Math.sin(2*L0r) - 2*0.016708634*Math.sin(M)
+                 + 4*0.016708634*y*Math.sin(M)*Math.cos(2*L0r)
+                 - 0.5*y*y*Math.sin(4*L0r)
+                 - 1.25*0.016708634**2*Math.sin(2*M)) * 4*180/Math.PI;
+  const latR   = lat*Math.PI/180;
+  const cosHA  = (Math.cos(90.833*Math.PI/180) - Math.sin(latR)*Math.sin(decl))
+                 / (Math.cos(latR)*Math.cos(decl));
+  if(Math.abs(cosHA) > 1) return null;
+  const HA = Math.acos(cosHA)*180/Math.PI;
+  const solarNoonUTC = 720 - 4*lng - eot; // minutes from midnight UTC
+  const tzOffMin = -now.getTimezoneOffset(); // local offset in minutes (positive = east)
+  const riseMin  = solarNoonUTC - HA*4 + tzOffMin;
+  const setMin   = solarNoonUTC + HA*4 + tzOffMin;
+  const toD = m => new Date(now.getFullYear(), now.getMonth(), now.getDate(),
+                            Math.floor(m/60), Math.round(m%60));
+  return { rise: toD(riseMin), set: toD(setMin) };
 }
 
 function calcSunAzimuth(t, lat, dayN) {
@@ -2399,13 +2414,13 @@ function toggleWeather() {
   panel.style.display = open ? 'none' : 'flex';
   btn.style.color      = open ? '#ffcc44' : '#000';
   btn.style.background = open ? 'transparent' : '#ffcc44';
-  if(!open && !WX.hourly.length) refreshWeather();
+  if(!open) refreshWeather(); // always refresh on open
 }
 
 async function refreshWeather() {
   const lat = ST.gpsPos ? ST.gpsPos.lat : M.lat;
   const lng = ST.gpsPos ? ST.gpsPos.lng : M.lng;
-  if(!lat){ toast('Sin posición GPS'); return; }
+  if(!lat && lat !== 0){ toast('Sin posición GPS'); return; }
   const sun = calcSunTimes(lat, lng);
   if(sun){ WX.sunRise = sun.rise; WX.sunSet = sun.set; }
   const fmt = d => d ? d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0') : '--:--';
@@ -2413,6 +2428,20 @@ async function refreshWeather() {
   const sEl = document.getElementById('wp-set');
   if(rEl) rEl.textContent = fmt(WX.sunRise);
   if(sEl) sEl.textContent = fmt(WX.sunSet);
+  // Fetch location name via reverse geocoding
+  const locEl = document.getElementById('wp-location');
+  if(locEl && navigator.onLine){
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat.toFixed(4)}&lon=${lng.toFixed(4)}&format=json&zoom=10`);
+      const d = await r.json();
+      const name = d.address ? (d.address.city || d.address.town || d.address.village || d.address.county || d.address.state || '') : '';
+      if(locEl) locEl.textContent = name || `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
+    } catch(e) {
+      if(locEl) locEl.textContent = `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
+    }
+  } else if(locEl) {
+    locEl.textContent = `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
+  }
   if(!navigator.onLine){ renderHours(); return; }
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}&hourly=temperature_2m,precipitation,windspeed_10m&forecast_days=1&timezone=auto`;
