@@ -1103,126 +1103,123 @@ function draw() {
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
 
-  // Sun arc — exact amanecer to atardecer, one point per hour
+  // Sun arc — amanecer to atardecer, hourly marks
   if(WX.sunRise && WX.sunSet){
-    const now    = new Date();
-    const riseMs = WX.sunRise.getTime();
-    const setMs  = WX.sunSet.getTime();
-    const nowMs  = now.getTime();
-    const dayLen = setMs - riseMs;
-    const latR   = M.lat * Math.PI/180;
-    const dayN   = getDayOfYear();
-    const declR  = -23.45 * Math.cos((dayN + 10) * 2*Math.PI/365) * Math.PI/180;
+    const now     = new Date();
+    const riseMs  = WX.sunRise.getTime();
+    const setMs   = WX.sunSet.getTime();
+    const nowMs   = now.getTime();
+    const dayLen  = setMs - riseMs;
+    const latR    = M.lat * Math.PI/180;
+    const dayN    = getDayOfYear();
+    const declR   = -23.45 * Math.cos((dayN+10)*2*Math.PI/365) * Math.PI/180;
     const solarNoon = (riseMs + setMs) / 2;
-    const baseLen = Math.min(M.W, M.H) * 0.48;
+    const cx = M.W/2, cy = M.H/2;
+    const R  = Math.min(M.W, M.H) * 0.46; // max radius at noon
 
-    // Build points: amanecer exact + each whole hour + atardecer exact
-    const sunPoints = [];
-
-    const addPoint = (timeMs, label, isEndpoint) => {
-      const t = (timeMs - riseMs) / dayLen;
-      if(t < -0.01 || t > 1.01) return;
-      const HA = (timeMs - solarNoon) / (dayLen/2) * Math.PI;
+    // For a given time, get screen position on the arc
+    // t=0 sunrise (edge), t=0.5 noon (top), t=1 sunset (edge)
+    // Use altitude to modulate radius: higher sun = closer to center top
+    const getPos = (timeMs) => {
+      const HA     = (timeMs - solarNoon) / (dayLen/2) * Math.PI;
       const sinAlt = Math.sin(latR)*Math.sin(declR) + Math.cos(latR)*Math.cos(declR)*Math.cos(HA);
-      const alt = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
-      if(alt < -0.05 && !isEndpoint) return;
-      const cosAz = (Math.sin(declR) - Math.sin(latR)*sinAlt) / (Math.cos(latR)*Math.cos(alt));
+      const alt    = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
+      const cosAz  = (Math.sin(declR) - Math.sin(latR)*sinAlt) / (Math.cos(latR)*Math.cos(Math.max(0.001, alt)));
       let az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
       if(Math.sin(HA) > 0) az = 2*Math.PI - az;
-      const groundDist = Math.max(0.02, Math.cos(Math.max(0, alt)));
+      // Distance from center: full R at horizon, shrinks as altitude increases
+      // At noon alt is max, distance is smallest
+      const dist = R * Math.cos(Math.max(0, alt));
       const screenAz = az + M.rot;
-      const x = M.W/2 + Math.sin(screenAz) * baseLen * groundDist;
-      const y = M.H/2 - Math.cos(screenAz) * baseLen * groundDist;
-      const isPast = timeMs <= nowMs;
-      const isNow  = !isEndpoint && Math.abs(timeMs - nowMs) < 1800000; // within 30min
-      sunPoints.push({x, y, label, isPast, isNow, isEndpoint, t});
+      return {
+        x: cx + Math.sin(screenAz) * dist,
+        y: cy - Math.cos(screenAz) * dist,
+        alt, az
+      };
     };
 
-    // Amanecer
-    addPoint(riseMs, '☀ ' + WX.sunRise.getHours().toString().padStart(2,'0') + ':' + WX.sunRise.getMinutes().toString().padStart(2,'0'), true);
-
-    // Each whole hour between rise and set
-    const riseH = WX.sunRise.getHours() + (WX.sunRise.getMinutes() > 30 ? 1 : 0);
+    // Collect points: sunrise + hourly + sunset
+    const pts = [];
+    const riseH = WX.sunRise.getHours();
     const setH  = WX.sunSet.getHours();
-    for(let h = riseH; h <= setH; h++){
+
+    // Sunrise
+    const rPos = getPos(riseMs);
+    pts.push({ ...rPos, ms: riseMs, label: WX.sunRise.getHours().toString().padStart(2,'0')+':'+WX.sunRise.getMinutes().toString().padStart(2,'0'), isEnd: true, isPast: riseMs <= nowMs });
+
+    // Each whole hour
+    for(let h = riseH+1; h <= setH; h++){
       const hMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0).getTime();
-      if(hMs > riseMs && hMs < setMs) addPoint(hMs, h + 'h', false);
+      if(hMs <= riseMs || hMs >= setMs) continue;
+      const pos = getPos(hMs);
+      const isPast = hMs <= nowMs;
+      const isNow  = h === now.getHours();
+      pts.push({ ...pos, ms: hMs, label: h+'h', isEnd: false, isPast, isNow });
     }
 
-    // Atardecer
-    addPoint(setMs, WX.sunSet.getHours().toString().padStart(2,'0') + ':' + WX.sunSet.getMinutes().toString().padStart(2,'0') + ' ☀', true);
+    // Sunset
+    const sPos = getPos(setMs);
+    pts.push({ ...sPos, ms: setMs, label: WX.sunSet.getHours().toString().padStart(2,'0')+':'+WX.sunSet.getMinutes().toString().padStart(2,'0'), isEnd: true, isPast: setMs <= nowMs });
 
-    if(sunPoints.length < 2) return;
+    if(pts.length < 2){ ctx.restore && ctx.restore(); }
+    else {
+      ctx.save();
 
-    ctx.save();
-
-    // Glow
-    ctx.globalAlpha = 0.07;
-    ctx.strokeStyle = '#ffcc44';
-    ctx.lineWidth = 14;
-    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    ctx.beginPath();
-    sunPoints.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
-    ctx.stroke();
-
-    // Past solid
-    const pastPts = sunPoints.filter(p => p.isPast || p.isEndpoint && p.t <= (nowMs-riseMs)/dayLen);
-    const futurePts = sunPoints.filter(p => !p.isPast);
-    ctx.globalAlpha = 0.85;
-    ctx.strokeStyle = '#ffcc44';
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([]);
-    if(pastPts.length > 1){
+      // Glow
+      ctx.globalAlpha = 0.07; ctx.strokeStyle = '#ffcc44';
+      ctx.lineWidth = 12; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
       ctx.beginPath();
-      pastPts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+      pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
       ctx.stroke();
-    }
-    // Future dashed
-    if(futurePts.length > 1){
-      ctx.globalAlpha = 0.4;
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([5,4]);
-      const bridge = pastPts.length ? [...pastPts.slice(-1), ...futurePts] : futurePts;
-      ctx.beginPath();
-      bridge.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
-      ctx.stroke();
+
+      // Past solid
+      const pastPts   = pts.filter(p => p.isPast);
+      const futurePts = pts.filter(p => !p.isPast);
       ctx.setLineDash([]);
-    }
-
-    // Points and labels
-    sunPoints.forEach(p => {
-      const r = p.isNow ? 6 : (p.isEndpoint ? 4 : 3);
-      ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.85 : (p.isEndpoint ? 0.7 : 0.45));
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-      ctx.fillStyle = p.isEndpoint ? (p.t < 0.5 ? '#ffaa22' : '#ff7744') : '#ffcc44';
-      ctx.fill();
-      if(p.isNow){
+      ctx.globalAlpha = 0.9; ctx.strokeStyle = '#ffcc44'; ctx.lineWidth = 2.5;
+      if(pastPts.length > 1){
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 11, 0, Math.PI*2);
-        ctx.fillStyle = 'rgba(255,204,68,0.15)';
-        ctx.fill();
+        pastPts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+        ctx.stroke();
       }
-      // Label above dot
-      const lx = p.x, ly = p.y - r - 9;
-      ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.9 : (p.isEndpoint ? 0.75 : 0.45));
-      ctx.font = p.isNow ? 'bold 10px monospace' : (p.isEndpoint ? 'bold 9px monospace' : '8px monospace');
-      const tw = ctx.measureText(p.label).width + 6;
-      ctx.fillStyle = 'rgba(6,13,20,0.9)';
-      ctx.fillRect(lx-tw/2, ly-7, tw, 13);
-      if(p.isNow || p.isEndpoint){
-        ctx.strokeStyle = p.isEndpoint ? 'rgba(255,150,50,0.6)' : 'rgba(255,204,68,0.6)';
-        ctx.lineWidth = 0.8;
-        ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
+      // Future dashed
+      if(futurePts.length > 0){
+        ctx.globalAlpha = 0.35; ctx.lineWidth = 1.5;
+        ctx.setLineDash([5,4]);
+        const bridge = pastPts.length ? [pastPts[pastPts.length-1], ...futurePts] : futurePts;
+        ctx.beginPath();
+        bridge.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+        ctx.stroke();
+        ctx.setLineDash([]);
       }
-      ctx.fillStyle = p.isEndpoint ? (p.t < 0.5 ? '#ffaa22' : '#ff7744') : '#ffcc44';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(p.label, lx, ly);
-    });
 
-    ctx.globalAlpha = 1.0;
-    ctx.restore();
+      // Dots and labels
+      pts.forEach(p => {
+        const r = p.isNow ? 6 : (p.isEnd ? 4 : 3);
+        ctx.globalAlpha = p.isNow ? 1 : (p.isPast ? 0.9 : (p.isEnd ? 0.65 : 0.4));
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+        ctx.fillStyle = p.isEnd ? '#ffaa44' : '#ffcc44'; ctx.fill();
+        if(p.isNow){
+          ctx.beginPath(); ctx.arc(p.x, p.y, 11, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba(255,204,68,0.15)'; ctx.fill();
+        }
+        const lx = p.x, ly = p.y - r - 9;
+        ctx.globalAlpha = p.isNow ? 1 : (p.isPast ? 0.9 : (p.isEnd ? 0.7 : 0.4));
+        ctx.font = p.isNow ? 'bold 10px monospace' : (p.isEnd ? 'bold 9px monospace' : '8px monospace');
+        const tw = ctx.measureText(p.label).width + 6;
+        ctx.fillStyle = 'rgba(6,13,20,0.9)';
+        ctx.fillRect(lx-tw/2, ly-7, tw, 13);
+        if(p.isNow || p.isEnd){
+          ctx.strokeStyle = 'rgba(255,170,68,0.6)'; ctx.lineWidth = 0.8;
+          ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
+        }
+        ctx.fillStyle = p.isEnd ? '#ffaa44' : '#ffcc44';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(p.label, lx, ly);
+      });
+
+      ctx.globalAlpha = 1; ctx.restore();
+    }
   }
 
   // OSM roads — grey, very faint
