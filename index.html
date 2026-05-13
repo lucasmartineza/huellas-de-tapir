@@ -69,8 +69,9 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 .roseta:active { opacity:0.7; }
 .odometer {
   position:fixed; bottom:160px; right:12px; z-index:49;
-  display:none; flex-direction:column; align-items:flex-start;
-  pointer-events:all;
+  display:flex; flex-direction:row; align-items:baseline; gap:5px;
+  pointer-events:all; background:rgba(6,13,20,0.7); padding:4px 8px; border-radius:8px;
+  border:1px solid #1a3040;
 }
 .odo-val {
   font-family:monospace; font-size:22px; font-weight:700;
@@ -1016,6 +1017,7 @@ function goHome() {
   persist(); // ensure latest state is saved before leaving
   document.getElementById('screen-map').style.display='none';
   document.getElementById('screen-load').style.display='flex';
+  document.getElementById('odometer').style.display='none';
   // Update load screen to reflect current session
   const status = ST.kmzName
     ? ST.kmzName + ' — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':'') + ' guardados'
@@ -1030,6 +1032,7 @@ function goHome() {
 function startMap() {
   document.getElementById('screen-load').style.display='none';
   document.getElementById('screen-map').style.display='block';
+  document.getElementById('odometer').style.display='flex';
   M.canvas = document.getElementById('map-canvas');
   M.ctx = M.canvas.getContext('2d');
   resizeCanvas();
