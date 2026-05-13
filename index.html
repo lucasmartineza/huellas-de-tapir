@@ -92,7 +92,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 
 /* DIAFRAGMA */
 #crosshair {
-  position:absolute; top:75%; left:50%; z-index:20; pointer-events:none;
+  position:absolute; top:50%; left:50%; z-index:20; pointer-events:none;
   transform:translate(-50%,-50%); width:45px; height:45px;
   isolation:isolate;
 }
@@ -1095,83 +1095,127 @@ function draw() {
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
 
-  // Sun arc — lines cross the full canvas in the solar azimuth direction
-  // Direction is global (same for whole region), drawn through canvas center
+  // Sun arc — single polyline, one point per hour, correct azimuth (southern hemisphere)
   if(WX.sunRise && WX.sunSet){
     const now    = new Date();
     const riseMs = WX.sunRise.getTime();
     const setMs  = WX.sunSet.getTime();
+    const nowMs  = now.getTime();
     const dayLen = setMs - riseMs;
-    const refLat = M.lat; // use map center lat for azimuth calculation
+    const latR   = M.lat * Math.PI/180;
     const dayN   = getDayOfYear();
-    const diag   = Math.sqrt(M.W*M.W + M.H*M.H);
-    // For each hour, compute azimuth and draw line through canvas center
-    // The line represents the sun's direction projected onto the ground
-    // It is the same for the entire visible area (azimuth varies <1° over 50km)
-    ctx.save();
-    const markHours = [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-    markHours.forEach(h => {
-      const hMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0).getTime();
-      const t   = (hMs - riseMs) / dayLen;
-      if(t < 0 || t > 1) return;
-      const {az, alt} = calcSunAzimuth(t, refLat, dayN);
-      if(alt < -0.05) return;
-      const isPast = hMs <= now.getTime();
+    // Solar declination (more precise)
+    const declR  = -23.45 * Math.cos((dayN + 10) * 2*Math.PI/365) * Math.PI/180;
+    // For each hour 5..19, compute solar azimuth using hour angle
+    // Hour angle: HA = (solar_time - 12) * 15° in radians
+    // Solar time ≈ local time + equation of time (simplified)
+    // Azimuth (from north, CW): atan2(sin(HA), cos(HA)*sin(lat) - tan(decl)*cos(lat))
+    const sunPoints = [];
+    for(let h = 5; h <= 19; h++){
+      const hDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0);
+      const t = (hDate.getTime() - riseMs) / dayLen;
+      if(t < -0.1 || t > 1.1) continue;
+      // Hour angle in radians (negative in morning, positive in afternoon)
+      const solarNoon = (riseMs + setMs) / 2; // approximate solar noon
+      const HA = (hDate.getTime() - solarNoon) / (dayLen/2) * Math.PI;
+      // Solar altitude
+      const sinAlt = Math.sin(latR)*Math.sin(declR) + Math.cos(latR)*Math.cos(declR)*Math.cos(HA);
+      const alt = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
+      if(alt < -0.02) continue; // below horizon
+      // Solar azimuth (from north, clockwise) — correct for both hemispheres
+      const cosAz = (Math.sin(declR) - Math.sin(latR)*sinAlt) / (Math.cos(latR)*Math.cos(alt));
+      let az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
+      if(Math.sin(HA) > 0) az = 2*Math.PI - az; // afternoon: az > 180°
+      const isPast = hDate.getTime() <= nowMs;
       const isNow  = h === now.getHours();
-      // Convert geographic azimuth to screen direction using proj() convention
-      // proj() rotates the world by M.rot, so north points at angle M.rot on screen
-      // Screen direction for azimuth az: angle = az + M.rot from screen-up
-      const screenAngle = az + M.rot;
-      const dx = Math.sin(screenAngle);
-      const dy = -Math.cos(screenAngle);
-      // Line through canvas center
-      const cx = M.W/2, cy = M.H/2;
-      const x1 = cx - dx*diag, y1 = cy - dy*diag;
-      const x2 = cx + dx*diag, y2 = cy + dy*diag;
-      // Draw glow for current hour
-      if(isNow){
-        ctx.globalAlpha = 0.12;
-        ctx.beginPath();
-        ctx.strokeStyle = '#ffcc44';
-        ctx.lineWidth = 12;
-        ctx.setLineDash([]);
-        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-        ctx.stroke();
-        ctx.globalAlpha = 0.25;
-        ctx.lineWidth = 5;
-        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-        ctx.stroke();
-      }
-      // Draw line
-      ctx.globalAlpha = isNow ? 0.9 : (isPast ? 0.5 : 0.18);
-      ctx.beginPath();
-      ctx.setLineDash(isPast ? [] : [6,4]);
+      sunPoints.push({h, az, alt, isPast, isNow, t});
+    }
+    if(sunPoints.length < 2){ }
+    else {
+      // Draw the single arc line
+      // Each point projected from map center at distance proportional to cos(alt) = ground shadow length
+      const baseLen = Math.min(M.W, M.H) * 0.42;
+      const ptCoords = sunPoints.map(p => {
+        const screenAz = p.az + M.rot;
+        const groundDist = Math.cos(p.alt); // normalized 0..1
+        return {
+          x: M.W/2 + Math.sin(screenAz) * baseLen * groundDist,
+          y: M.H/2 - Math.cos(screenAz) * baseLen * groundDist,
+          ...p
+        };
+      });
+      ctx.save();
+      // Glow pass
+      ctx.globalAlpha = 0.08;
       ctx.strokeStyle = '#ffcc44';
-      ctx.lineWidth   = isNow ? 2 : (isPast ? 1 : 0.7);
-      ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+      ctx.lineWidth = 14;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ptCoords.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
       ctx.stroke();
+      // Main line — past solid, future dashed
+      const nowIdx = ptCoords.findIndex(p => p.isNow);
+      // Past segment
+      ctx.globalAlpha = 0.85;
+      ctx.strokeStyle = '#ffcc44';
+      ctx.lineWidth = 2.5;
       ctx.setLineDash([]);
-      // Label — placed at 70% along from p1 to p2
-      const lx = x1 + (x2-x1) * 0.72;
-      const ly = y1 + (y2-y1) * 0.72;
-      const label = h + 'h';
-      ctx.globalAlpha = isNow ? 1.0 : (isPast ? 0.85 : 0.45);
-      ctx.font = isNow ? 'bold 10px monospace' : '8px monospace';
-      const tw = ctx.measureText(label).width + 6;
-      ctx.fillStyle = 'rgba(6,13,20,0.85)';
-      ctx.fillRect(lx-tw/2, ly-7, tw, 13);
-      if(isNow){
-        ctx.strokeStyle = 'rgba(255,204,68,0.5)';
-        ctx.lineWidth = 0.8;
-        ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
+      ctx.beginPath();
+      const pastPts = ptCoords.filter(p => p.isPast);
+      const futurePts = ptCoords.filter(p => !p.isPast);
+      if(pastPts.length > 1){
+        pastPts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+        ctx.stroke();
       }
-      ctx.fillStyle = '#ffcc44';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(label, lx, ly);
-    });
-    ctx.globalAlpha = 1.0;
-    ctx.restore();
+      // Future segment dashed
+      ctx.globalAlpha = 0.4;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5,4]);
+      ctx.beginPath();
+      if(futurePts.length > 1){
+        // Connect from last past to first future
+        const bridge = pastPts.length ? [...pastPts.slice(-1), ...futurePts] : futurePts;
+        bridge.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      // Hour dots and labels
+      ptCoords.forEach(p => {
+        const r = p.isNow ? 5 : 3;
+        ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.8 : 0.45);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+        ctx.fillStyle = '#ffcc44';
+        ctx.fill();
+        if(p.isNow){
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba(255,204,68,0.15)';
+          ctx.fill();
+        }
+        // Label — offset perpendicular to arc
+        const label = p.h + 'h';
+        ctx.font = p.isNow ? 'bold 10px monospace' : '8px monospace';
+        const tw = ctx.measureText(label).width + 6;
+        // Place label above the dot
+        const lx = p.x, ly = p.y - r - 10;
+        ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.85 : 0.45);
+        ctx.fillStyle = 'rgba(6,13,20,0.85)';
+        ctx.fillRect(lx-tw/2, ly-7, tw, 13);
+        if(p.isNow){
+          ctx.strokeStyle = 'rgba(255,204,68,0.6)';
+          ctx.lineWidth = 0.8;
+          ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
+        }
+        ctx.fillStyle = '#ffcc44';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, lx, ly);
+      });
+      ctx.globalAlpha = 1.0;
+      ctx.restore();
+    }
   }
 
   // OSM roads — grey, very faint
@@ -1456,8 +1500,7 @@ function startGPS() {
     p.textContent = Math.round(pos.coords.accuracy)+'m'; p.classList.add('on');
 
     if (M.following) {
-      const offsetLat = (M.H * 0.25) / M.scale;
-      M.lat = ST.gpsPos.lat + offsetLat;
+      M.lat = ST.gpsPos.lat;
       M.lng = ST.gpsPos.lng;
     }
   },()=>{},{enableHighAccuracy:true,maximumAge:1000,timeout:15000});
