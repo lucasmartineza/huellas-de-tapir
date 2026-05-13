@@ -1098,7 +1098,7 @@ function draw() {
       ctx.globalAlpha = 0.85;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(ssTag, mx + 8, my - 8);
+      ctx.fillText(t.name, mx + 8, my - 8);
       ctx.globalAlpha = 1.0;
     }
 
@@ -2067,9 +2067,8 @@ function buildTramoPanel() {
   if (!container || !ST.tramos.length) return;
   container.innerHTML = ST.tramos.map((t, i) => {
     const pts = ST.points.filter(p => p.tramo === t.name).length;
-    const ssLabel = 'SS' + (i+1);
     return `<div class="tramo-panel-item" id="tpi-${i}" onclick="selectTramo(${i})">
-      <div class="tramo-panel-name" style="color:#00e5ff;">${ssLabel}</div>
+      <div class="tramo-panel-name" style="color:#ffffff;">${t.name}</div>
       <div class="tramo-panel-pts">${pts} pto${pts!==1?'s':''}</div>
     </div>`;
   }).join('');
