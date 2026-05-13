@@ -2065,7 +2065,12 @@ let activeTramoIdx = -1;
 function buildTramoPanel() {
   const container = document.getElementById('tramo-panel-items');
   if (!container || !ST.tramos.length) return;
-  container.innerHTML = ST.tramos.map((t, i) => {
+  const sorted = ST.tramos.map((t, i) => ({t, i})).sort((a, b) => {
+    const na = parseInt((a.t.name.match(/[0-9]+/) || [0])[0]);
+    const nb = parseInt((b.t.name.match(/[0-9]+/) || [0])[0]);
+    return na - nb;
+  });
+  container.innerHTML = sorted.map(({t, i}) => {
     const pts = ST.points.filter(p => p.tramo === t.name).length;
     return `<div class="tramo-panel-item" id="tpi-${i}" onclick="selectTramo(${i})">
       <div class="tramo-panel-name" style="color:#ffffff;">${t.name}</div>
