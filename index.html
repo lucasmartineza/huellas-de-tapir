@@ -516,9 +516,11 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 
   <!-- ODOMETER -->
   <div class="odometer" id="odometer">
-    <div class="odo-val" id="odo-val">0.0</div>
-    <div class="odo-unit">KM</div>
-    <div class="odo-reset" onclick="resetOdo()">↺ RESET</div>
+    <div style="display:flex;align-items:baseline;gap:6px;">
+      <div class="odo-val" id="odo-val">0.0</div>
+      <div class="odo-unit">KM</div>
+      <div class="odo-reset" onclick="resetOdo()">↺</div>
+    </div>
   </div>
 
   <!-- ROSETA -->
