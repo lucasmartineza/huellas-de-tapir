@@ -52,7 +52,6 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 #load-status { font-size:9px; color:#1a5a6a; letter-spacing:1px; text-align:center; min-height:16px; font-family:'Share Tech Mono',monospace; }
 .load-hint { font-size:7px; color:#1a5a6a; letter-spacing:1px; text-transform:uppercase; text-align:center; font-family:'Share Tech Mono',monospace; line-height:1.9; }
 .roads-btn {
-  position:fixed; top:46px; right:8px; z-index:52;
   background:rgba(0,0,0,0.88); border:1px solid #1a3a48;
   border-radius:20px; padding:5px 10px;
   font-size:8px; font-weight:700; letter-spacing:1.5px;
@@ -439,6 +438,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   <div id="topbar">
     <span class="topbar-title">Huella de Tapir</span>
     <div style="display:flex;gap:6px;align-items:center;">
+      <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
       <button class="gps-pill" id="gps-pill" onclick="centerGPS()">GPS</button>
     </div>
@@ -468,8 +468,6 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
       <div id="tramo-panel-items"></div>
     </div>
   </div>
-
-  <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CARGAR CAMINOS</button>
 
   <div id="weather-panel" style="display:none;position:fixed;top:50px;right:0;width:175px;bottom:70px;
     background:rgba(4,10,18,0.97);border-left:1px solid #1a3040;z-index:53;
@@ -1018,7 +1016,7 @@ function startMap() {
   });
   // Show roads button if online
   const rb = document.getElementById('roads-btn');
-  if(rb){ rb.style.display = 'block'; if(ST.roads&&ST.roads.length){ rb.classList.add('done'); rb.textContent=ST.roads.length+' CAMINOS OK'; } }
+  if(rb){ rb.style.display = 'inline-block'; if(ST.roads&&ST.roads.length){ rb.classList.add('done'); rb.textContent=ST.roads.length+' CAMINOS OK'; } }
   initTouch();
   startGPS();
   requestAnimationFrame(loop);
@@ -1100,15 +1098,26 @@ function draw() {
       ctx.lineTo(cx + dx*diag, cy + dy*diag);
       ctx.stroke();
       ctx.setLineDash([]);
-      // Label
-      const lx = cx + dx * Math.min(cx, cy) * 0.75;
-      const ly = cy + dy * Math.min(cx, cy) * 0.75;
-      ctx.globalAlpha = isNow ? 0.95 : (isPast ? 0.65 : 0.3);
-      ctx.font = isNow ? 'bold 9px monospace' : '7px monospace';
-      ctx.fillStyle = '#060d14';
-      const label = h+'h';
+      // Label — placed along the line at a fixed distance from center
+      // Use two positions (near and far) to avoid overlap with map center
+      const labelDist = Math.min(M.W, M.H) * 0.38;
+      const lx = cx + dx * labelDist;
+      const ly = cy + dy * labelDist;
+      const label = h + 'h';
+      ctx.globalAlpha = isNow ? 0.95 : (isPast ? 0.65 : 0.28);
+      ctx.font = isNow ? 'bold 9px monospace' : '7.5px monospace';
       const tw = ctx.measureText(label).width + 6;
-      ctx.fillRect(lx-tw/2, ly-7, tw, 13);
+      // Dark background pill
+      ctx.fillStyle = 'rgba(6,13,20,0.85)';
+      ctx.beginPath();
+      ctx.roundRect(lx-tw/2, ly-7, tw, 13, 3);
+      ctx.fill();
+      // Border for current hour
+      if(isNow){
+        ctx.strokeStyle = 'rgba(255,204,68,0.6)';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
       ctx.fillStyle = '#ffcc44';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -1321,7 +1330,7 @@ function onTM(e) {
     M.scale=Math.min(Math.max(T.sc0*dist/T.pd0,300),500000);
     // Rotation: positive angle clockwise on screen = positive rotation
     const angle=Math.atan2(t1.clientY-t0.clientY,t1.clientX-t0.clientX);
-    M.rot = T.mr0 + (angle - T.pr0);
+    M.rot = T.mr0 - (angle - T.pr0);
     document.getElementById('rot-btn').style.display = Math.abs(M.rot)>0.05 ? 'flex':'none';
   }
 }
