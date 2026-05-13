@@ -62,11 +62,29 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 .roads-btn.loading { color:#00e5ff; animation:btn-breathe 1s ease-in-out infinite; }
 .roads-btn.done { color:#00ffaa; border-color:#00ffaa33; }
 .roseta {
-  position:fixed; bottom:90px; left:12px; z-index:49;
+  position:fixed; bottom:150px; left:12px; z-index:49;
   width:52px; height:52px; pointer-events:all; cursor:pointer;
   transform-origin:center;
 }
 .roseta:active { opacity:0.7; }
+.odometer {
+  position:fixed; bottom:72px; left:12px; z-index:49;
+  display:none; flex-direction:column; align-items:flex-start;
+  pointer-events:all;
+}
+.odo-val {
+  font-family:monospace; font-size:22px; font-weight:700;
+  color:#00e5ff; letter-spacing:1px;
+  text-shadow: 0 0 8px rgba(0,229,255,0.8), 0 0 20px rgba(0,229,255,0.4);
+  line-height:1;
+}
+.odo-unit { font-family:monospace; font-size:8px; color:#4a8898; letter-spacing:2px; margin-top:2px; }
+.odo-reset {
+  font-family:monospace; font-size:7px; color:#1a5a6a; letter-spacing:1px;
+  cursor:pointer; margin-top:2px; text-transform:uppercase;
+  text-decoration:underline;
+}
+.odo-reset:active { color:#00e5ff; }
 .load-logo { width:90px; display:block; margin:0 auto; mix-blend-mode:screen; opacity:0.75; }
 
 #screen-map { display:none; position:fixed; inset:0; overflow:hidden; }
@@ -74,7 +92,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 
 /* DIAFRAGMA */
 #crosshair {
-  position:absolute; top:65%; left:50%; z-index:20; pointer-events:none;
+  position:absolute; top:75%; left:50%; z-index:20; pointer-events:none;
   transform:translate(-50%,-50%); width:45px; height:45px;
   isolation:isolate;
 }
@@ -496,6 +514,13 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
     <div id="wp-hours" style="flex:1;overflow-y:auto;"></div>
   </div>
 
+  <!-- ODOMETER -->
+  <div class="odometer" id="odometer">
+    <div class="odo-val" id="odo-val">0.0</div>
+    <div class="odo-unit">KM</div>
+    <div class="odo-reset" onclick="resetOdo()">↺ RESET</div>
+  </div>
+
   <!-- ROSETA -->
   <svg class="roseta" id="roseta" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" onclick="resetRot()" title="Reset Norte">
     <!-- Outer ring -->
@@ -682,7 +707,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 
 <script>
 // ══ STATE ══
-const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false, roads:[], lastBearing:0 };
+const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false, roads:[], lastBearing:0, odoKm:0, odoPrev:null };
 const STORE = 'tapir5';
 
 // ══ MAP ══
@@ -1010,6 +1035,9 @@ function startMap() {
   window.addEventListener('resize', resizeCanvas);
   fitAll();
   buildTramoPanel();
+  // Show odometer
+  const odoDiv = document.getElementById('odometer');
+  if(odoDiv) odoDiv.style.display = 'flex';
   // Load saved OSM roads
   loadRoads().then(roads => {
     if(roads && roads.length){ ST.roads=roads; }
@@ -1067,61 +1095,75 @@ function draw() {
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
 
-  // Sun arc — anchored to geographic world via proj(), moves/zooms/pans with map
+  // Sun arc — lines cross the full canvas in the solar azimuth direction
+  // Direction is global (same for whole region), drawn through canvas center
   if(WX.sunRise && WX.sunSet){
     const now    = new Date();
     const riseMs = WX.sunRise.getTime();
     const setMs  = WX.sunSet.getTime();
     const dayLen = setMs - riseMs;
-    // Use GPS position or map center as the anchor point
-    const anchorLat = ST.gpsPos ? ST.gpsPos.lat : M.lat;
-    const anchorLng = ST.gpsPos ? ST.gpsPos.lng : M.lng;
-    const dayN = getDayOfYear();
-    const cos  = Math.cos(anchorLat * Math.PI/180);
-    // Extend line ~40km in each direction in geographic coords
-    const extKm = 40;
-    const dLat  = extKm / 111.0; // degrees per km latitude
+    const refLat = M.lat; // use map center lat for azimuth calculation
+    const dayN   = getDayOfYear();
+    const diag   = Math.sqrt(M.W*M.W + M.H*M.H);
+    // For each hour, compute azimuth and draw line through canvas center
+    // The line represents the sun's direction projected onto the ground
+    // It is the same for the entire visible area (azimuth varies <1° over 50km)
     ctx.save();
     const markHours = [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
     markHours.forEach(h => {
       const hMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0).getTime();
       const t   = (hMs - riseMs) / dayLen;
       if(t < 0 || t > 1) return;
-      const {az, alt} = calcSunAzimuth(t, anchorLat, dayN);
+      const {az, alt} = calcSunAzimuth(t, refLat, dayN);
       if(alt < -0.05) return;
       const isPast = hMs <= now.getTime();
       const isNow  = h === now.getHours();
-      // Direction vector in geographic space (az = from north, clockwise)
-      const sinAz = Math.sin(az), cosAz = Math.cos(az);
-      // Extend anchor point in both directions along azimuth
-      const lat1 = anchorLat - cosAz * dLat;
-      const lng1 = anchorLng - sinAz * dLat / cos;
-      const lat2 = anchorLat + cosAz * dLat;
-      const lng2 = anchorLng + sinAz * dLat / cos;
-      const p1 = proj(lat1, lng1);
-      const p2 = proj(lat2, lng2);
-      ctx.globalAlpha = isNow ? 0.9 : (isPast ? 0.55 : 0.22);
+      // Convert geographic azimuth to screen direction using proj() convention
+      // proj() rotates the world by M.rot, so north points at angle M.rot on screen
+      // Screen direction for azimuth az: angle = az + M.rot from screen-up
+      const screenAngle = az + M.rot;
+      const dx = Math.sin(screenAngle);
+      const dy = -Math.cos(screenAngle);
+      // Line through canvas center
+      const cx = M.W/2, cy = M.H/2;
+      const x1 = cx - dx*diag, y1 = cy - dy*diag;
+      const x2 = cx + dx*diag, y2 = cy + dy*diag;
+      // Draw glow for current hour
+      if(isNow){
+        ctx.globalAlpha = 0.12;
+        ctx.beginPath();
+        ctx.strokeStyle = '#ffcc44';
+        ctx.lineWidth = 12;
+        ctx.setLineDash([]);
+        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.globalAlpha = 0.25;
+        ctx.lineWidth = 5;
+        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+      // Draw line
+      ctx.globalAlpha = isNow ? 0.9 : (isPast ? 0.5 : 0.18);
       ctx.beginPath();
       ctx.setLineDash(isPast ? [] : [6,4]);
       ctx.strokeStyle = '#ffcc44';
-      ctx.lineWidth   = isNow ? 2.5 : (isPast ? 1.2 : 0.8);
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
+      ctx.lineWidth   = isNow ? 2 : (isPast ? 1 : 0.7);
+      ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
       ctx.stroke();
       ctx.setLineDash([]);
-      // Label at 30% from anchor toward p2
-      const lx = p1.x + (p2.x - p1.x) * 0.72;
-      const ly = p1.y + (p2.y - p1.y) * 0.72;
+      // Label — placed at 70% along from p1 to p2
+      const lx = x1 + (x2-x1) * 0.72;
+      const ly = y1 + (y2-y1) * 0.72;
       const label = h + 'h';
-      ctx.globalAlpha = isNow ? 0.95 : (isPast ? 0.7 : 0.28);
-      ctx.font = isNow ? 'bold 9px monospace' : '7.5px monospace';
+      ctx.globalAlpha = isNow ? 1.0 : (isPast ? 0.85 : 0.45);
+      ctx.font = isNow ? 'bold 10px monospace' : '8px monospace';
       const tw = ctx.measureText(label).width + 6;
       ctx.fillStyle = 'rgba(6,13,20,0.85)';
-      ctx.fillRect(lx - tw/2, ly - 7, tw, 13);
+      ctx.fillRect(lx-tw/2, ly-7, tw, 13);
       if(isNow){
         ctx.strokeStyle = 'rgba(255,204,68,0.5)';
         ctx.lineWidth = 0.8;
-        ctx.strokeRect(lx - tw/2, ly - 7, tw, 13);
+        ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
       }
       ctx.fillStyle = '#ffcc44';
       ctx.textAlign = 'center';
@@ -1371,6 +1413,14 @@ function resetRot() { M.rot=0; document.getElementById('rot-btn').style.display=
 // ══ GPS ══
 function startGPS() {
   if (!navigator.geolocation) return;
+  // Prevent screen sleep
+  if ('wakeLock' in navigator) {
+    navigator.wakeLock.request('screen').catch(()=>{});
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && 'wakeLock' in navigator)
+        navigator.wakeLock.request('screen').catch(()=>{});
+    });
+  }
   navigator.geolocation.watchPosition(pos=>{
     const newLat = pos.coords.latitude;
     const newLng = pos.coords.longitude;
@@ -1390,17 +1440,34 @@ function startGPS() {
       }
     }
 
-    ST.gpsPos = {lat:newLat, lng:newLng};
+    // Odometer
+    if(ST.odoPrev){
+      const dLat = (newLat - ST.odoPrev.lat) * Math.PI/180;
+      const dLng = (newLng - ST.odoPrev.lng) * Math.PI/180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(ST.odoPrev.lat*Math.PI/180)*Math.cos(newLat*Math.PI/180)*Math.sin(dLng/2)**2;
+      const dist = 6371 * 2 * Math.asin(Math.sqrt(a));
+      if(dist < 0.5) ST.odoKm += dist; // ignore jumps > 500m (GPS glitch)
+    }
+    ST.odoPrev = {lat:newLat, lng:newLng};
+    ST.gpsPos  = {lat:newLat, lng:newLng};
+    const odoEl = document.getElementById('odo-val');
+    if(odoEl) odoEl.textContent = ST.odoKm.toFixed(1);
     const p = document.getElementById('gps-pill');
     p.textContent = Math.round(pos.coords.accuracy)+'m'; p.classList.add('on');
 
     if (M.following) {
-      const offsetLat = (M.H * 0.15) / M.scale;
+      const offsetLat = (M.H * 0.25) / M.scale;
       M.lat = ST.gpsPos.lat + offsetLat;
       M.lng = ST.gpsPos.lng;
     }
   },()=>{},{enableHighAccuracy:true,maximumAge:1000,timeout:15000});
 }
+function resetOdo() {
+  ST.odoKm = 0; ST.odoPrev = null;
+  const el = document.getElementById('odo-val');
+  if(el) el.textContent = '0.0';
+}
+
 function centerGPS() {
   if (ST.gpsPos) {
     M.lat = ST.gpsPos.lat;
