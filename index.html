@@ -1087,6 +1087,21 @@ function draw() {
     ctx.globalAlpha = 1.0;
 
     // Start/end flags
+    // Draw SS label next to route midpoint
+    const ssIdx = ST.tramos.indexOf(t);
+    const ssTag = 'SS' + (ssIdx + 1);
+    const midPt = t.route[Math.floor(t.route.length/2)];
+    if(midPt){
+      const {x:mx, y:my} = proj(midPt[0], midPt[1]);
+      ctx.font = 'bold 11px monospace';
+      ctx.fillStyle = '#ffffff';
+      ctx.globalAlpha = 0.85;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ssTag, mx + 8, my - 8);
+      ctx.globalAlpha = 1.0;
+    }
+
     // Derive LPE/FPE labels from tramo name
     // PE 1/5/8 → LPE1, FPE1 | PE 4 / 7 → LPE4 | PSSE → LSSE, FSSE
     let startLabel, endLabel;
@@ -2054,7 +2069,7 @@ function buildTramoPanel() {
     const pts = ST.points.filter(p => p.tramo === t.name).length;
     const ssLabel = 'SS' + (i+1);
     return `<div class="tramo-panel-item" id="tpi-${i}" onclick="selectTramo(${i})">
-      <div class="tramo-panel-name"><span style="color:#00e5ff;margin-right:4px;font-size:8px;">${ssLabel}</span>${t.name}</div>
+      <div class="tramo-panel-name" style="color:#00e5ff;">${ssLabel}</div>
       <div class="tramo-panel-pts">${pts} pto${pts!==1?'s':''}</div>
     </div>`;
   }).join('');
