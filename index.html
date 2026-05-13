@@ -1067,56 +1067,61 @@ function draw() {
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
 
-  // Sun arc — azimuth lines crossing full canvas, rotate with map
+  // Sun arc — anchored to geographic world via proj(), moves/zooms/pans with map
   if(WX.sunRise && WX.sunSet){
     const now    = new Date();
     const riseMs = WX.sunRise.getTime();
     const setMs  = WX.sunSet.getTime();
     const dayLen = setMs - riseMs;
-    const lat    = M.lat;
-    const dayN   = getDayOfYear();
-    const cx = M.W/2, cy = M.H/2;
-    const diag = Math.sqrt(M.W*M.W + M.H*M.H);
+    // Use GPS position or map center as the anchor point
+    const anchorLat = ST.gpsPos ? ST.gpsPos.lat : M.lat;
+    const anchorLng = ST.gpsPos ? ST.gpsPos.lng : M.lng;
+    const dayN = getDayOfYear();
+    const cos  = Math.cos(anchorLat * Math.PI/180);
+    // Extend line ~40km in each direction in geographic coords
+    const extKm = 40;
+    const dLat  = extKm / 111.0; // degrees per km latitude
     ctx.save();
-    const markHours = [5,7,9,11,13,15,17,19];
+    const markHours = [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
     markHours.forEach(h => {
       const hMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0).getTime();
       const t   = (hMs - riseMs) / dayLen;
       if(t < 0 || t > 1) return;
-      const {az, alt} = calcSunAzimuth(t, lat, dayN);
+      const {az, alt} = calcSunAzimuth(t, anchorLat, dayN);
       if(alt < -0.05) return;
       const isPast = hMs <= now.getTime();
       const isNow  = h === now.getHours();
-      const rotAz  = az + M.rot; // align with proj() rotation convention
-      const dx = Math.sin(rotAz), dy = -Math.cos(rotAz);
-      ctx.globalAlpha = isNow ? 0.85 : (isPast ? 0.5 : 0.22);
+      // Direction vector in geographic space (az = from north, clockwise)
+      const sinAz = Math.sin(az), cosAz = Math.cos(az);
+      // Extend anchor point in both directions along azimuth
+      const lat1 = anchorLat - cosAz * dLat;
+      const lng1 = anchorLng - sinAz * dLat / cos;
+      const lat2 = anchorLat + cosAz * dLat;
+      const lng2 = anchorLng + sinAz * dLat / cos;
+      const p1 = proj(lat1, lng1);
+      const p2 = proj(lat2, lng2);
+      ctx.globalAlpha = isNow ? 0.9 : (isPast ? 0.55 : 0.22);
       ctx.beginPath();
       ctx.setLineDash(isPast ? [] : [6,4]);
       ctx.strokeStyle = '#ffcc44';
       ctx.lineWidth   = isNow ? 2.5 : (isPast ? 1.2 : 0.8);
-      ctx.moveTo(cx - dx*diag, cy - dy*diag);
-      ctx.lineTo(cx + dx*diag, cy + dy*diag);
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
       ctx.stroke();
       ctx.setLineDash([]);
-      // Label — placed along the line at a fixed distance from center
-      // Use two positions (near and far) to avoid overlap with map center
-      const labelDist = Math.min(M.W, M.H) * 0.38;
-      const lx = cx + dx * labelDist;
-      const ly = cy + dy * labelDist;
+      // Label at 30% from anchor toward p2
+      const lx = p1.x + (p2.x - p1.x) * 0.72;
+      const ly = p1.y + (p2.y - p1.y) * 0.72;
       const label = h + 'h';
-      ctx.globalAlpha = isNow ? 0.95 : (isPast ? 0.65 : 0.28);
+      ctx.globalAlpha = isNow ? 0.95 : (isPast ? 0.7 : 0.28);
       ctx.font = isNow ? 'bold 9px monospace' : '7.5px monospace';
       const tw = ctx.measureText(label).width + 6;
-      // Dark background pill
       ctx.fillStyle = 'rgba(6,13,20,0.85)';
-      ctx.beginPath();
-      ctx.roundRect(lx-tw/2, ly-7, tw, 13, 3);
-      ctx.fill();
-      // Border for current hour
+      ctx.fillRect(lx - tw/2, ly - 7, tw, 13);
       if(isNow){
-        ctx.strokeStyle = 'rgba(255,204,68,0.6)';
+        ctx.strokeStyle = 'rgba(255,204,68,0.5)';
         ctx.lineWidth = 0.8;
-        ctx.stroke();
+        ctx.strokeRect(lx - tw/2, ly - 7, tw, 13);
       }
       ctx.fillStyle = '#ffcc44';
       ctx.textAlign = 'center';
