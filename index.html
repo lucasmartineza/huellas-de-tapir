@@ -1119,7 +1119,9 @@ function draw() {
     // Solar time ≈ local time + equation of time (simplified)
     // Azimuth (from north, CW): atan2(sin(HA), cos(HA)*sin(lat) - tan(decl)*cos(lat))
     const sunPoints = [];
-    for(let h = 5; h <= 19; h++){
+    const riseH = WX.sunRise ? WX.sunRise.getHours() : 5;
+    const setH  = WX.sunSet  ? WX.sunSet.getHours()  : 19;
+    for(let h = riseH; h <= setH + 1; h++){
       const hDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0);
       const t = (hDate.getTime() - riseMs) / dayLen;
       if(t < -0.1 || t > 1.1) continue;
@@ -1142,7 +1144,7 @@ function draw() {
     else {
       // Draw the single arc line
       // Each point projected from map center at distance proportional to cos(alt) = ground shadow length
-      const baseLen = Math.min(M.W, M.H) * 0.42;
+      const baseLen = Math.max(M.W, M.H) * 0.65; // long enough to span full canvas
       const ptCoords = sunPoints.map(p => {
         const screenAz = p.az + M.rot;
         const groundDist = Math.cos(p.alt); // normalized 0..1
@@ -1221,6 +1223,29 @@ function draw() {
         ctx.textBaseline = 'middle';
         ctx.fillText(label, lx, ly);
       });
+      // Sunrise label at first point, sunset at last
+      if(ptCoords.length >= 2){
+        const first = ptCoords[0], last = ptCoords[ptCoords.length-1];
+        const fmt = d => d ? d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0') : '';
+        ctx.globalAlpha = 0.9;
+        ctx.font = '8px monospace';
+        // Sunrise label
+        const rLabel = '☀ '+fmt(WX.sunRise);
+        const rw = ctx.measureText(rLabel).width + 6;
+        ctx.fillStyle = 'rgba(6,13,20,0.85)';
+        ctx.fillRect(first.x-rw/2, first.y+6, rw, 13);
+        ctx.fillStyle = '#ffaa22';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(rLabel, first.x, first.y+12);
+        // Sunset label
+        const sLabel = fmt(WX.sunSet)+' ☀';
+        const sw = ctx.measureText(sLabel).width + 6;
+        ctx.fillStyle = 'rgba(6,13,20,0.85)';
+        ctx.fillRect(last.x-sw/2, last.y+6, sw, 13);
+        ctx.fillStyle = '#ff7744';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(sLabel, last.x, last.y+12);
+      }
       ctx.globalAlpha = 1.0;
       ctx.restore();
     }
