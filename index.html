@@ -438,7 +438,10 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   </div>
   <div id="topbar">
     <span class="topbar-title">Huella de Tapir</span>
-    <button class="gps-pill" id="gps-pill" onclick="centerGPS()">GPS</button>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
+      <button class="gps-pill" id="gps-pill" onclick="centerGPS()">GPS</button>
+    </div>
   </div>
   <div id="side-btns">
     <button class="side-btn" onclick="centerGPS()">
@@ -467,6 +470,34 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   </div>
 
   <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CARGAR CAMINOS</button>
+
+  <!-- WEATHER PANEL -->
+  <div id="weather-panel" style="display:none;position:fixed;top:50px;right:0;width:175px;bottom:70px;
+    background:rgba(4,10,18,0.97);border-left:1px solid #1a3040;z-index:53;
+    flex-direction:column;overflow:hidden;">
+    <div style="padding:7px 10px 5px;border-bottom:1px solid #0a2530;display:flex;align-items:center;justify-content:space-between;">
+      <span style="color:#ffcc44;font-size:9px;letter-spacing:2px;font-weight:700;">☀ CLIMA</span>
+      <button onclick="refreshWeather()" style="background:transparent;border:none;color:#4a8898;font-size:9px;cursor:pointer;letter-spacing:1px;">↻ ACT.</button>
+    </div>
+    <div id="wp-sunrise" style="padding:5px 10px;border-bottom:1px solid #0a2530;display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <span id="wp-rise" style="color:#ffcc44;font-size:9px;font-weight:bold;">--:--</span>
+        <span style="color:#4a8898;font-size:6.5px;letter-spacing:1px;">SALE</span>
+      </div>
+      <span style="color:#4a8898;font-size:8px;">—</span>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <span id="wp-set" style="color:#ff7744;font-size:9px;font-weight:bold;">--:--</span>
+        <span style="color:#4a8898;font-size:6.5px;letter-spacing:1px;">SE PONE</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:2px 8px;border-bottom:1px solid #1a3040;">
+      <span style="color:#4a8898;font-size:6.5px;"></span>
+      <span style="color:#4a8898;font-size:6.5px;text-align:center;">°C</span>
+      <span style="color:#4a8898;font-size:6.5px;text-align:center;">mm</span>
+      <span style="color:#4a8898;font-size:6.5px;text-align:center;">km/h</span>
+    </div>
+    <div id="wp-hours" style="flex:1;overflow-y:auto;"></div>
+  </div>
 
   <!-- ROSETA -->
   <svg class="roseta" id="roseta" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" onclick="resetRot()" title="Reset Norte">
@@ -1038,6 +1069,99 @@ function draw() {
   const gs=40;
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
+
+  // Sun arc
+  if(WX.sunRise && WX.sunSet){
+    const now = new Date();
+    const riseMs = WX.sunRise.getTime();
+    const setMs  = WX.sunSet.getTime();
+    const nowMs  = now.getTime();
+    const dayLen = setMs - riseMs;
+    // Arc: x goes from right(sunrise) to left(sunset) across full canvas width
+    // y = peak at noon (top 15% of canvas), dawn/dusk at bottom
+    const arcY0 = M.H * 0.92; // horizon y
+    const arcPeak = M.H * 0.08; // noon peak y
+    const sunArcX = (t) => M.W - t * M.W; // t=0 sunrise(right), t=1 sunset(left)
+    const sunArcY = (t) => arcY0 - (arcY0 - arcPeak) * Math.sin(Math.PI * t);
+    const tNow = Math.max(0, Math.min(1, (nowMs - riseMs) / dayLen));
+
+    ctx.save();
+    ctx.globalAlpha = 1.0;
+
+    // Draw past arc (solid)
+    if(tNow > 0){
+      const steps = 40;
+      ctx.beginPath();
+      ctx.moveTo(sunArcX(0), sunArcY(0));
+      for(let i=1; i<=steps; i++){
+        const t = (i/steps)*tNow;
+        ctx.lineTo(sunArcX(t), sunArcY(t));
+      }
+      ctx.strokeStyle = 'rgba(255,204,68,0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    // Draw future arc (dashed)
+    if(tNow < 1){
+      ctx.beginPath();
+      ctx.setLineDash([4,3]);
+      ctx.moveTo(sunArcX(tNow), sunArcY(tNow));
+      const steps = 40;
+      for(let i=1; i<=steps; i++){
+        const t = tNow + (i/steps)*(1-tNow);
+        ctx.lineTo(sunArcX(t), sunArcY(t));
+      }
+      ctx.strokeStyle = 'rgba(255,204,68,0.3)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Hour marks every 2h from 05:00 to 19:00
+    const markHours = [5,7,9,11,13,15,17,19];
+    markHours.forEach(h => {
+      const hMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0).getTime();
+      const t = (hMs - riseMs) / dayLen;
+      if(t < 0 || t > 1) return;
+      const mx = sunArcX(t), my = sunArcY(t);
+      const isPast = hMs <= nowMs;
+      const isCurrent = Math.abs(now.getHours() - h) < 1;
+      ctx.globalAlpha = isCurrent ? 1.0 : (isPast ? 0.75 : 0.3);
+      ctx.beginPath();
+      ctx.arc(mx, my, isCurrent ? 5 : 2.5, 0, Math.PI*2);
+      ctx.fillStyle = '#ffcc44';
+      ctx.fill();
+      if(isCurrent){
+        ctx.beginPath();
+        ctx.arc(mx, my, 9, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(255,204,68,0.15)';
+        ctx.fill();
+      }
+      // Label
+      ctx.globalAlpha = isCurrent ? 1.0 : (isPast ? 0.7 : 0.3);
+      ctx.font = isCurrent ? 'bold 8px monospace' : '7px monospace';
+      ctx.fillStyle = '#ffcc44';
+      ctx.textAlign = 'center';
+      ctx.fillText(h+'h', mx, my - (isCurrent ? 10 : 7));
+    });
+
+    // Current sun dot
+    ctx.globalAlpha = 1.0;
+    ctx.beginPath();
+    ctx.arc(sunArcX(tNow), sunArcY(tNow), 5, 0, Math.PI*2);
+    ctx.fillStyle = '#ffcc44';
+    ctx.fill();
+
+    // Sunrise/sunset labels at ends
+    const fmt = d => d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+    ctx.font = '7px monospace';
+    ctx.fillStyle = 'rgba(255,204,68,0.6)';
+    ctx.textAlign = 'center';
+    ctx.fillText(fmt(WX.sunRise), sunArcX(0), arcY0 - 4);
+    ctx.fillStyle = 'rgba(255,120,68,0.6)';
+    ctx.fillText(fmt(WX.sunSet), sunArcX(1), arcY0 - 4);
+    ctx.restore();
+  }
 
   // OSM roads — grey, very faint
   if(ST.roads && ST.roads.length){
@@ -2137,6 +2261,104 @@ function toggleTramoPanel() {
   document.getElementById('tramo-arrow').innerHTML = tramoPanelOpen
     ? '<polyline points="15 18 9 12 15 6"/>'
     : '<polyline points="9 18 15 12 9 6"/>';
+}
+
+// ══ WEATHER ══
+
+const WX = { sunRise:null, sunSet:null, hourly:[], lat:null, lng:null };
+
+// Sun position calculator (no API needed)
+function calcSunTimes(lat, lng) {
+  const now   = new Date();
+  const JD    = now / 86400000 + 2440587.5;
+  const n     = JD - 2451545.0;
+  const L     = (280.46 + 0.9856474 * n) % 360;
+  const g     = ((357.528 + 0.9856003 * n) % 360) * Math.PI / 180;
+  const lam   = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2*g)) * Math.PI / 180;
+  const sinDec= 0.39782 * Math.sin(lam);
+  const cosDec= Math.cos(Math.asin(sinDec));
+  const cosH  = (Math.cos(90.833 * Math.PI/180) - sinDec * Math.sin(lat * Math.PI/180))
+                / (cosDec * Math.cos(lat * Math.PI/180));
+  if(cosH > 1 || cosH < -1) return null; // polar day/night
+  const H   = Math.acos(cosH) * 180 / Math.PI;
+  const RA  = (Math.atan2(-0.39782 * Math.sin(lam - Math.PI/180 * 282.634) * Math.cos(lam),
+               cosDec) * 180 / Math.PI + 360) % 360 / 15;
+  const lng0 = lng / 15;
+  let rise = ((360 - H) / 15 - RA - lng0 + 24) % 24;
+  let set  = (H / 15 - RA - lng0 + 24) % 24;
+  // Adjust for timezone offset
+  const tzOff = now.getTimezoneOffset() / -60;
+  rise += tzOff; set += tzOff;
+  const toDate = h => {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate(),
+                       Math.floor(h), Math.round((h % 1) * 60));
+    return d;
+  };
+  return { rise: toDate(rise), set: toDate(set) };
+}
+
+function toggleWeather() {
+  const panel = document.getElementById('weather-panel');
+  const btn   = document.getElementById('weather-btn');
+  const open  = panel.style.display === 'flex';
+  panel.style.display = open ? 'none' : 'flex';
+  btn.style.color     = open ? '#ffcc44' : '#000';
+  btn.style.background= open ? 'transparent' : '#ffcc44';
+  if(!open && !WX.hourly.length) refreshWeather();
+}
+
+async function refreshWeather() {
+  const lat = ST.gpsPos ? ST.gpsPos.lat : M.lat;
+  const lng = ST.gpsPos ? ST.gpsPos.lng : M.lng;
+  if(!lat && !lng){ toast('Sin posición GPS'); return; }
+
+  // Calc sunrise/sunset
+  const sun = calcSunTimes(lat, lng);
+  if(sun){ WX.sunRise = sun.rise; WX.sunSet = sun.set; }
+  const fmt = d => d ? d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0') : '--:--';
+  document.getElementById('wp-rise').textContent = fmt(WX.sunRise);
+  document.getElementById('wp-set').textContent  = fmt(WX.sunSet);
+
+  // Fetch hourly forecast from Open-Meteo (free, no API key)
+  if(!navigator.onLine){ renderHours(); return; }
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}&hourly=temperature_2m,precipitation,windspeed_10m&forecast_days=1&timezone=auto`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const times = data.hourly.time;
+    const temps = data.hourly.temperature_2m;
+    const rain  = data.hourly.precipitation;
+    const wind  = data.hourly.windspeed_10m;
+    WX.hourly = times.map((t,i) => ({
+      hour: new Date(t).getHours(),
+      temp: Math.round(temps[i]),
+      rain: rain[i],
+      wind: Math.round(wind[i])
+    })).filter(h => h.hour >= 5 && h.hour <= 17);
+  } catch(e) { console.warn('Weather fetch error:', e); }
+  renderHours();
+}
+
+function renderHours() {
+  const container = document.getElementById('wp-hours');
+  if(!container) return;
+  const nowH = new Date().getHours();
+  if(!WX.hourly.length){
+    container.innerHTML = '<div style="padding:12px 10px;color:#4a8898;font-size:8px;text-align:center;">Sin conexión<br>No hay datos</div>';
+    return;
+  }
+  container.innerHTML = WX.hourly.map(h => {
+    const isCurrent = h.hour === nowH;
+    const style = isCurrent ? 'background:rgba(255,204,68,0.07);' : '';
+    const tc = isCurrent ? '#ffcc44' : '';
+    return `<div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:3px 8px;
+              align-items:center;border-bottom:1px solid rgba(26,48,64,0.5);${style}">
+      <span style="color:${tc||'#4a8898'};font-size:7px;">${h.hour.toString().padStart(2,'0')}h</span>
+      <span style="color:${tc||'#ffffff'};font-size:8px;font-weight:bold;text-align:center;">${h.temp}°</span>
+      <span style="color:#00a0c8;font-size:7px;text-align:center;">${h.rain}</span>
+      <span style="color:#c8dce8;font-size:7px;text-align:center;">${h.wind}</span>
+    </div>`;
+  }).join('');
 }
 
 // ══ OSM ROADS ══
