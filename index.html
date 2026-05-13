@@ -1144,7 +1144,7 @@ function draw() {
     else {
       // Draw the single arc line
       // Each point projected from map center at distance proportional to cos(alt) = ground shadow length
-      const baseLen = Math.max(M.W, M.H) * 0.65; // long enough to span full canvas
+      const baseLen = Math.min(M.W, M.H) * 0.48;
       const ptCoords = sunPoints.map(p => {
         const screenAz = p.az + M.rot;
         const groundDist = Math.cos(p.alt); // normalized 0..1
