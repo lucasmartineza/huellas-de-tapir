@@ -1592,7 +1592,14 @@ function centerGPS() {
 function startCompass() {
   if (!window._compassHandler) {
     window._compassHandler = (e) => {
-      let heading = e.webkitCompassHeading || (e.alpha ? (360 - e.alpha) : null);
+      // webkitCompassHeading: degrees clockwise from magnetic north (iOS)
+      // alpha: degrees counter-clockwise from north (Android/standard)
+      let heading = null;
+      if (e.webkitCompassHeading != null) {
+        heading = e.webkitCompassHeading; // iOS: already correct
+      } else if (e.alpha != null) {
+        heading = (360 - e.alpha) % 360; // Android: invert
+      }
       if (heading !== null && ST.compass) {
         M.rot = heading * Math.PI / 180;
       }
@@ -1667,7 +1674,7 @@ function markPoint() {
     tramo: tramo ? tramo.name : '',
     distFromStart: dist ? dist.fromStart : null,
     distToEnd:     dist ? dist.toEnd     : null,
-    type:null, photo:null, audio:null, audioDur:0,
+    type:null, photo:null, tags:[], stars:0,
     notes:'', ts:new Date().toISOString(),
   };
   ST.points.push(pt); ST.curPt=pt; ST.isEdit=false;
@@ -2454,17 +2461,16 @@ function setStar(n){
 }
 
 function loadObsAndStars(){
-  // Reset all buttons
-  document.querySelectorAll('.obs-btn').forEach(b => b.classList.remove('sel'));
-  document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('lit'));
-  if(!ST.curPt) return;
-  // Restore tags
-  (ST.curPt.tags || []).forEach(tag => {
-    const btn = document.querySelector('.obs-btn[data-obs="'+tag+'"]');
-    if(btn) btn.classList.add('sel');
-  });
-  // Restore stars
-  if(ST.curPt.stars) setStar(ST.curPt.stars);
+  try {
+    document.querySelectorAll('.obs-btn').forEach(b => b.classList.remove('sel'));
+    document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('lit'));
+    if(!ST.curPt) return;
+    (ST.curPt.tags || []).forEach(tag => {
+      const btn = document.querySelector('.obs-btn[data-obs="'+tag+'"]');
+      if(btn) btn.classList.add('sel');
+    });
+    if(ST.curPt.stars) setStar(ST.curPt.stars);
+  } catch(e) { console.warn('loadObsAndStars error:', e); }
 }
 
 // ══ WEATHER & SUN ══
