@@ -1723,12 +1723,9 @@ function openSheet(pt) {
 }
 
 function closeSheet() {
-  if(REC.isRec) stopRec();
-  document.getElementById('audio-el').pause();
-  document.getElementById('audio-el').src='';
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('sheet').classList.remove('open');
-  ST.curPt=null; shType=null; REC.pendingB64=null;
+  ST.curPt=null; shType=null;
 }
 
 function refreshTypes(t) {
@@ -1795,7 +1792,6 @@ async function delPoint() {
   if(!ST.curPt) return;
   if(!confirm('¿Eliminar punto #'+ST.curPt.number+'? Esta acción no se puede deshacer.')) return;
   await deletePhoto('photo_'+ST.curPt.id);
-  await deletePhoto('audio_'+ST.curPt.id);
   ST.points=ST.points.filter(p=>p.id!==ST.curPt.id);
   persist(); closeSheet(); toast('Punto eliminado');
 }
