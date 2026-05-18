@@ -1775,13 +1775,12 @@ async function clearPhoto() {
   }
 }
 
-async function savePoint() {
+async async function savePoint() {
   if(!ST.curPt) return;
   const pt=ST.curPt;
   pt.type=shType;
   pt.notes=document.getElementById('notes-ta').value.trim();
   if(pt._photo){ pt.photo=pt._photo; delete pt._photo; }
-  if(REC.pendingB64){ pt.audio=REC.pendingB64; pt.audioDur=REC.elapsed; }
   try {
     await persistPhoto(pt);
   } catch(e) {
