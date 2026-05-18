@@ -1601,7 +1601,7 @@ function startCompass() {
         heading = (360 - e.alpha) % 360; // Android: invert
       }
       if (heading !== null && ST.compass) {
-        M.rot = heading * Math.PI / 180;
+        M.rot = -heading * Math.PI / 180; // negate: map rotates opposite to device
       }
     };
     window.addEventListener('deviceorientationabsolute', window._compassHandler, true);
@@ -1712,9 +1712,6 @@ function openSheet(pt) {
   } else {
     prev.src=''; wrap.style.display='none'; opts.style.display='grid';
   }
-
-  resetAudio();
-  if(pt.audio) showPlayer(pt.audio,pt.audioDur);
 
   refreshTypes(pt.type);
   const db=document.getElementById('btn-del');
