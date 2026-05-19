@@ -2619,6 +2619,7 @@ function selectTramo(idx) {
   const dLat=maxLat-minLat||0.01, dLng=maxLng-minLng||0.01;
   const cos=Math.cos(M.lat*Math.PI/180);
   M.scale=Math.min((M.H-140)*0.75/dLat, M.W*0.65/(dLng*cos));
+  M.following=false; M.navMode=false; // don't auto-follow after selecting a tramo
 }
 
 function toggleTramoPanel() {
