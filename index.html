@@ -121,16 +121,20 @@ html,body { height:100%; background:var(--bg-screen); color:var(--color-accent);
 }
 .roseta:active { opacity:0.7; }
 .odometer {
-  position:fixed; bottom:72px; left:12px; z-index:49;
-  display:none; flex-direction:column; align-items:flex-start;
+  position:fixed; bottom:230px; left:12px; z-index:49;
+  display:none; flex-direction:row; align-items:flex-end; gap:12px;
   pointer-events:all;
+  background:rgba(6,13,20,0.7); padding:5px 10px; border-radius:10px;
+  border:1px solid #1a3040;
 }
+body.light .odometer { background:rgba(255,255,255,0.92); border-color:#a0aab8; }
 .odo-val {
-  font-family:monospace; font-size:22px; font-weight:700;
+  font-family:monospace; font-size:26px; font-weight:700;
   color:var(--color-accent); letter-spacing:1px;
   text-shadow: 0 0 8px rgba(0,229,255,0.8), 0 0 20px rgba(0,229,255,0.4);
   line-height:1;
 }
+body.light .odo-val { text-shadow:none; }
 .odo-unit { font-family:monospace; font-size:8px; color:var(--color-muted); letter-spacing:2px; margin-top:2px; }
 .odo-reset {
   font-family:monospace; font-size:7px; color:var(--color-dim); letter-spacing:1px;
@@ -628,19 +632,26 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
       <span style="color:#4a8898;font-size:6px;text-align:center;"></span>
     </div>
     <div id="wp-hours" style="flex:1;overflow-y:auto;"></div>
-    <div id="wp-3day" style="border-top:1px solid #1a3040;overflow-y:auto;"></div>
+    <div id="wp-3day" style="border-top:2px solid #0a2530;overflow-y:auto;max-height:160px;"></div>
   </div>
 
   <!-- ODOMETER -->
   <div class="odometer" id="odometer">
-    <div style="display:flex;align-items:baseline;gap:5px;">
-      <div class="odo-val" id="odo-val">0.0</div>
-      <div class="odo-unit">KM</div>
-      <div class="odo-reset" onclick="resetOdo()">↺</div>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;">
+      <div style="display:flex;align-items:baseline;gap:4px;">
+        <div class="odo-val" id="odo-val">0.0</div>
+        <div class="odo-unit">KM</div>
+        <div class="odo-reset" onclick="resetOdo()">↺</div>
+      </div>
+      <div class="odo-unit" style="letter-spacing:1.5px;">RECORRIDO</div>
     </div>
-    <div style="display:flex;align-items:baseline;gap:4px;margin-top:2px;">
-      <div class="odo-val" id="spd-val" style="font-size:18px;">0</div>
-      <div class="odo-unit">KM/H</div>
+    <div style="width:1px;background:#1a3040;align-self:stretch;margin:0 2px;"></div>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;">
+      <div style="display:flex;align-items:baseline;gap:4px;">
+        <div class="odo-val" id="spd-val">0</div>
+        <div class="odo-unit">KM/H</div>
+      </div>
+      <div class="odo-unit" style="letter-spacing:1.5px;">VELOCIDAD</div>
     </div>
   </div>
 
@@ -2669,6 +2680,15 @@ function loadObsAndStars(){
 }
 
 // ══ WEATHER & SUN ══
+function toggleDay(i){
+  const detail = document.getElementById('day-detail-'+i);
+  const arrow  = document.getElementById('day-arrow-'+i);
+  if(!detail) return;
+  const open = detail.style.display !== 'none';
+  detail.style.display = open ? 'none' : 'block';
+  if(arrow) arrow.textContent = open ? '›' : '⌄';
+}
+
 
 const WX = { sunRise:null, sunSet:null, hourly:[], daily:[] };
 
@@ -2775,17 +2795,37 @@ function renderHours() {
     const dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
     d3el.innerHTML = WX.daily.map((d,i) => {
       const name = i===0 ? 'HOY' : i===1 ? 'MAÑANA' : dayNames[d.date.getDay()].toUpperCase();
-      const cur = i===0;
-      const s = cur ? 'background:rgba(255,204,68,0.05);' : '';
-      return `<div style="display:grid;grid-template-columns:36px 1fr 1fr 1fr 1fr;padding:4px 8px;
-        align-items:center;border-bottom:1px solid rgba(26,48,64,0.5);${s}">
-        <span style="color:#4a8898;font-size:7px;font-weight:bold;">${name}</span>
-        <span style="color:#ffffff;font-size:7.5px;text-align:center;">${d.tmax}°</span>
-        <span style="color:#4a8898;font-size:7px;text-align:center;">${d.tmin}°</span>
-        <span style="color:#00a0c8;font-size:7px;text-align:center;">${d.rain}</span>
-        <span style="color:#c8dce8;font-size:7px;text-align:center;">${d.wind}</span>
+      const dateStr = d.date.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
+      return `<div style="border-bottom:1px solid rgba(26,48,64,0.4);">
+        <div onclick="toggleDay(${i})" style="display:flex;justify-content:space-between;align-items:center;
+          padding:7px 10px;cursor:pointer;">
+          <div>
+            <span style="color:#ffcc44;font-size:9px;font-weight:bold;letter-spacing:1px;">${name}</span>
+            <span style="color:#4a8898;font-size:7.5px;margin-left:6px;">${dateStr}</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="color:#ffffff;font-size:11px;font-weight:bold;">${d.tmax}°</span>
+            <span style="color:#4a8898;font-size:10px;">${d.tmin}°</span>
+            <span style="color:#4a8898;font-size:10px;" id="day-arrow-${i}">›</span>
+          </div>
+        </div>
+        <div id="day-detail-${i}" style="display:${i===0?'block':'none'};padding:0 10px 8px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div style="background:rgba(0,229,255,0.05);border:1px solid #0a2530;border-radius:6px;padding:6px 8px;">
+              <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">LLUVIA</div>
+              <div style="color:#00a0c8;font-size:14px;font-weight:bold;margin-top:2px;">${d.rain}<span style="font-size:9px;color:#4a8898;"> mm</span></div>
+            </div>
+            <div style="background:rgba(0,229,255,0.05);border:1px solid #0a2530;border-radius:6px;padding:6px 8px;">
+              <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">VIENTO</div>
+              <div style="color:#c8dce8;font-size:14px;font-weight:bold;margin-top:2px;">${d.wind}<span style="font-size:9px;color:#4a8898;"> km/h</span></div>
+            </div>
+          </div>
+        </div>
       </div>`;
     }).join('');
+    // Auto-expand today
+    const arr0 = document.getElementById('day-arrow-0');
+    if(arr0) arr0.textContent = '⌄';
   }
   el.innerHTML = WX.hourly.map(h => {
     const cur = h.hour === nowH;
