@@ -378,7 +378,7 @@ html,body { height:100%; background:var(--bg-screen); color:var(--color-accent);
 }
 .tramo-toggle:active { color:var(--color-accent); }
 .tramo-list-panel {
-  width:130px; height:100%;
+  width:130px; max-height:calc(100% - 240px); height:auto;
   background:var(--bg-bottombar);
   border-left:1px solid var(--border-main);
   overflow-y:auto; pointer-events:all;
@@ -597,7 +597,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
     </div>
   </div>
 
-  <div id="weather-panel" style="display:none;position:fixed;top:50px;right:0;width:175px;bottom:70px;
+  <div id="weather-panel" style="display:none;position:fixed;top:50px;right:0;width:175px;bottom:290px;
     background:rgba(4,10,18,0.97);border-left:1px solid #1a3040;z-index:53;
     flex-direction:column;overflow:hidden;">
     <div style="padding:7px 10px 5px;border-bottom:1px solid #0a2530;display:flex;align-items:center;justify-content:space-between;">
@@ -621,14 +621,27 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
       <span style="color:#4a8898;font-size:6.5px;text-align:center;">mm</span>
       <span style="color:#4a8898;font-size:6.5px;text-align:center;">km/h</span>
     </div>
+    <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:2px 8px;border-bottom:1px solid #1a3040;border-top:1px solid #1a3040;">
+      <span style="color:#4a8898;font-size:6px;letter-spacing:1px;">HOY</span>
+      <span style="color:#4a8898;font-size:6px;text-align:center;"></span>
+      <span style="color:#4a8898;font-size:6px;text-align:center;"></span>
+      <span style="color:#4a8898;font-size:6px;text-align:center;"></span>
+    </div>
     <div id="wp-hours" style="flex:1;overflow-y:auto;"></div>
+    <div id="wp-3day" style="border-top:1px solid #1a3040;overflow-y:auto;"></div>
   </div>
 
   <!-- ODOMETER -->
   <div class="odometer" id="odometer">
-    <div class="odo-val" id="odo-val">0.0</div>
-    <div class="odo-unit">KM</div>
-    <div class="odo-reset" onclick="resetOdo()">↺ RESET</div>
+    <div style="display:flex;align-items:baseline;gap:5px;">
+      <div class="odo-val" id="odo-val">0.0</div>
+      <div class="odo-unit">KM</div>
+      <div class="odo-reset" onclick="resetOdo()">↺</div>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:4px;margin-top:2px;">
+      <div class="odo-val" id="spd-val" style="font-size:18px;">0</div>
+      <div class="odo-unit">KM/H</div>
+    </div>
   </div>
 
   <!-- ROSETA -->
@@ -1333,14 +1346,14 @@ function draw() {
         // Place label above the dot
         const lx = p.x, ly = p.y - r - 10;
         ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.85 : 0.45);
-        ctx.fillStyle = 'rgba(6,13,20,0.85)';
+        ctx.fillStyle = document.body.classList.contains('light')?'rgba(255,255,255,0.92)':'rgba(6,13,20,0.85)';
         ctx.fillRect(lx-tw/2, ly-7, tw, 13);
         if(p.isNow){
           ctx.strokeStyle = document.body.classList.contains('light')?'rgba(180,80,0,0.6)':'rgba(255,204,68,0.6)';
           ctx.lineWidth = 0.8;
           ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
         }
-        ctx.fillStyle = document.body.classList.contains('light')?'#c05000':'#ffcc44';
+        ctx.fillStyle = document.body.classList.contains('light')?'#7a3500':'#ffcc44';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(label, lx, ly);
@@ -1613,6 +1626,10 @@ function startGPS() {
     const newLat = pos.coords.latitude;
     const newLng = pos.coords.longitude;
     const speed  = pos.coords.speed || 0; // m/s
+    // Update speedometer
+    const spdKmh = Math.round(speed * 3.6);
+    const spdEl = document.getElementById('spd-val');
+    if(spdEl) spdEl.textContent = spdKmh;
 
     // Calculate bearing if moving fast enough (>1.4 m/s = ~5 km/h)
     if (ST.gpsPos && speed > 1.4) {
@@ -2653,7 +2670,7 @@ function loadObsAndStars(){
 
 // ══ WEATHER & SUN ══
 
-const WX = { sunRise:null, sunSet:null, hourly:[] };
+const WX = { sunRise:null, sunSet:null, hourly:[], daily:[] };
 
 function getDayOfYear() {
   const now = new Date();
@@ -2719,15 +2736,26 @@ async function refreshWeather() {
   if(sEl) sEl.textContent = fmt(WX.sunSet);
   if(!navigator.onLine){ renderHours(); return; }
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}&hourly=temperature_2m,precipitation,windspeed_10m&forecast_days=1&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}&hourly=temperature_2m,precipitation,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&forecast_days=3&timezone=auto`;
     const res  = await fetch(url);
     const data = await res.json();
     WX.hourly  = data.hourly.time.map((t,i) => ({
       hour: new Date(t).getHours(),
+      day: new Date(t).getDate(),
       temp: Math.round(data.hourly.temperature_2m[i]),
       rain: data.hourly.precipitation[i],
       wind: Math.round(data.hourly.windspeed_10m[i])
-    })).filter(h => h.hour >= 5 && h.hour <= 17);
+    })).filter(h => {
+      const today = new Date().getDate();
+      return h.day === today && h.hour >= 5 && h.hour <= 17;
+    });
+    WX.daily = data.daily ? data.daily.time.map((t,i) => ({
+      date: new Date(t),
+      tmax: Math.round(data.daily.temperature_2m_max[i]),
+      tmin: Math.round(data.daily.temperature_2m_min[i]),
+      rain: data.daily.precipitation_sum[i],
+      wind: Math.round(data.daily.windspeed_10m_max[i])
+    })) : [];
   } catch(e) { console.warn('Weather error:', e); }
   renderHours();
 }
@@ -2739,6 +2767,25 @@ function renderHours() {
   if(!WX.hourly.length){
     el.innerHTML = '<div style="padding:12px;color:#4a8898;font-size:8px;text-align:center;">Sin conexión</div>';
     return;
+  }
+  // Render 3-day summary
+  const d3el = document.getElementById('wp-3day');
+  if(d3el && WX.daily.length > 0){
+    const days = ['Hoy','Mañana','Pasado'];
+    const dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    d3el.innerHTML = WX.daily.map((d,i) => {
+      const name = i===0 ? 'HOY' : i===1 ? 'MAÑANA' : dayNames[d.date.getDay()].toUpperCase();
+      const cur = i===0;
+      const s = cur ? 'background:rgba(255,204,68,0.05);' : '';
+      return `<div style="display:grid;grid-template-columns:36px 1fr 1fr 1fr 1fr;padding:4px 8px;
+        align-items:center;border-bottom:1px solid rgba(26,48,64,0.5);${s}">
+        <span style="color:#4a8898;font-size:7px;font-weight:bold;">${name}</span>
+        <span style="color:#ffffff;font-size:7.5px;text-align:center;">${d.tmax}°</span>
+        <span style="color:#4a8898;font-size:7px;text-align:center;">${d.tmin}°</span>
+        <span style="color:#00a0c8;font-size:7px;text-align:center;">${d.rain}</span>
+        <span style="color:#c8dce8;font-size:7px;text-align:center;">${d.wind}</span>
+      </div>`;
+    }).join('');
   }
   el.innerHTML = WX.hourly.map(h => {
     const cur = h.hour === nowH;
