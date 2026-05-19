@@ -1323,7 +1323,7 @@ function draw() {
         if(p.isNow){
           ctx.beginPath();
           ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
-          ctx.fillStyle = document.body.classList.contains('light')?'rgba(180,80,0,':'rgba(255,204,68,'0.15)';
+          ctx.fillStyle = document.body.classList.contains('light')?'rgba(180,80,0,0.15)':'rgba(255,204,68,0.15)';
           ctx.fill();
         }
         // Label — offset perpendicular to arc
@@ -1336,7 +1336,7 @@ function draw() {
         ctx.fillStyle = 'rgba(6,13,20,0.85)';
         ctx.fillRect(lx-tw/2, ly-7, tw, 13);
         if(p.isNow){
-          ctx.strokeStyle = document.body.classList.contains('light')?'rgba(180,80,0,':'rgba(255,204,68,'0.6)';
+          ctx.strokeStyle = document.body.classList.contains('light')?'rgba(180,80,0,0.6)':'rgba(255,204,68,0.6)';
           ctx.lineWidth = 0.8;
           ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
         }
@@ -1771,9 +1771,6 @@ function openSheet(pt) {
     prev.src=''; wrap.style.display='none'; opts.style.display='grid';
   }
 
-  resetAudio();
-  if(pt.audio) showPlayer(pt.audio,pt.audioDur);
-
   refreshTypes(pt.type);
   const db=document.getElementById('btn-del');
   ST.isEdit ? db.classList.add('show') : db.classList.remove('show');
@@ -1784,12 +1781,9 @@ function openSheet(pt) {
 }
 
 function closeSheet() {
-  if(REC.isRec) stopRec();
-  document.getElementById('audio-el').pause();
-  document.getElementById('audio-el').src='';
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('sheet').classList.remove('open');
-  ST.curPt=null; shType=null; REC.pendingB64=null;
+  ST.curPt=null; shType=null;
 }
 
 function refreshTypes(t) {
