@@ -68,10 +68,9 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 }
 .roseta:active { opacity:0.7; }
 .odometer {
-  position:fixed; bottom:220px; left:12px; z-index:49;
-  display:flex; flex-direction:row; align-items:baseline; gap:5px;
-  pointer-events:all; background:rgba(6,13,20,0.7); padding:4px 8px; border-radius:8px;
-  border:1px solid #1a3040;
+  position:fixed; bottom:72px; left:12px; z-index:49;
+  display:none; flex-direction:column; align-items:flex-start;
+  pointer-events:all;
 }
 .odo-val {
   font-family:monospace; font-size:22px; font-weight:700;
@@ -81,8 +80,9 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 }
 .odo-unit { font-family:monospace; font-size:8px; color:#4a8898; letter-spacing:2px; margin-top:2px; }
 .odo-reset {
-  font-family:monospace; font-size:13px; color:#1a8a9a; letter-spacing:1px;
-  cursor:pointer; padding:2px 4px;
+  font-family:monospace; font-size:7px; color:#1a5a6a; letter-spacing:1px;
+  cursor:pointer; margin-top:2px; text-transform:uppercase;
+  text-decoration:underline;
 }
 .odo-reset:active { color:#00e5ff; }
 .load-logo { width:90px; display:block; margin:0 auto; mix-blend-mode:screen; opacity:0.75; }
@@ -312,7 +312,7 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 }
 
 .tramo-panel {
-  position:fixed; right:0; top:48px; bottom:220px; z-index:51;
+  position:fixed; right:0; top:48px; bottom:78px; z-index:51;
   display:flex; flex-direction:row; align-items:flex-start;
   pointer-events:none;
 }
@@ -516,10 +516,6 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
         <span style="color:#4a8898;font-size:6.5px;letter-spacing:1px;">SE PONE</span>
       </div>
     </div>
-    <div style="padding:4px 10px;border-bottom:1px solid #0a2530;display:flex;align-items:center;gap:4px;">
-      <span style="color:#4a8898;font-size:7px;">📍</span>
-      <span id="wp-location" style="color:#4a8898;font-size:7px;letter-spacing:0.5px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</span>
-    </div>
     <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:2px 8px;border-bottom:1px solid #1a3040;">
       <span style="color:#4a8898;font-size:6.5px;"></span>
       <span style="color:#4a8898;font-size:6.5px;text-align:center;">°C</span>
@@ -531,11 +527,9 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 
   <!-- ODOMETER -->
   <div class="odometer" id="odometer">
-    <div style="display:flex;align-items:baseline;gap:6px;">
-      <div class="odo-val" id="odo-val">0.0</div>
-      <div class="odo-unit">KM</div>
-      <div class="odo-reset" onclick="resetOdo()">↺</div>
-    </div>
+    <div class="odo-val" id="odo-val">0.0</div>
+    <div class="odo-unit">KM</div>
+    <div class="odo-reset" onclick="resetOdo()">↺ RESET</div>
   </div>
 
   <!-- ROSETA -->
@@ -644,70 +638,54 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
   </div>
   <label class="fl">TIPO DE OBSTÁCULO</label>
   <div class="obs-grid" id="obs-grid">
-    <div class="obs-btn" data-obs="curva-der" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 18 Q6 4 22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M19 1.5 L22 4 L19 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg><span>CURVA<br>DERECHA</span></div>
-    <div class="obs-btn" data-obs="curva-izq" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 18 Q24 4 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M11 1.5 L8 4 L11 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg><span>CURVA<br>IZQUIERDA</span></div>
-    <div class="obs-btn" data-obs="lomo" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 18 L8 18 Q15 4 22 18 L28 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg><span>LOMO</span></div>
-    <div class="obs-btn" data-obs="vado" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 8 L8 8 Q15 20 22 8 L28 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M8 15 Q15 11 22 15" stroke="#00a0c8" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
-        <path d="M10 19 Q15 16 20 19" stroke="#00a0c8" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
-      </svg><span>VADO</span></div>
-    <div class="obs-btn" data-obs="u-der" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9 3 L9 14 Q9 20 15 20 Q21 20 21 14 L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M17 3 L17 14 Q17 17 15 17 Q13 17 13 14 L13 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
-        <path d="M18 0.5 L21 3 L24 0.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg><span>U<br>DERECHA</span></div>
-    <div class="obs-btn" data-obs="u-izq" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M21 3 L21 14 Q21 20 15 20 Q9 20 9 14 L9 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M13 3 L13 14 Q13 17 15 17 Q17 17 17 14 L17 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
-        <path d="M12 0.5 L9 3 L6 0.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg><span>U<br>IZQUIERDA</span></div>
-    <div class="obs-btn" data-obs="ese" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 20 Q6 12 15 11 Q24 10 24 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M21 2 L24 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M6 20 L9 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-      </svg><span>ESE (S)</span></div>
-    <div class="obs-btn" data-obs="paisaje" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="3" y="3" width="24" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M3 15 L9 9 L14 13 L19 8 L27 15" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="22" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2"/>
-      </svg><span>PAISAJE</span></div>
-    <div class="obs-btn" data-obs="panoramica" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 11 Q2 3 15 3 Q28 3 28 11 Q28 19 15 19 Q2 19 2 11Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-        <path d="M6 11 Q6 6 15 6 Q24 6 24 11" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" fill="none" opacity="0.5"/>
-        <circle cx="15" cy="11" r="2" fill="currentColor" opacity="0.6"/>
-      </svg><span>PANORÁMICA</span></div>
-    <div class="obs-btn" data-obs="parking" onclick="toggleObs(this)">
-      <svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="4" y="2" width="22" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M11 6 L11 16 M11 6 L16 6 Q20 6 20 10 Q20 14 16 14 L11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg><span>PARKING</span></div>
+    <div class="obs-btn" data-obs="curva-der" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 18 Q6 4 22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 1.5 L22 4 L19 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CURVA<br>DER</span></div>
+    <div class="obs-btn" data-obs="curva-izq" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 18 Q24 4 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 1.5 L8 4 L11 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CURVA<br>IZQ</span></div>
+    <div class="obs-btn" data-obs="lomo" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 18 L8 18 Q15 4 22 18 L28 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>LOMO</span></div>
+    <div class="obs-btn" data-obs="vado" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8 L8 8 Q15 20 22 8 L28 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 15 Q15 11 22 15" stroke="#00a0c8" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/><path d="M10 19 Q15 16 20 19" stroke="#00a0c8" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg><span>VADO</span></div>
+    <div class="obs-btn" data-obs="u-der" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 3 L9 14 Q9 20 15 20 Q21 20 21 14 L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M17 3 L17 14 Q17 17 15 17 Q13 17 13 14 L13 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/><path d="M18 0.5 L21 3 L24 0.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>U DER</span></div>
+    <div class="obs-btn" data-obs="u-izq" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 3 L21 14 Q21 20 15 20 Q9 20 9 14 L9 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 3 L13 14 Q13 17 15 17 Q17 17 17 14 L17 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/><path d="M12 0.5 L9 3 L6 0.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>U IZQ</span></div>
+    <div class="obs-btn" data-obs="ese" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 20 Q6 12 15 11 Q24 10 24 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M21 2 L24 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6 20 L9 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>ESE</span></div>
+    <div class="obs-btn" data-obs="paisaje" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="24" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 15 L9 9 L14 13 L19 8 L27 15" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2"/></svg><span>PAISAJE</span></div>
+    <div class="obs-btn" data-obs="panoramica" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 11 Q2 3 15 3 Q28 3 28 11 Q28 19 15 19 Q2 19 2 11Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M6 11 Q6 6 15 6 Q24 6 24 11" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" fill="none" opacity="0.5"/><circle cx="15" cy="11" r="2" fill="currentColor" opacity="0.6"/></svg><span>PANORÁM.</span></div>
+    <div class="obs-btn" data-obs="parking" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="2" width="22" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 6 L11 16 M11 6 L16 6 Q20 6 20 10 Q20 14 16 14 L11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>PARKING</span></div>
   </div>
   <label class="fl">RELEVANCIA</label>
   <div class="stars-row" id="stars-row">
-    <div class="star-btn" data-star="1" onclick="setStar(1)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
-    <div class="star-btn" data-star="2" onclick="setStar(2)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
-    <div class="star-btn" data-star="3" onclick="setStar(3)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
-    <div class="star-btn" data-star="4" onclick="setStar(4)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
-    <div class="star-btn" data-star="5" onclick="setStar(5)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="1" onclick="setStar(1)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="2" onclick="setStar(2)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="3" onclick="setStar(3)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="4" onclick="setStar(4)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="5" onclick="setStar(5)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
   </div>
+  <label class="fl">Nota de voz</label>
+  <div class="rec-row">
+    <div class="rec-info">
+      <div class="rec-dot" id="rec-dot"></div>
+      <div><div class="rec-h" id="rec-h">LISTO</div><div class="rec-t" id="rec-t">0:00</div></div>
+    </div>
+    <button class="rec-btn" id="rec-btn" onclick="toggleRec()">
+      <svg id="rec-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+        <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+      <svg id="rec-stop" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+      </svg>
+    </button>
+  </div>
+  <div class="player-row" id="player-row">
+    <button class="play-btn" onclick="togglePlay()">
+      <svg id="play-i" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg id="pause-i" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+    </button>
+    <div class="play-info">
+      <div class="play-d" id="play-d">0:00</div>
+      <div class="play-bar"><div class="play-p" id="play-p"></div></div>
+    </div>
+    <button class="play-del" onclick="delAudio()">BORRAR</button>
+  </div>
+  <audio id="audio-el" style="display:none"></audio>
   <label class="fl">Notas</label>
   <textarea class="notes-ta" id="notes-ta" placeholder="Ángulo, acceso, luz, distancia..."></textarea>
   <div class="sh-actions">
@@ -761,11 +739,11 @@ html,body { height:100%; background:#000; color:#00e5ff; font-family:sans-serif;
 
 <script>
 // ══ STATE ══
-const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false, roads:[], lastBearing:0, odoKm:0, odoPrev:null, compass:false };
+const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false, roads:[], lastBearing:0, odoKm:0, odoPrev:null };
 const STORE = 'tapir5';
 
 // ══ MAP ══
-const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{}, following:true, navMode:false };
+const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{}, following:true, navMode:false, compass:false };
 
 // ══ STORAGE — IndexedDB for photos, localStorage for metadata ══
 const DB_NAME = 'tapir_db', DB_VER = 4, DB_STORE = 'photos', ROADS_STORE = 'roads', META_STORE = 'meta';
@@ -1069,7 +1047,6 @@ function goHome() {
   persist(); // ensure latest state is saved before leaving
   document.getElementById('screen-map').style.display='none';
   document.getElementById('screen-load').style.display='flex';
-  document.getElementById('odometer').style.display='none';
   // Update load screen to reflect current session
   const status = ST.kmzName
     ? ST.kmzName + ' — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':'') + ' guardados'
@@ -1084,7 +1061,6 @@ function goHome() {
 function startMap() {
   document.getElementById('screen-load').style.display='none';
   document.getElementById('screen-map').style.display='block';
-  document.getElementById('odometer').style.display='flex';
   M.canvas = document.getElementById('map-canvas');
   M.ctx = M.canvas.getContext('2d');
   resizeCanvas();
@@ -1151,122 +1127,126 @@ function draw() {
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
 
-  // Sun arc — amanecer to atardecer, hourly marks
+  // Sun arc — single polyline, one point per hour, correct azimuth (southern hemisphere)
   if(WX.sunRise && WX.sunSet){
-    const now     = new Date();
-    const riseMs  = WX.sunRise.getTime();
-    const setMs   = WX.sunSet.getTime();
-    const nowMs   = now.getTime();
-    const dayLen  = setMs - riseMs;
-    const latR    = M.lat * Math.PI/180;
-    const dayN    = getDayOfYear();
-    const declR   = -23.45 * Math.cos((dayN+10)*2*Math.PI/365) * Math.PI/180;
-    const solarNoon = (riseMs + setMs) / 2;
-    const cx = M.W/2, cy = M.H/2;
-    const R  = Math.min(M.W, M.H) * 0.46; // max radius at noon
-
-    // For a given time, get screen position on the arc
-    // t=0 sunrise (edge), t=0.5 noon (top), t=1 sunset (edge)
-    // Use altitude to modulate radius: higher sun = closer to center top
-    const getPos = (timeMs) => {
-      const HA     = (timeMs - solarNoon) / (dayLen/2) * Math.PI;
+    const now    = new Date();
+    const riseMs = WX.sunRise.getTime();
+    const setMs  = WX.sunSet.getTime();
+    const nowMs  = now.getTime();
+    const dayLen = setMs - riseMs;
+    const latR   = M.lat * Math.PI/180;
+    const dayN   = getDayOfYear();
+    // Solar declination (more precise)
+    const declR  = -23.45 * Math.cos((dayN + 10) * 2*Math.PI/365) * Math.PI/180;
+    // For each hour 5..19, compute solar azimuth using hour angle
+    // Hour angle: HA = (solar_time - 12) * 15° in radians
+    // Solar time ≈ local time + equation of time (simplified)
+    // Azimuth (from north, CW): atan2(sin(HA), cos(HA)*sin(lat) - tan(decl)*cos(lat))
+    const sunPoints = [];
+    for(let h = 5; h <= 19; h++){
+      const hDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0);
+      const t = (hDate.getTime() - riseMs) / dayLen;
+      if(t < -0.1 || t > 1.1) continue;
+      // Hour angle in radians (negative in morning, positive in afternoon)
+      const solarNoon = (riseMs + setMs) / 2; // approximate solar noon
+      const HA = (hDate.getTime() - solarNoon) / (dayLen/2) * Math.PI;
+      // Solar altitude
       const sinAlt = Math.sin(latR)*Math.sin(declR) + Math.cos(latR)*Math.cos(declR)*Math.cos(HA);
-      const alt    = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
-      const cosAz  = (Math.sin(declR) - Math.sin(latR)*sinAlt) / (Math.cos(latR)*Math.cos(Math.max(0.001, alt)));
+      const alt = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
+      if(alt < -0.02) continue; // below horizon
+      // Solar azimuth (from north, clockwise) — correct for both hemispheres
+      const cosAz = (Math.sin(declR) - Math.sin(latR)*sinAlt) / (Math.cos(latR)*Math.cos(alt));
       let az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
-      if(Math.sin(HA) > 0) az = 2*Math.PI - az;
-      // Distance from center: full R at horizon, shrinks as altitude increases
-      // At noon alt is max, distance is smallest
-      const dist = R * Math.cos(Math.max(0, alt));
-      const screenAz = az + M.rot;
-      return {
-        x: cx + Math.sin(screenAz) * dist,
-        y: cy - Math.cos(screenAz) * dist,
-        alt, az
-      };
-    };
-
-    // Collect points: sunrise + hourly + sunset
-    const pts = [];
-    const riseH = WX.sunRise.getHours();
-    const setH  = WX.sunSet.getHours();
-
-    // Sunrise
-    const rPos = getPos(riseMs);
-    pts.push({ ...rPos, ms: riseMs, label: WX.sunRise.getHours().toString().padStart(2,'0')+':'+WX.sunRise.getMinutes().toString().padStart(2,'0'), isEnd: true, isPast: riseMs <= nowMs });
-
-    // Each whole hour
-    for(let h = riseH+1; h <= setH; h++){
-      const hMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0).getTime();
-      if(hMs <= riseMs || hMs >= setMs) continue;
-      const pos = getPos(hMs);
-      const isPast = hMs <= nowMs;
+      if(Math.sin(HA) > 0) az = 2*Math.PI - az; // afternoon: az > 180°
+      const isPast = hDate.getTime() <= nowMs;
       const isNow  = h === now.getHours();
-      pts.push({ ...pos, ms: hMs, label: h+'h', isEnd: false, isPast, isNow });
+      sunPoints.push({h, az, alt, isPast, isNow, t});
     }
-
-    // Sunset
-    const sPos = getPos(setMs);
-    pts.push({ ...sPos, ms: setMs, label: WX.sunSet.getHours().toString().padStart(2,'0')+':'+WX.sunSet.getMinutes().toString().padStart(2,'0'), isEnd: true, isPast: setMs <= nowMs });
-
-    if(pts.length < 2){ ctx.restore && ctx.restore(); }
+    if(sunPoints.length < 2){ }
     else {
+      // Draw the single arc line
+      // Each point projected from map center at distance proportional to cos(alt) = ground shadow length
+      const baseLen = Math.min(M.W, M.H) * 0.42;
+      const ptCoords = sunPoints.map(p => {
+        const screenAz = p.az + M.rot;
+        const groundDist = Math.cos(p.alt); // normalized 0..1
+        return {
+          x: M.W/2 + Math.sin(screenAz) * baseLen * groundDist,
+          y: M.H/2 - Math.cos(screenAz) * baseLen * groundDist,
+          ...p
+        };
+      });
       ctx.save();
-
-      // Glow
-      ctx.globalAlpha = 0.07; ctx.strokeStyle = '#ffcc44';
-      ctx.lineWidth = 12; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      // Glow pass
+      ctx.globalAlpha = 0.08;
+      ctx.strokeStyle = '#ffcc44';
+      ctx.lineWidth = 14;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
       ctx.beginPath();
-      pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+      ptCoords.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
       ctx.stroke();
-
-      // Past solid
-      const pastPts   = pts.filter(p => p.isPast);
-      const futurePts = pts.filter(p => !p.isPast);
+      // Main line — past solid, future dashed
+      const nowIdx = ptCoords.findIndex(p => p.isNow);
+      // Past segment
+      ctx.globalAlpha = 0.85;
+      ctx.strokeStyle = '#ffcc44';
+      ctx.lineWidth = 2.5;
       ctx.setLineDash([]);
-      ctx.globalAlpha = 0.9; ctx.strokeStyle = '#ffcc44'; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      const pastPts = ptCoords.filter(p => p.isPast);
+      const futurePts = ptCoords.filter(p => !p.isPast);
       if(pastPts.length > 1){
-        ctx.beginPath();
         pastPts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
         ctx.stroke();
       }
-      // Future dashed
-      if(futurePts.length > 0){
-        ctx.globalAlpha = 0.35; ctx.lineWidth = 1.5;
-        ctx.setLineDash([5,4]);
-        const bridge = pastPts.length ? [pastPts[pastPts.length-1], ...futurePts] : futurePts;
-        ctx.beginPath();
+      // Future segment dashed
+      ctx.globalAlpha = 0.4;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5,4]);
+      ctx.beginPath();
+      if(futurePts.length > 1){
+        // Connect from last past to first future
+        const bridge = pastPts.length ? [...pastPts.slice(-1), ...futurePts] : futurePts;
         bridge.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
         ctx.stroke();
-        ctx.setLineDash([]);
       }
-
-      // Dots and labels
-      pts.forEach(p => {
-        const r = p.isNow ? 6 : (p.isEnd ? 4 : 3);
-        ctx.globalAlpha = p.isNow ? 1 : (p.isPast ? 0.9 : (p.isEnd ? 0.65 : 0.4));
-        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-        ctx.fillStyle = p.isEnd ? '#ffaa44' : '#ffcc44'; ctx.fill();
+      ctx.setLineDash([]);
+      // Hour dots and labels
+      ptCoords.forEach(p => {
+        const r = p.isNow ? 5 : 3;
+        ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.8 : 0.45);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+        ctx.fillStyle = '#ffcc44';
+        ctx.fill();
         if(p.isNow){
-          ctx.beginPath(); ctx.arc(p.x, p.y, 11, 0, Math.PI*2);
-          ctx.fillStyle = 'rgba(255,204,68,0.15)'; ctx.fill();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba(255,204,68,0.15)';
+          ctx.fill();
         }
-        const lx = p.x, ly = p.y - r - 9;
-        ctx.globalAlpha = p.isNow ? 1 : (p.isPast ? 0.9 : (p.isEnd ? 0.7 : 0.4));
-        ctx.font = p.isNow ? 'bold 10px monospace' : (p.isEnd ? 'bold 9px monospace' : '8px monospace');
-        const tw = ctx.measureText(p.label).width + 6;
-        ctx.fillStyle = 'rgba(6,13,20,0.9)';
+        // Label — offset perpendicular to arc
+        const label = p.h + 'h';
+        ctx.font = p.isNow ? 'bold 10px monospace' : '8px monospace';
+        const tw = ctx.measureText(label).width + 6;
+        // Place label above the dot
+        const lx = p.x, ly = p.y - r - 10;
+        ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.85 : 0.45);
+        ctx.fillStyle = 'rgba(6,13,20,0.85)';
         ctx.fillRect(lx-tw/2, ly-7, tw, 13);
-        if(p.isNow || p.isEnd){
-          ctx.strokeStyle = 'rgba(255,170,68,0.6)'; ctx.lineWidth = 0.8;
+        if(p.isNow){
+          ctx.strokeStyle = 'rgba(255,204,68,0.6)';
+          ctx.lineWidth = 0.8;
           ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
         }
-        ctx.fillStyle = p.isEnd ? '#ffaa44' : '#ffcc44';
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(p.label, lx, ly);
+        ctx.fillStyle = '#ffcc44';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, lx, ly);
       });
-
-      ctx.globalAlpha = 1; ctx.restore();
+      ctx.globalAlpha = 1.0;
+      ctx.restore();
     }
   }
 
@@ -1565,60 +1545,38 @@ function resetOdo() {
 
 function centerGPS() {
   if (ST.gpsPos) {
-    M.lat = ST.gpsPos.lat;
-    M.lng = ST.gpsPos.lng;
-    M.following = true;
-    if (!M.navMode && !ST.compass) {
-      M.navMode = true;
-      if (ST.lastBearing) M.rot = -ST.lastBearing;
+    M.lat=ST.gpsPos.lat; M.lng=ST.gpsPos.lng; M.following=true;
+    if(!M.navMode && !M.compass){
+      M.navMode=true;
+      if(ST.lastBearing) M.rot=-ST.lastBearing;
       toast('Modo navegación');
-    } else if (M.navMode && !ST.compass) {
-      M.navMode = false;
-      ST.compass = true;
-      startCompass();
-      toast('Modo brújula');
+    } else if(M.navMode && !M.compass){
+      M.navMode=false; M.compass=true;
+      startCompass(); toast('Modo brújula');
     } else {
-      M.navMode = false;
-      ST.compass = false;
-      stopCompass();
-      M.rot = 0;
-      toast('Norte fijo');
+      M.navMode=false; M.compass=false;
+      stopCompass(); M.rot=0; toast('Norte fijo');
     }
-  } else {
-    toast('Sin señal GPS');
-  }
+  } else toast('Sin señal GPS');
 }
 
-function startCompass() {
-  if (!window._compassHandler) {
-    window._compassHandler = (e) => {
-      // webkitCompassHeading: degrees clockwise from magnetic north (iOS)
-      // alpha: degrees counter-clockwise from north (Android/standard)
-      let heading = null;
-      if (e.webkitCompassHeading != null) {
-        heading = e.webkitCompassHeading; // iOS: already correct
-      } else if (e.alpha != null) {
-        heading = (360 - e.alpha) % 360; // Android: invert
-      }
-      if (heading !== null && ST.compass) {
-        M.rot = -heading * Math.PI / 180; // negate: map rotates opposite to device
-      }
+function startCompass(){
+  if(!window._compassHandler){
+    window._compassHandler = e => {
+      const h = e.webkitCompassHeading!=null ? e.webkitCompassHeading : (e.alpha!=null ? (360-e.alpha)%360 : null);
+      if(h!==null && M.compass) M.rot = -h*Math.PI/180;
     };
     window.addEventListener('deviceorientationabsolute', window._compassHandler, true);
     window.addEventListener('deviceorientation', window._compassHandler, true);
-    // iOS 13+ requires permission
-    if (typeof DeviceOrientationEvent !== 'undefined' &&
-        typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission().catch(() => {});
-    }
+    if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function')
+      DeviceOrientationEvent.requestPermission().catch(()=>{});
   }
 }
-
-function stopCompass() {
-  if (window._compassHandler) {
+function stopCompass(){
+  if(window._compassHandler){
     window.removeEventListener('deviceorientationabsolute', window._compassHandler, true);
     window.removeEventListener('deviceorientation', window._compassHandler, true);
-    window._compassHandler = null;
+    window._compassHandler=null;
   }
 }
 
@@ -1674,7 +1632,7 @@ function markPoint() {
     tramo: tramo ? tramo.name : '',
     distFromStart: dist ? dist.fromStart : null,
     distToEnd:     dist ? dist.toEnd     : null,
-    type:null, photo:null, tags:[], stars:0,
+    type:null, photo:null, audio:null, audioDur:0, tags:[], stars:0,
     notes:'', ts:new Date().toISOString(),
   };
   ST.points.push(pt); ST.curPt=pt; ST.isEdit=false;
@@ -1713,6 +1671,9 @@ function openSheet(pt) {
     prev.src=''; wrap.style.display='none'; opts.style.display='grid';
   }
 
+  resetAudio();
+  if(pt.audio) showPlayer(pt.audio,pt.audioDur);
+
   refreshTypes(pt.type);
   const db=document.getElementById('btn-del');
   ST.isEdit ? db.classList.add('show') : db.classList.remove('show');
@@ -1723,9 +1684,12 @@ function openSheet(pt) {
 }
 
 function closeSheet() {
+  if(REC.isRec) stopRec();
+  document.getElementById('audio-el').pause();
+  document.getElementById('audio-el').src='';
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('sheet').classList.remove('open');
-  ST.curPt=null; shType=null;
+  ST.curPt=null; shType=null; REC.pendingB64=null;
 }
 
 function refreshTypes(t) {
@@ -1772,12 +1736,13 @@ async function clearPhoto() {
   }
 }
 
-async async function savePoint() {
+async function savePoint() {
   if(!ST.curPt) return;
   const pt=ST.curPt;
   pt.type=shType;
   pt.notes=document.getElementById('notes-ta').value.trim();
   if(pt._photo){ pt.photo=pt._photo; delete pt._photo; }
+  if(REC.pendingB64){ pt.audio=REC.pendingB64; pt.audioDur=REC.elapsed; }
   try {
     await persistPhoto(pt);
   } catch(e) {
@@ -1792,6 +1757,7 @@ async function delPoint() {
   if(!ST.curPt) return;
   if(!confirm('¿Eliminar punto #'+ST.curPt.number+'? Esta acción no se puede deshacer.')) return;
   await deletePhoto('photo_'+ST.curPt.id);
+  await deletePhoto('audio_'+ST.curPt.id);
   ST.points=ST.points.filter(p=>p.id!==ST.curPt.id);
   persist(); closeSheet(); toast('Punto eliminado');
 }
@@ -2141,7 +2107,7 @@ async function genPDF(){
           ${pt.notes?`<div style="color:#a0b8c8;font-style:italic;">${pt.notes}</div>`:''}
           <div style="color:#336677;font-family:monospace;">${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)}</div>
           ${pt.stars ? `<div style="color:#ffcc44;font-size:10px;margin:2px 0;">${'★'.repeat(pt.stars)}${'☆'.repeat(5-pt.stars)}</div>` : ''}
-          ${pt.tags && pt.tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin:2px 0;">${pt.tags.map(t=>`<span style="background:rgba(0,229,255,0.08);border:1px solid #1a3a48;border-radius:3px;padding:1px 4px;font-size:7px;color:#00e5ff;">${{'curva-der':'↱D','curva-izq':'↰I','lomo':'⌒Lomo','vado':'≋Vado','u-der':'⟳UD','u-izq':'⟲UI','ese':'S','paisaje':'Paisaje','panoramica':'Panorámica','parking':'P'}[t]||t}</span>`).join('')}</div>` : ''}
+          ${pt.tags&&pt.tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin:2px 0;">${pt.tags.map(t=>`<span style="background:rgba(0,229,255,0.08);border:1px solid #1a3a48;border-radius:3px;padding:1px 4px;font-size:7px;color:#00e5ff;">${{'curva-der':'↱D','curva-izq':'↰I','lomo':'Lomo','vado':'Vado','u-der':'U›','u-izq':'‹U','ese':'S','paisaje':'Paisaje','panoramica':'Panor.','parking':'P'}[t]||t}</span>`).join('')}</div>` : ''}
           <a href="geo:${pt.lat.toFixed(6)},${pt.lng.toFixed(6)}" style="color:#00e5ff;font-size:8px;">📍 Maps.me</a>
         </div>
       </div>`;
@@ -2435,7 +2401,6 @@ function toggleTramoPanel() {
 
 function toggleObs(btn){
   btn.classList.toggle('sel');
-  // Update curPt.tags
   if(ST.curPt){
     const obs = btn.getAttribute('data-obs');
     if(!ST.curPt.tags) ST.curPt.tags = [];
@@ -2446,7 +2411,7 @@ function toggleObs(btn){
 }
 
 function setStar(n){
-  ST.curPt && (ST.curPt.stars = n);
+  if(ST.curPt) ST.curPt.stars = n;
   document.querySelectorAll('.star-btn').forEach(b => {
     b.classList.toggle('lit', parseInt(b.getAttribute('data-star')) <= n);
   });
@@ -2457,12 +2422,12 @@ function loadObsAndStars(){
     document.querySelectorAll('.obs-btn').forEach(b => b.classList.remove('sel'));
     document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('lit'));
     if(!ST.curPt) return;
-    (ST.curPt.tags || []).forEach(tag => {
+    (ST.curPt.tags||[]).forEach(tag => {
       const btn = document.querySelector('.obs-btn[data-obs="'+tag+'"]');
       if(btn) btn.classList.add('sel');
     });
     if(ST.curPt.stars) setStar(ST.curPt.stars);
-  } catch(e) { console.warn('loadObsAndStars error:', e); }
+  } catch(e) { console.warn('loadObsAndStars:', e); }
 }
 
 // ══ WEATHER & SUN ══
@@ -2475,38 +2440,27 @@ function getDayOfYear() {
 }
 
 function calcSunTimes(lat, lng) {
-  // NOAA solar calculator algorithm — accurate to ~1 minute
-  const now = new Date();
-  const jd  = (now - new Date(1900, 0, 1)) / 86400000 + 2415020.5 + now.getHours()/24;
-  const t   = (jd - 2451545.0) / 36525.0;
-  const L0  = (280.46646 + t*(36000.76983 + t*0.0003032)) % 360;
-  const M   = (357.52911 + t*(35999.05029 - t*0.0001537)) * Math.PI/180;
-  const C   = (1.914602 - t*(0.004817 + 0.000014*t))*Math.sin(M)
-             + (0.019993 - 0.000101*t)*Math.sin(2*M)
-             + 0.000289*Math.sin(3*M);
-  const sunLon = (L0 + C) * Math.PI/180;
-  const omega  = (125.04 - 1934.136*t) * Math.PI/180;
-  const appLon = sunLon - (0.00569 + 0.00478*Math.sin(omega)) * Math.PI/180;
-  const eps    = (23.439291 - t*0.013004) * Math.PI/180;
-  const decl   = Math.asin(Math.sin(eps)*Math.sin(appLon));
-  const y      = Math.tan(eps/2)**2;
-  const L0r    = L0*Math.PI/180;
-  const eot    = (y*Math.sin(2*L0r) - 2*0.016708634*Math.sin(M)
-                 + 4*0.016708634*y*Math.sin(M)*Math.cos(2*L0r)
-                 - 0.5*y*y*Math.sin(4*L0r)
-                 - 1.25*0.016708634**2*Math.sin(2*M)) * 4*180/Math.PI;
-  const latR   = lat*Math.PI/180;
-  const cosHA  = (Math.cos(90.833*Math.PI/180) - Math.sin(latR)*Math.sin(decl))
-                 / (Math.cos(latR)*Math.cos(decl));
-  if(Math.abs(cosHA) > 1) return null;
-  const HA = Math.acos(cosHA)*180/Math.PI;
-  const solarNoonUTC = 720 - 4*lng - eot; // minutes from midnight UTC
-  const tzOffMin = -now.getTimezoneOffset(); // local offset in minutes (positive = east)
-  const riseMin  = solarNoonUTC - HA*4 + tzOffMin;
-  const setMin   = solarNoonUTC + HA*4 + tzOffMin;
-  const toD = m => new Date(now.getFullYear(), now.getMonth(), now.getDate(),
-                            Math.floor(m/60), Math.round(m%60));
-  return { rise: toD(riseMin), set: toD(setMin) };
+  const now  = new Date();
+  const JD   = now / 86400000 + 2440587.5;
+  const n    = JD - 2451545.0;
+  const L    = (280.46 + 0.9856474 * n) % 360;
+  const g    = ((357.528 + 0.9856003 * n) % 360) * Math.PI / 180;
+  const lam  = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2*g)) * Math.PI / 180;
+  const sinD = 0.39782 * Math.sin(lam);
+  const cosD = Math.cos(Math.asin(sinD));
+  const cosH = (Math.cos(90.833 * Math.PI/180) - sinD * Math.sin(lat * Math.PI/180))
+               / (cosD * Math.cos(lat * Math.PI/180));
+  if(cosH > 1 || cosH < -1) return null;
+  const H   = Math.acos(cosH) * 180 / Math.PI;
+  const RA  = (Math.atan2(-0.39782 * Math.sin(lam - Math.PI/180*282.634) * Math.cos(lam),
+               cosD) * 180 / Math.PI + 360) % 360 / 15;
+  const lngH = lng / 15;
+  const tzOff = now.getTimezoneOffset() / -60;
+  const rise = ((360 - H) / 15 - RA - lngH + 24) % 24 + tzOff;
+  const set  = (H / 15 - RA - lngH + 24) % 24 + tzOff;
+  const toD  = h => new Date(now.getFullYear(), now.getMonth(), now.getDate(),
+                             Math.floor(h), Math.round((h%1)*60));
+  return { rise: toD(rise), set: toD(set) };
 }
 
 function calcSunAzimuth(t, lat, dayN) {
@@ -2528,13 +2482,13 @@ function toggleWeather() {
   panel.style.display = open ? 'none' : 'flex';
   btn.style.color      = open ? '#ffcc44' : '#000';
   btn.style.background = open ? 'transparent' : '#ffcc44';
-  if(!open) refreshWeather(); // always refresh on open
+  if(!open && !WX.hourly.length) refreshWeather();
 }
 
 async function refreshWeather() {
   const lat = ST.gpsPos ? ST.gpsPos.lat : M.lat;
   const lng = ST.gpsPos ? ST.gpsPos.lng : M.lng;
-  if(!lat && lat !== 0){ toast('Sin posición GPS'); return; }
+  if(!lat){ toast('Sin posición GPS'); return; }
   const sun = calcSunTimes(lat, lng);
   if(sun){ WX.sunRise = sun.rise; WX.sunSet = sun.set; }
   const fmt = d => d ? d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0') : '--:--';
@@ -2542,20 +2496,6 @@ async function refreshWeather() {
   const sEl = document.getElementById('wp-set');
   if(rEl) rEl.textContent = fmt(WX.sunRise);
   if(sEl) sEl.textContent = fmt(WX.sunSet);
-  // Fetch location name via reverse geocoding
-  const locEl = document.getElementById('wp-location');
-  if(locEl && navigator.onLine){
-    try {
-      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat.toFixed(4)}&lon=${lng.toFixed(4)}&format=json&zoom=10`);
-      const d = await r.json();
-      const name = d.address ? (d.address.city || d.address.town || d.address.village || d.address.county || d.address.state || '') : '';
-      if(locEl) locEl.textContent = name || `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
-    } catch(e) {
-      if(locEl) locEl.textContent = `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
-    }
-  } else if(locEl) {
-    locEl.textContent = `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
-  }
   if(!navigator.onLine){ renderHours(); return; }
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}&hourly=temperature_2m,precipitation,windspeed_10m&forecast_days=1&timezone=auto`;
