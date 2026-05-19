@@ -37,30 +37,30 @@
   --roseta-bg: rgba(0,0,0,0.5);
 }
 body.light {
-  --bg-primary: #f5f5f0;
-  --bg-screen: #f5f5f0;
-  --bg-topbar: rgba(255,255,253,0.97);
-  --bg-bottombar: rgba(255,255,253,0.97);
-  --bg-panel: rgba(255,255,253,0.97);
+  --bg-primary: #ffffff;
+  --bg-screen: #ffffff;
+  --bg-topbar: rgba(255,255,255,0.97);
+  --bg-bottombar: rgba(255,255,255,0.97);
+  --bg-panel: rgba(255,255,255,0.97);
   --bg-sheet: #ffffff;
   --bg-card: #ffffff;
-  --bg-input: #f0f0ea;
-  --bg-btn: rgba(240,240,234,0.97);
+  --bg-input: #f2f4f8;
+  --bg-btn: rgba(242,244,248,0.97);
   --bg-overlay: rgba(0,0,0,0.45);
-  --bg-roads: rgba(240,240,234,0.97);
-  --bg-obs: #f0f0ea;
-  --bg-map: #f0ede8;
-  --border-main: #8a8a7a;
-  --border-card: #8a8a7a;
-  --color-accent: #0055aa;
-  --color-text: #0a0a08;
-  --color-muted: #333328;
-  --color-dim: #555548;
-  --color-sub: #0a0a08;
-  --color-handle: #8a8a7a;
-  --color-grid: rgba(0,0,0,0.07);
-  --color-route: #0044cc;
-  --roseta-bg: rgba(240,240,234,0.92);
+  --bg-roads: rgba(242,244,248,0.97);
+  --bg-obs: #f2f4f8;
+  --bg-map: #ffffff;
+  --border-main: #a0aab8;
+  --border-card: #a0aab8;
+  --color-accent: #003399;
+  --color-text: #0a0a0a;
+  --color-muted: #334466;
+  --color-dim: #556688;
+  --color-sub: #0a0a0a;
+  --color-handle: #a0aab8;
+  --color-grid: rgba(0,0,0,0.06);
+  --color-route: #003399;
+  --roseta-bg: rgba(242,244,248,0.95);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body { height:100%; background:var(--bg-screen); color:var(--color-accent); font-family:sans-serif; overflow:hidden; }
@@ -466,11 +466,11 @@ html,body { height:100%; background:var(--bg-screen); color:var(--color-accent);
 body.light .tramo-panel-name { color: #0a0a08 !important; }
 body.light .tramo-panel-pts { color: #555548 !important; }
 body.light .tramo-panel-hdr { color: #333328 !important; }
-body.light .topbar-title { color: #0044cc !important; }
-body.light .sh-num { color: #0044cc !important; }
-body.light .fl { color: #0044cc !important; }
-body.light .sh-tramo-tag { border-color: #0044cc88 !important; color: #0044cc !important; }
-body.light .dist-pill span { color: #0044cc !important; }
+body.light .topbar-title { color: #003399 !important; }
+body.light .sh-num { color: #003399 !important; }
+body.light .fl { color: #003399 !important; }
+body.light .sh-tramo-tag { border-color: #003399 !important; color: #003399 !important; }
+body.light .dist-pill span { color: #003399 !important; }
 body.light .dist-pill { color: #333328 !important; background: #e8e8e0 !important; border-color: #8a8a7a !important; }
 body.light .notes-ta { color: #0a0a08 !important; background: #f0f0ea !important; }
 body.light .notes-ta::placeholder { color: #888878 !important; }
@@ -1220,9 +1220,9 @@ function loop() { draw(); requestAnimationFrame(loop); }
 function draw() {
   const ctx=M.ctx;
   ctx.clearRect(0,0,M.W,M.H);
-  ctx.fillStyle=document.body.classList.contains('light')?'#f0ede8':'#060d14'; ctx.fillRect(0,0,M.W,M.H);
+  ctx.fillStyle=document.body.classList.contains('light')?'#ffffff':'#060d14'; ctx.fillRect(0,0,M.W,M.H);
   // Subtle white grid
-  ctx.strokeStyle=document.body.classList.contains('light')?'rgba(0,0,0,0.07)':'rgba(255,255,255,0.04)'; ctx.lineWidth=0.5;
+  ctx.strokeStyle=document.body.classList.contains('light')?'rgba(0,0,0,0.06)':'rgba(255,255,255,0.04)'; ctx.lineWidth=0.5;
   const gs=40;
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
@@ -1352,7 +1352,7 @@ function draw() {
 
   // OSM roads — grey, very faint
   if(ST.roads && ST.roads.length){
-    ctx.strokeStyle=document.body.classList.contains('light')?'rgba(0,0,0,0.18)':'rgba(255,255,255,0.22)'; ctx.lineWidth=1.2; ctx.globalAlpha=1;
+    ctx.strokeStyle=document.body.classList.contains('light')?'rgba(0,0,0,0.14)':'rgba(255,255,255,0.22)'; ctx.lineWidth=1.2; ctx.globalAlpha=1;
     ST.roads.forEach(road => {
       if(road.length < 2) return;
       ctx.beginPath();
@@ -1376,18 +1376,28 @@ function draw() {
       ctx.globalAlpha = isActive ? 1.0 : (activeTramoIdx >= 0 ? 0.4 : 1.0);
     }
     // Glow layer when active
-    if(isActive && isCron){
+    if(isCron){
+      const light = document.body.classList.contains('light');
+      // Outer glow
       ctx.beginPath();
       const p0g=proj(t.route[0][0],t.route[0][1]);
       ctx.moveTo(p0g.x,p0g.y);
       for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
-      ctx.strokeStyle='rgba(255,255,255,0.35)';
-      ctx.lineWidth=10;
+      ctx.strokeStyle = light ? 'rgba(0,120,255,0.18)' : 'rgba(0,229,255,0.18)';
+      ctx.lineWidth = isActive ? 16 : 10;
+      ctx.stroke();
+      // Mid glow
+      ctx.beginPath();
+      ctx.moveTo(p0g.x,p0g.y);
+      for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
+      ctx.strokeStyle = light ? 'rgba(0,80,200,0.28)' : 'rgba(0,229,255,0.35)';
+      ctx.lineWidth = isActive ? 8 : 5;
       ctx.stroke();
     }
     ctx.beginPath();
-    ctx.strokeStyle = isCron ? '#00e5ff' : 'rgba(255,255,255,0.5)';
-    ctx.lineWidth = isActive ? 5 : (isCron ? 2.5 : 1);
+    const light2 = document.body.classList.contains('light');
+    ctx.strokeStyle = isCron ? (light2 ? '#003399' : '#00e5ff') : (light2 ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.5)');
+    ctx.lineWidth = isActive ? 3 : (isCron ? 2 : 1);
     const p0=proj(t.route[0][0],t.route[0][1]);
     ctx.moveTo(p0.x,p0.y);
     for (let i=1;i<t.route.length;i++) {
@@ -1405,8 +1415,8 @@ function draw() {
     if(midPt){
       const {x:mx, y:my} = proj(midPt[0], midPt[1]);
       ctx.font = 'bold 11px monospace';
-      ctx.fillStyle = '#ffffff';
-      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = document.body.classList.contains('light') ? '#003399' : '#ffffff';
+      ctx.globalAlpha = 0.9;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       ctx.fillText(t.name, mx + 8, my - 8);
@@ -1452,7 +1462,8 @@ function drawFlag(lat, lng, isStart, ssLabel) {
 
   // Pole
   ctx.beginPath();
-  ctx.strokeStyle = '#ffffff';
+  const flagLight = document.body.classList.contains('light');
+  ctx.strokeStyle = flagLight ? '#111111' : '#ffffff';
   ctx.lineWidth = 1.5;
   ctx.moveTo(x, y);
   ctx.lineTo(x, y - poleH);
@@ -1461,12 +1472,12 @@ function drawFlag(lat, lng, isStart, ssLabel) {
   // Base dot
   ctx.beginPath();
   ctx.arc(x, y, 2.5, 0, Math.PI*2);
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = flagLight ? '#111111' : '#ffffff';
   ctx.fill();
 
   if (isStart) {
     // Solid white flag
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = flagLight ? '#ffffff' : '#ffffff';
     ctx.fillRect(x, y - poleH, flagW, flagH);
   } else {
     // Checkered flag — 3x3 grid of squares
@@ -1479,13 +1490,13 @@ function drawFlag(lat, lng, isStart, ssLabel) {
       }
     }
     // Border
-    ctx.strokeStyle = '#ffffff';
+    ctx.strokeStyle = flagLight ? '#333' : '#ffffff';
     ctx.lineWidth = 0.5;
     ctx.strokeRect(x, y - poleH, flagW, flagH);
   }
 
   // SS label next to flag
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = flagLight ? '#111111' : '#ffffff';
   ctx.font = 'bold 8px monospace';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
@@ -1494,7 +1505,8 @@ function drawFlag(lat, lng, isStart, ssLabel) {
 
 function drawMarker(pt) {
   const {x,y}=proj(pt.lat,pt.lng);
-  const col=pt.type==='photo'?'#00e5ff':pt.type==='video'?'#0080ff':pt.type==='both'?'#00ffaa':'#334466';
+  const lm=document.body.classList.contains('light');
+  const col=pt.type==='photo'?(lm?'#003399':'#00e5ff'):pt.type==='video'?(lm?'#0055cc':'#0080ff'):pt.type==='both'?(lm?'#006633':'#00ffaa'):(lm?'#334466':'#334466');
   const r=15;
   M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2); M.ctx.fillStyle=col+'20'; M.ctx.fill();
   M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2); M.ctx.strokeStyle=col; M.ctx.lineWidth=2; M.ctx.stroke();
@@ -2258,30 +2270,30 @@ async function genPDF(){
   --roseta-bg: rgba(0,0,0,0.5);
 }
 body.light {
-  --bg-primary: #f5f5f0;
-  --bg-screen: #f5f5f0;
-  --bg-topbar: rgba(255,255,253,0.97);
-  --bg-bottombar: rgba(255,255,253,0.97);
-  --bg-panel: rgba(255,255,253,0.97);
+  --bg-primary: #ffffff;
+  --bg-screen: #ffffff;
+  --bg-topbar: rgba(255,255,255,0.97);
+  --bg-bottombar: rgba(255,255,255,0.97);
+  --bg-panel: rgba(255,255,255,0.97);
   --bg-sheet: #ffffff;
   --bg-card: #ffffff;
-  --bg-input: #f0f0ea;
-  --bg-btn: rgba(240,240,234,0.97);
+  --bg-input: #f2f4f8;
+  --bg-btn: rgba(242,244,248,0.97);
   --bg-overlay: rgba(0,0,0,0.45);
-  --bg-roads: rgba(240,240,234,0.97);
-  --bg-obs: #f0f0ea;
-  --bg-map: #f0ede8;
-  --border-main: #8a8a7a;
-  --border-card: #8a8a7a;
-  --color-accent: #0055aa;
-  --color-text: #0a0a08;
-  --color-muted: #333328;
-  --color-dim: #555548;
-  --color-sub: #0a0a08;
-  --color-handle: #8a8a7a;
-  --color-grid: rgba(0,0,0,0.07);
-  --color-route: #0044cc;
-  --roseta-bg: rgba(240,240,234,0.92);
+  --bg-roads: rgba(242,244,248,0.97);
+  --bg-obs: #f2f4f8;
+  --bg-map: #ffffff;
+  --border-main: #a0aab8;
+  --border-card: #a0aab8;
+  --color-accent: #003399;
+  --color-text: #0a0a0a;
+  --color-muted: #334466;
+  --color-dim: #556688;
+  --color-sub: #0a0a0a;
+  --color-handle: #a0aab8;
+  --color-grid: rgba(0,0,0,0.06);
+  --color-route: #003399;
+  --roseta-bg: rgba(242,244,248,0.95);
 }
     *{box-sizing:border-box;margin:0;padding:0;}
     @page{size:A4 landscape;margin:6mm;}
@@ -2299,11 +2311,11 @@ body.light {
 body.light .tramo-panel-name { color: #0a0a08 !important; }
 body.light .tramo-panel-pts { color: #555548 !important; }
 body.light .tramo-panel-hdr { color: #333328 !important; }
-body.light .topbar-title { color: #0044cc !important; }
-body.light .sh-num { color: #0044cc !important; }
-body.light .fl { color: #0044cc !important; }
-body.light .sh-tramo-tag { border-color: #0044cc88 !important; color: #0044cc !important; }
-body.light .dist-pill span { color: #0044cc !important; }
+body.light .topbar-title { color: #003399 !important; }
+body.light .sh-num { color: #003399 !important; }
+body.light .fl { color: #003399 !important; }
+body.light .sh-tramo-tag { border-color: #003399 !important; color: #003399 !important; }
+body.light .dist-pill span { color: #003399 !important; }
 body.light .dist-pill { color: #333328 !important; background: #e8e8e0 !important; border-color: #8a8a7a !important; }
 body.light .notes-ta { color: #0a0a08 !important; background: #f0f0ea !important; }
 body.light .notes-ta::placeholder { color: #888878 !important; }
