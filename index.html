@@ -1005,6 +1005,8 @@ async function onKMZ(e) {
     const tramos = parseTramos(kmlText);
     if (!tramos.length) { setStatus('No se encontraron tramos con ruta'); return; }
     ST.tramos = tramos; ST.kmzName = file.name; ST.points = []; ST.nextN = 1;
+    ST.roads = []; // clear roads from previous event — will download for new location
+    await saveRoads([]);
     persist();
     setStatus(tramos.length + ' tramos cargados');
     setTimeout(startMap, 400);
@@ -2876,10 +2878,12 @@ async function loadOSMRoads() {
   // Bounding box of all tramos + 0.05° buffer (~5km)
   const allLats = ST.tramos.flatMap(t => t.route.map(p=>p[0]));
   const allLngs = ST.tramos.flatMap(t => t.route.map(p=>p[1]));
-  const S = (Math.min(...allLats) - 0.18).toFixed(5);
-  const N = (Math.max(...allLats) + 0.18).toFixed(5);
-  const W = (Math.min(...allLngs) - 0.18).toFixed(5);
-  const E = (Math.max(...allLngs) + 0.18).toFixed(5);
+  // Buffer around ALL tramos (not GPS position) — ~20km margin
+  const S = (Math.min(...allLats) - 0.20).toFixed(5);
+  const N = (Math.max(...allLats) + 0.20).toFixed(5);
+  const W = (Math.min(...allLngs) - 0.20).toFixed(5);
+  const E = (Math.max(...allLngs) + 0.20).toFixed(5);
+  toast('Descargando caminos del área de la carrera...');
 
   const query = `[out:json][timeout:25];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential)$"](${S},${W},${N},${E}););out geom;`;
   const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
