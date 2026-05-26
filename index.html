@@ -167,7 +167,7 @@ body.light .odo-val { text-shadow:none; }
 .gps-pill.on { border-color:#00ffaa55; color:#00ffaa; }
 
 #side-btns {
-  position:fixed; right:12px; bottom:92px; z-index:49;
+  position:fixed; right:12px; bottom:160px; z-index:49;
   display:flex; flex-direction:column; gap:8px;
 }
 .side-btn {
@@ -576,6 +576,13 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
     </div>
   </div>
   <div id="side-btns">
+    <button class="side-btn" onclick="centerRace()" title="Centrar carrera" style="font-size:8px;letter-spacing:0.5px;color:#00e5ff;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <line x1="12" y1="3" x2="12" y2="21"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+      </svg>
+    </button>
     <button class="side-btn" onclick="centerGPS()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="3"/>
@@ -1197,6 +1204,13 @@ function startMap() {
   window.addEventListener('resize', resizeCanvas);
   fitAll();
   buildTramoPanel();
+  // Calculate sun times immediately using map center (no need to open weather panel)
+  (function initSun(){
+    const lat = M.lat || -31.4;
+    const lng = M.lng || -64.2;
+    const sun = calcSunTimes(lat, lng);
+    if(sun){ WX.sunRise = sun.rise; WX.sunSet = sun.set; }
+  })();
   // Show odometer
   const odoDiv = document.getElementById('odometer');
   if(odoDiv) odoDiv.style.display = 'flex';
@@ -1626,6 +1640,15 @@ function handleTap(sx, sy) {
   }
 }
 
+function centerRace() {
+  if (!ST.tramos.length) { toast('Sin tramos cargados'); return; }
+  M.following = false;
+  M.navMode = false;
+  M.rot = 0;
+  fitAll();
+  toast('Vista general de la carrera');
+}
+
 function resetRot() { M.rot=0; document.getElementById('rot-btn').style.display='none'; }
 
 // ══ GPS ══
@@ -1672,6 +1695,11 @@ function startGPS() {
     }
     ST.odoPrev = {lat:newLat, lng:newLng};
     ST.gpsPos  = {lat:newLat, lng:newLng};
+    // Update sun times with actual GPS position (first fix or every 10 mins)
+    if(!WX._lastSunCalc || (Date.now() - WX._lastSunCalc) > 600000){
+      const sun = calcSunTimes(newLat, newLng);
+      if(sun){ WX.sunRise = sun.rise; WX.sunSet = sun.set; WX._lastSunCalc = Date.now(); }
+    }
     const odoEl = document.getElementById('odo-val');
     if(odoEl) odoEl.textContent = ST.odoKm.toFixed(1);
     const p = document.getElementById('gps-pill');
