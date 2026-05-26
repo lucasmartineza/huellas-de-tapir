@@ -739,6 +739,10 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
     </div>
   </div>
   <label class="fl">Foto de referencia</label>
+  <div id="photo-save-row" style="display:none;gap:6px;margin:0 0 8px;">
+    <button onclick="saveAndUsePhoto()" style="flex:1;background:#00e5ff;color:#000;border:none;border-radius:8px;padding:10px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">GUARDAR Y USAR</button>
+    <button onclick="justUsePhoto()" style="flex:1;background:transparent;color:#00e5ff;border:1px solid #00e5ff;border-radius:8px;padding:10px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">SOLO USAR</button>
+  </div>
   <div id="photo-opts-row" class="photo-opts">
     <div class="photo-opt-btn" onclick="document.getElementById('ci-camera').click()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1292,7 +1296,7 @@ function draw() {
     else {
       // Draw the single arc line
       // Each point projected from map center at distance proportional to cos(alt) = ground shadow length
-      const baseLen = Math.min(M.W, M.H) * 0.42;
+      const baseLen = Math.max(M.W, M.H) * 0.8; // always crosses full canvas
       const ptCoords = sunPoints.map(p => {
         const screenAz = p.az + M.rot;
         const groundDist = Math.cos(p.alt); // normalized 0..1
@@ -1354,11 +1358,11 @@ function draw() {
         }
         // Label — offset perpendicular to arc
         const label = p.h + 'h';
-        ctx.font = p.isNow ? 'bold 10px monospace' : '8px monospace';
+        ctx.font = p.isNow ? 'bold 11px monospace' : (p.isEnd ? 'bold 10px monospace' : '9px monospace');
         const tw = ctx.measureText(label).width + 6;
         // Place label above the dot
         const lx = p.x, ly = p.y - r - 10;
-        ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.85 : 0.45);
+        ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.95 : 0.65);
         ctx.fillStyle = document.body.classList.contains('light')?'rgba(255,255,255,0.92)':'rgba(6,13,20,0.85)';
         ctx.fillRect(lx-tw/2, ly-7, tw, 13);
         if(p.isNow){
@@ -1778,7 +1782,7 @@ function markPoint() {
     notes:'', ts:new Date().toISOString(),
   };
   ST.points.push(pt); ST.curPt=pt; ST.isEdit=false;
-  persist(); openSheet(pt);
+  persist(); checkAutoBackup(); openSheet(pt);
   toast('#'+pt.number+' marcado');
 }
 
@@ -1844,14 +1848,17 @@ function onPhoto(e) {
     const img=new Image();
     img.onload=()=>{
       const canvas=document.createElement('canvas');
-      canvas.width  = Math.round(img.naturalWidth  * 0.2);
-      canvas.height = Math.round(img.naturalHeight * 0.2);
+      canvas.width  = Math.round(img.naturalWidth  * 0.18);
+      canvas.height = Math.round(img.naturalHeight * 0.18);
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      const compressed = canvas.toDataURL('image/jpeg', 0.75);
+      const compressed = canvas.toDataURL('image/jpeg', 0.45);
       document.getElementById('photo-prev').src=compressed;
       document.getElementById('photo-preview-wrap').style.display='block';
       document.getElementById('photo-opts-row').style.display='none';
+      document.getElementById('photo-save-row').style.display='flex';
       if(ST.curPt) ST.curPt._photo=compressed;
+      // Store original for "Save to Camera Roll"
+      window._photoOriginal = original;
     };
     img.src=original;
   };
@@ -2682,6 +2689,81 @@ function loadObsAndStars(){
   } catch(e) { console.warn('loadObsAndStars:', e); }
 }
 
+// ══ PHOTO SAVE TO CAMERA ROLL ══
+
+function saveAndUsePhoto() {
+  // Save original to camera roll via share API
+  if (window._photoOriginal && navigator.share) {
+    fetch(window._photoOriginal)
+      .then(r => r.blob())
+      .then(blob => {
+        const file = new File([blob], 'tapir_photo.jpg', {type:'image/jpeg'});
+        navigator.share({ files: [file] }).catch(()=>{});
+      }).catch(()=>{});
+  } else if (window._photoOriginal) {
+    // Fallback: open image so user can long-press save
+    const a = document.createElement('a');
+    a.href = window._photoOriginal;
+    a.download = 'tapir_photo.jpg';
+    a.click();
+  }
+  document.getElementById('photo-save-row').style.display = 'none';
+}
+
+function justUsePhoto() {
+  document.getElementById('photo-save-row').style.display = 'none';
+  window._photoOriginal = null;
+}
+
+// ══ AUTO BACKUP (JSON checkpoint every 3 points) ══
+
+function autoBackup() {
+  try {
+    const backup = {
+      v: 2,
+      ts: new Date().toISOString(),
+      kmzName: ST.kmzName,
+      nextN: ST.nextN,
+      points: ST.points.map(pt => ({
+        id: pt.id, number: pt.number,
+        lat: pt.lat, lng: pt.lng,
+        tramo: pt.tramo,
+        distFromStart: pt.distFromStart,
+        distToEnd: pt.distToEnd,
+        type: pt.type,
+        photo: pt.photo || pt._photo || null,
+        tags: pt.tags || [],
+        stars: pt.stars || 0,
+        notes: pt.notes || '',
+        ts: pt.ts
+      }))
+    };
+    localStorage.setItem('tapir-backup', JSON.stringify(backup));
+    localStorage.setItem('tapir-backup-count', ST.points.length);
+  } catch(e) { console.warn('autoBackup error:', e); }
+}
+
+function checkAutoBackup() {
+  if (ST.points.length > 0 && ST.points.length % 3 === 0) {
+    autoBackup();
+  }
+}
+
+function restoreFromBackup() {
+  try {
+    const raw = localStorage.getItem('tapir-backup');
+    if (!raw) return false;
+    const backup = JSON.parse(raw);
+    if (!backup.points || !backup.points.length) return false;
+    ST.points = backup.points;
+    ST.nextN = backup.nextN || (Math.max(...backup.points.map(p=>p.number)) + 1);
+    ST.kmzName = backup.kmzName || ST.kmzName;
+    persist();
+    toast('Backup restaurado: ' + backup.points.length + ' puntos');
+    return true;
+  } catch(e) { console.warn('restoreFromBackup error:', e); return false; }
+}
+
 // ══ WEATHER & SUN ══
 function toggleDay(i){
   const detail = document.getElementById('day-detail-'+i);
@@ -2834,12 +2916,12 @@ function renderHours() {
     const cur = h.hour === nowH;
     const s = cur ? 'background:rgba(255,204,68,0.07);' : '';
     const tc = cur ? '#ffcc44' : '';
-    return `<div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:3px 8px;
+    return `<div style="display:grid;grid-template-columns:30px 1fr 1fr 1fr;padding:5px 8px;
               align-items:center;border-bottom:1px solid rgba(26,48,64,0.5);${s}">
-      <span style="color:${tc||'#4a8898'};font-size:7px;">${h.hour.toString().padStart(2,'0')}h</span>
-      <span style="color:${tc||'#fff'};font-size:8px;font-weight:bold;text-align:center;">${h.temp}°</span>
-      <span style="color:#00a0c8;font-size:7px;text-align:center;">${h.rain}</span>
-      <span style="color:#c8dce8;font-size:7px;text-align:center;">${h.wind}</span>
+      <span style="color:${tc||'#4a8898'};font-size:9px;">${h.hour.toString().padStart(2,'0')}h</span>
+      <span style="color:${tc||'#fff'};font-size:11px;font-weight:bold;text-align:center;">${h.temp}°</span>
+      <span style="color:#00a0c8;font-size:9px;text-align:center;">${h.rain}</span>
+      <span style="color:#c8dce8;font-size:9px;text-align:center;">${h.wind}</span>
     </div>`;
   }).join('');
 }
