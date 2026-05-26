@@ -1280,127 +1280,106 @@ function draw() {
   for(let x=0;x<M.W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,M.H);ctx.stroke();}
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
 
-  // Sun arc — single polyline, one point per hour, correct azimuth (southern hemisphere)
+  // Sun arc — lines crossing full canvas at solar azimuth direction
   if(WX.showSun && WX.sunRise && WX.sunSet){
     const now    = new Date();
     const riseMs = WX.sunRise.getTime();
     const setMs  = WX.sunSet.getTime();
     const nowMs  = now.getTime();
     const dayLen = setMs - riseMs;
-    const latR   = (M._tramoCenterLat || M.lat || -31.4) * Math.PI/180;
+    const latDeg = M._tramoCenterLat || M.lat || -31.4;
+    const latR   = latDeg * Math.PI/180;
     const dayN   = getDayOfYear();
-    // Solar declination (more precise)
     const declR  = -23.45 * Math.cos((dayN + 10) * 2*Math.PI/365) * Math.PI/180;
-    // For each hour 5..19, compute solar azimuth using hour angle
-    // Hour angle: HA = (solar_time - 12) * 15° in radians
-    // Solar time ≈ local time + equation of time (simplified)
-    // Azimuth (from north, CW): atan2(sin(HA), cos(HA)*sin(lat) - tan(decl)*cos(lat))
+    const cx = M.W/2, cy = M.H/2;
+    const diag = Math.sqrt(M.W*M.W + M.H*M.H);
+
+    // Collect valid hour positions
     const sunPoints = [];
-    for(let h = 5; h <= 19; h++){
-      const hDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0);
-      const t = (hDate.getTime() - riseMs) / dayLen;
-      if(t < -0.1 || t > 1.1) continue;
-      // Hour angle in radians (negative in morning, positive in afternoon)
-      const solarNoon = (riseMs + setMs) / 2; // approximate solar noon
-      const HA = (hDate.getTime() - solarNoon) / (dayLen/2) * Math.PI;
-      // Solar altitude
+    const riseH = WX.sunRise.getHours();
+    const setH  = WX.sunSet.getHours() + 1;
+    const solarNoon = (riseMs + setMs) / 2;
+
+    // Add sunrise point
+    const addPt = (hDate, isEnd) => {
+      const hMs = hDate.getTime();
+      const t = (hMs - riseMs) / dayLen;
+      if(t < -0.05 || t > 1.05) return;
+      const HA = (hMs - solarNoon) / (dayLen/2) * Math.PI;
       const sinAlt = Math.sin(latR)*Math.sin(declR) + Math.cos(latR)*Math.cos(declR)*Math.cos(HA);
       const alt = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
-      if(alt < -0.02) continue; // below horizon
-      // Solar azimuth (from north, clockwise) — correct for both hemispheres
-      const cosAz = (Math.sin(declR) - Math.sin(latR)*sinAlt) / (Math.cos(latR)*Math.cos(alt));
-      let az = Math.acos(Math.max(-1, Math.min(1, cosAz)));
-      if(Math.sin(HA) > 0) az = 2*Math.PI - az; // afternoon: az > 180°
-      const isPast = hDate.getTime() <= nowMs;
-      const isNow  = h === now.getHours();
-      sunPoints.push({h, az, alt, isPast, isNow, t});
+      if(alt < -0.05 && !isEnd) return;
+      let az = Math.atan2(-Math.cos(declR)*Math.sin(HA),
+                           Math.cos(latR)*Math.sin(declR) - Math.sin(latR)*Math.cos(declR)*Math.cos(HA));
+      az = (az + Math.PI + M.rot) % (2*Math.PI); // from north + map rotation
+      // Project: line through center at this azimuth, clipped to canvas
+      const dx = Math.sin(az), dy = -Math.cos(az);
+      // Find intersection with canvas edges
+      let tMin = -diag, tMax = diag;
+      if(Math.abs(dx) > 0.001){
+        const t1 = (0-cx)/dx, t2 = (M.W-cx)/dx;
+        tMin = Math.max(tMin, Math.min(t1,t2));
+        tMax = Math.min(tMax, Math.max(t1,t2));
+      }
+      if(Math.abs(dy) > 0.001){
+        const t1 = (0-cy)/dy, t2 = (M.H-cy)/dy;
+        tMin = Math.max(tMin, Math.min(t1,t2));
+        tMax = Math.min(tMax, Math.max(t1,t2));
+      }
+      const x1 = cx + dx*tMin, y1 = cy + dy*tMin;
+      const x2 = cx + dx*tMax, y2 = cy + dy*tMax;
+      const isPast = hMs <= nowMs;
+      const isNow  = !isEnd && hDate.getHours() === now.getHours();
+      sunPoints.push({h: hDate.getHours(), x1,y1,x2,y2, az,alt, isPast, isNow, isEnd, t});
+    };
+
+    // Sunrise
+    addPt(WX.sunRise, true);
+    // Each whole hour
+    for(let h = riseH; h <= setH; h++){
+      addPt(new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0), false);
     }
-    if(sunPoints.length < 2){ }
-    else {
-      // Draw the single arc line
-      // Each point projected from map center at distance proportional to cos(alt) = ground shadow length
-      const baseLen = Math.max(M.W, M.H) * 0.8; // always crosses full canvas
-      const ptCoords = sunPoints.map(p => {
-        const screenAz = p.az + M.rot;
-        const groundDist = Math.cos(p.alt); // normalized 0..1
-        return {
-          x: M.W/2 + Math.sin(screenAz) * baseLen * groundDist,
-          y: M.H/2 - Math.cos(screenAz) * baseLen * groundDist,
-          ...p
-        };
-      });
-      ctx.save();
-      // Glow pass
-      ctx.globalAlpha = 0.08;
-      ctx.strokeStyle = document.body.classList.contains('light')?'#c05000':'#ffcc44';
-      ctx.lineWidth = 14;
-      ctx.lineJoin = 'round';
-      ctx.lineCap = 'round';
+    // Sunset
+    addPt(WX.sunSet, true);
+
+    ctx.save();
+    sunPoints.forEach(p => {
+      const light = document.body.classList.contains('light');
+      const baseColor = light ? '#b85000' : '#ffcc44';
+      const alpha = p.isNow ? 0.95 : (p.isPast ? 0.65 : (p.isEnd ? 0.6 : 0.3));
+      ctx.globalAlpha = alpha;
       ctx.beginPath();
-      ptCoords.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+      ctx.setLineDash(p.isPast || p.isEnd ? [] : [6,4]);
+      ctx.strokeStyle = baseColor;
+      ctx.lineWidth = p.isNow ? 2.5 : (p.isEnd ? 1.5 : 1);
+      ctx.moveTo(p.x1, p.y1); ctx.lineTo(p.x2, p.y2);
       ctx.stroke();
-      // Main line — past solid, future dashed
-      const nowIdx = ptCoords.findIndex(p => p.isNow);
-      // Past segment
-      ctx.globalAlpha = 0.85;
-      ctx.strokeStyle = document.body.classList.contains('light')?'#c05000':'#ffcc44';
-      ctx.lineWidth = 2.5;
       ctx.setLineDash([]);
-      ctx.beginPath();
-      const pastPts = ptCoords.filter(p => p.isPast);
-      const futurePts = ptCoords.filter(p => !p.isPast);
-      if(pastPts.length > 1){
-        pastPts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
-        ctx.stroke();
+
+      // Label at 72% along line
+      const lx = p.x1 + (p.x2-p.x1)*0.72;
+      const ly = p.y1 + (p.y2-p.y1)*0.72;
+      // Only label if in canvas
+      if(lx < 0 || lx > M.W || ly < 0 || ly > M.H) return;
+      const label = p.isEnd ?
+        (p.t < 0.5 ? WX.sunRise.getHours().toString().padStart(2,'0')+':'+WX.sunRise.getMinutes().toString().padStart(2,'0') :
+                     WX.sunSet.getHours().toString().padStart(2,'0')+':'+WX.sunSet.getMinutes().toString().padStart(2,'0'))
+        : p.h+'h';
+      ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.85 : (p.isEnd ? 0.7 : 0.4));
+      ctx.font = p.isNow ? 'bold 11px monospace' : (p.isEnd ? 'bold 10px monospace' : '9px monospace');
+      const tw = ctx.measureText(label).width + 8;
+      ctx.fillStyle = light ? 'rgba(255,255,255,0.92)' : 'rgba(6,13,20,0.88)';
+      ctx.fillRect(lx-tw/2, ly-8, tw, 15);
+      if(p.isNow){
+        ctx.strokeStyle = baseColor; ctx.lineWidth=0.8;
+        ctx.strokeRect(lx-tw/2, ly-8, tw, 15);
       }
-      // Future segment dashed
-      ctx.globalAlpha = 0.4;
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([5,4]);
-      ctx.beginPath();
-      if(futurePts.length > 1){
-        // Connect from last past to first future
-        const bridge = pastPts.length ? [...pastPts.slice(-1), ...futurePts] : futurePts;
-        bridge.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
-        ctx.stroke();
-      }
-      ctx.setLineDash([]);
-      // Hour dots and labels
-      ptCoords.forEach(p => {
-        const r = p.isNow ? 5 : 3;
-        ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.8 : 0.45);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-        ctx.fillStyle = document.body.classList.contains('light')?'#c05000':'#ffcc44';
-        ctx.fill();
-        if(p.isNow){
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
-          ctx.fillStyle = document.body.classList.contains('light')?'rgba(180,80,0,0.15)':'rgba(255,204,68,0.15)';
-          ctx.fill();
-        }
-        // Label — offset perpendicular to arc
-        const label = p.h + 'h';
-        ctx.font = p.isNow ? 'bold 11px monospace' : (p.isEnd ? 'bold 10px monospace' : '9px monospace');
-        const tw = ctx.measureText(label).width + 6;
-        // Place label above the dot
-        const lx = p.x, ly = p.y - r - 10;
-        ctx.globalAlpha = p.isNow ? 1.0 : (p.isPast ? 0.95 : 0.65);
-        ctx.fillStyle = document.body.classList.contains('light')?'rgba(255,255,255,0.92)':'rgba(6,13,20,0.85)';
-        ctx.fillRect(lx-tw/2, ly-7, tw, 13);
-        if(p.isNow){
-          ctx.strokeStyle = document.body.classList.contains('light')?'rgba(180,80,0,0.6)':'rgba(255,204,68,0.6)';
-          ctx.lineWidth = 0.8;
-          ctx.strokeRect(lx-tw/2, ly-7, tw, 13);
-        }
-        ctx.fillStyle = document.body.classList.contains('light')?'#7a3500':'#ffcc44';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(label, lx, ly);
-      });
-      ctx.globalAlpha = 1.0;
-      ctx.restore();
-    }
+      ctx.fillStyle = p.isEnd ? (light?'#7a3500':baseColor) : (p.isNow ? baseColor : (light?'#7a3500':baseColor));
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, lx, ly);
+    });
+    ctx.globalAlpha = 1.0;
+    ctx.restore();
   }
 
   // OSM roads — grey, very faint
