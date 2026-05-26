@@ -1209,16 +1209,21 @@ function startMap() {
   buildTramoPanel();
   // Calculate sun times immediately using map center (no need to open weather panel)
   (function initSun(){
-    // Use tramo center for accurate sun calc
     const all = ST.tramos.flatMap(t=>t.route);
     const lats = all.map(p=>p[0]);
     const lngs = all.map(p=>p[1]);
     const lat = lats.length ? (Math.min(...lats)+Math.max(...lats))/2 : M.lat || -31.4;
     const lng = lngs.length ? (Math.min(...lngs)+Math.max(...lngs))/2 : M.lng || -64.2;
-    const sun = calcSunTimes(lat, lng);
-    if(sun){ WX.sunRise = sun.rise; WX.sunSet = sun.set; }
-    // Store tramo center for arc drawing
     M._tramoCenterLat = lat; M._tramoCenterLng = lng;
+    const sun = calcSunTimes(lat, lng);
+    if(sun){
+      WX.sunRise = sun.rise; WX.sunSet = sun.set;
+    } else {
+      // Fallback: use fixed times based on lat/season
+      const now = new Date();
+      WX.sunRise = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 0);
+      WX.sunSet  = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0);
+    }
   })();
   // Show odometer
   const odoDiv = document.getElementById('odometer');
@@ -1281,7 +1286,7 @@ function draw() {
   for(let y=0;y<M.H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(M.W,y);ctx.stroke();}
 
   // Sun arc — lines crossing full canvas at solar azimuth direction
-  if(WX.showSun && WX.sunRise && WX.sunSet){
+  if(!WX.hideSun && WX.sunRise && WX.sunSet){
     const now    = new Date();
     const riseMs = WX.sunRise.getTime();
     const setMs  = WX.sunSet.getTime();
@@ -2707,14 +2712,11 @@ function loadObsAndStars(){
 
 // ══ SUN ARC TOGGLE ══
 function toggleSunArc(){
-  WX.showSun = !WX.showSun;
+  WX.hideSun = !WX.hideSun;
   const btn = document.getElementById('sun-arc-btn');
-  if(btn) btn.style.opacity = WX.showSun ? '0.8' : '0.3';
-  if(WX.showSun && !WX.sunRise){
-    const lat = ST.gpsPos ? ST.gpsPos.lat : M.lat;
-    const lng = ST.gpsPos ? ST.gpsPos.lng : M.lng;
-    const sun = calcSunTimes(lat || -31.4, lng || -64.2);
-    if(sun){ WX.sunRise = sun.rise; WX.sunSet = sun.set; }
+  if(btn){
+    btn.style.opacity = WX.hideSun ? '0.3' : '1.0';
+    btn.textContent = WX.hideSun ? '○ POSICIÓN DEL SOL' : '☀ POSICIÓN DEL SOL';
   }
 }
 
@@ -2804,7 +2806,7 @@ function toggleDay(i){
 }
 
 
-const WX = { sunRise:null, sunSet:null, hourly:[], daily:[], showSun:true };
+const WX = { sunRise:null, sunSet:null, hourly:[], daily:[], hideSun:false };
 
 function getDayOfYear() {
   const now = new Date();
