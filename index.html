@@ -1359,10 +1359,13 @@ function draw() {
       ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
       ctx.setLineDash([]);
 
-      // Label at 70% along line
-      const lx = x1+(x2-x1)*0.72;
-      const ly = y1+(y2-y1)*0.72;
-      if(lx<2||lx>M.W-2||ly<2||ly>M.H-2) continue;
+      // Label — find first candidate position that's inside canvas
+      let lx, ly, labelOk = false;
+      for(const frac of [0.72, 0.5, 0.3, 0.85, 0.15]){
+        lx = x1+(x2-x1)*frac; ly = y1+(y2-y1)*frac;
+        if(lx>8 && lx<M.W-8 && ly>8 && ly<M.H-8){ labelOk=true; break; }
+      }
+      if(!labelOk) continue;
 
       const label = isRise ? '☀'+fmt(WX.sunRise) : isSet ? fmt(WX.sunSet)+'☀' : h+'h';
       ctx.globalAlpha = isNow ? 1.0 : (isPast ? 0.85 : (isRise||isSet ? 0.7 : 0.38));
@@ -2810,27 +2813,34 @@ function getDayOfYear() {
 }
 
 function calcSunTimes(lat, lng) {
-  const now  = new Date();
-  const JD   = now / 86400000 + 2440587.5;
-  const n    = JD - 2451545.0;
-  const L    = (280.46 + 0.9856474 * n) % 360;
-  const g    = ((357.528 + 0.9856003 * n) % 360) * Math.PI / 180;
-  const lam  = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2*g)) * Math.PI / 180;
-  const sinD = 0.39782 * Math.sin(lam);
-  const cosD = Math.cos(Math.asin(sinD));
-  const cosH = (Math.cos(90.833 * Math.PI/180) - sinD * Math.sin(lat * Math.PI/180))
-               / (cosD * Math.cos(lat * Math.PI/180));
-  if(cosH > 1 || cosH < -1) return null;
-  const H   = Math.acos(cosH) * 180 / Math.PI;
-  const RA  = (Math.atan2(-0.39782 * Math.sin(lam - Math.PI/180*282.634) * Math.cos(lam),
-               cosD) * 180 / Math.PI + 360) % 360 / 15;
-  const lngH = lng / 15;
-  const tzOff = now.getTimezoneOffset() / -60;
-  const rise = ((360 - H) / 15 - RA - lngH + 24) % 24 + tzOff;
-  const set  = (H / 15 - RA - lngH + 24) % 24 + tzOff;
-  const toD  = h => new Date(now.getFullYear(), now.getMonth(), now.getDate(),
-                             Math.floor(h), Math.round((h%1)*60));
-  return { rise: toD(rise), set: toD(set) };
+  // NOAA Solar Calculator — accurate to ~1 min
+  const now = new Date();
+  const JD  = now / 86400000 + 2440587.5;
+  const t   = (JD - 2451545.0) / 36525.0;
+  const L0  = (280.46646 + t * 36000.76983) % 360;
+  const M   = (357.52911 + t * 35999.05029) * Math.PI / 180;
+  const C   = (1.914602 - t * 0.004817) * Math.sin(M) + 0.019993 * Math.sin(2*M);
+  const sunLon = (L0 + C) * Math.PI / 180;
+  const eps    = (23.439291 - t * 0.013004) * Math.PI / 180;
+  const decl   = Math.asin(Math.sin(eps) * Math.sin(sunLon));
+  const y      = Math.tan(eps/2) ** 2;
+  const L0r    = L0 * Math.PI / 180;
+  const eot    = (y*Math.sin(2*L0r) - 2*0.016708634*Math.sin(M)
+                + 4*0.016708634*y*Math.sin(M)*Math.cos(2*L0r)
+                - 0.5*y*y*Math.sin(4*L0r)
+                - 1.25*0.016708634**2*Math.sin(2*M)) * 4 * 180/Math.PI;
+  const latR   = lat * Math.PI / 180;
+  const cosHA  = (Math.cos(90.833*Math.PI/180) - Math.sin(latR)*Math.sin(decl))
+                 / (Math.cos(latR) * Math.cos(decl));
+  if(Math.abs(cosHA) > 1) return null;
+  const HA = Math.acos(cosHA) * 180 / Math.PI;
+  const solarNoonUTC = 720 - 4*lng - eot; // minutes from midnight UTC
+  const tzOffMin = -now.getTimezoneOffset(); // local offset in minutes (+180 for UTC-3)
+  const riseMin  = solarNoonUTC - HA*4 + tzOffMin;
+  const setMin   = solarNoonUTC + HA*4 + tzOffMin;
+  const toD = m => new Date(now.getFullYear(), now.getMonth(), now.getDate(),
+                            Math.floor(m/60), Math.round(m%60));
+  return { rise: toD(riseMin), set: toD(setMin) };
 }
 
 function calcSunAzimuth(t, lat, dayN) {
