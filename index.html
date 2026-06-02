@@ -711,6 +711,10 @@ if('serviceWorker' in navigator){
       </svg>
       PUNTOS
     </button>
+    <button class="nav-btn" id="btn-nomade" onclick="NOM_open()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      NÓMADE
+    </button>
     <button id="mark-btn" onclick="markPoint()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
@@ -1709,6 +1713,7 @@ function startGPS() {
     const spdKmh = Math.round(speed * 3.6);
     const spdEl = document.getElementById('spd-val');
     if(spdEl) spdEl.textContent = spdKmh;
+    NOM_onGPSUpdate(newLat, newLng, spdKmh);
 
     // Calculate bearing if moving fast enough (>1.4 m/s = ~5 km/h)
     if (ST.gpsPos && speed > 1.4) {
@@ -2474,7 +2479,83 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
     </div>
   </div>
   ${pages}
-  </body></html>`);
+  
+<!-- ══ MODO NÓMADE ══ -->
+<div id="nom-overlay" style="display:none;position:fixed;inset:0;z-index:200;background:#060d14;flex-direction:column;">
+
+  <!-- Header -->
+  <div style="background:#040c10;border-bottom:1px solid #0a2530;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div>
+      <div style="color:#00e5ff;font-size:13px;font-weight:700;letter-spacing:2px;">🧭 MODO NÓMADE</div>
+      <div style="color:#4a8898;font-size:9px;letter-spacing:1px;margin-top:1px;">Navegación por rutas reales</div>
+    </div>
+    <button onclick="NOM_close()" style="background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:8px 14px;color:#c8dce8;font-size:11px;cursor:pointer;">✕ CERRAR</button>
+  </div>
+
+  <!-- Destination selector (shown when not navigating) -->
+  <div id="nom-selector" style="flex:1;overflow-y:auto;padding:12px 16px;">
+    <div style="color:#4a8898;font-size:8px;letter-spacing:2px;margin-bottom:8px;">ELEGIR DESTINO</div>
+    
+    <!-- Toggle modo carrera -->
+    <div style="background:#0a1520;border:1px solid #1a3040;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="color:#ffffff;font-size:10px;font-weight:700;">RESPETAR SENTIDO DE CARRERA</div>
+        <div style="color:#4a8898;font-size:8px;margin-top:2px;">Navegar siempre al LPE del tramo</div>
+      </div>
+      <button id="nom-race-btn" onclick="NOM_toggleRace()" style="background:#1a3040;border:1px solid #0a2530;border-radius:20px;padding:5px 14px;color:#4a8898;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:1px;min-width:60px;">OFF</button>
+    </div>
+
+    <!-- LPEs / Tramos -->
+    <div style="color:#00e5ff;font-size:8px;letter-spacing:1.5px;margin-bottom:6px;">LARGADAS DE TRAMO</div>
+    <div id="nom-tramo-list" style="margin-bottom:16px;"></div>
+
+    <!-- Puntos marcados -->
+    <div style="color:#00e5ff;font-size:8px;letter-spacing:1.5px;margin-bottom:6px;">PUNTOS MARCADOS</div>
+    <div id="nom-point-list"></div>
+  </div>
+
+  <!-- Navigation panel (shown while navigating) -->
+  <div id="nom-nav" style="display:none;flex:1;flex-direction:column;">
+    <!-- Map -->
+    <div style="flex:1;position:relative;">
+      <canvas id="nom-canvas" style="width:100%;height:100%;display:block;"></canvas>
+      <!-- Recalc button -->
+      <button onclick="NOM_recalc()" style="position:absolute;top:12px;right:12px;background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:8px 12px;color:#00e5ff;font-size:9px;cursor:pointer;letter-spacing:1px;">↻ RECALCULAR</button>
+    </div>
+    <!-- Current instruction banner -->
+    <div id="nom-instruction" style="background:#001a30;border-top:2px solid #00e5ff;padding:12px 16px;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="nom-arrow" style="font-size:32px;min-width:40px;text-align:center;">↑</div>
+        <div>
+          <div id="nom-instr-text" style="color:#ffffff;font-size:13px;font-weight:700;">Calculando ruta...</div>
+          <div id="nom-instr-dist" style="color:#00e5ff;font-size:11px;margin-top:2px;font-family:monospace;"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Stats bar -->
+    <div style="background:#040c10;border-top:1px solid #0a2530;padding:10px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex-shrink:0;">
+      <div style="text-align:center;">
+        <div id="nom-dist-total" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">DISTANCIA</div>
+      </div>
+      <div style="text-align:center;">
+        <div id="nom-eta" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--:--</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">LLEGADA</div>
+      </div>
+      <div style="text-align:center;">
+        <div id="nom-time-left" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">TIEMPO</div>
+      </div>
+    </div>
+    <!-- Change dest button -->
+    <div style="background:#040c10;border-top:1px solid #0a2530;padding:8px 16px;flex-shrink:0;">
+      <button onclick="NOM_showSelector()" style="width:100%;background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px;color:#c8dce8;font-size:10px;cursor:pointer;letter-spacing:1px;">↩ CAMBIAR DESTINO</button>
+    </div>
+  </div>
+
+</div>
+
+</body></html>`);
   win.document.close();
   if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
 }
@@ -2847,6 +2928,335 @@ function restoreFromBackup() {
   } catch(e) { console.warn('restoreFromBackup error:', e); return false; }
 }
 
+
+// ══════════════════════════════════════════════
+// ══ MODO NÓMADE ══════════════════════════════
+// ══════════════════════════════════════════════
+
+const NOM = {
+  active: false,
+  raceMode: false,
+  dest: null,        // {lat, lng, name}
+  route: null,       // OSRM route object
+  steps: [],         // navigation steps
+  stepIdx: 0,        // current step
+  canvas: null,
+  ctx: null,
+  animFrame: null,
+  watchId: null,
+};
+
+function NOM_open() {
+  NOM.active = true;
+  const overlay = document.getElementById('nom-overlay');
+  overlay.style.display = 'flex';
+  NOM_showSelector();
+  NOM_buildLists();
+}
+
+function NOM_close() {
+  NOM.active = false;
+  document.getElementById('nom-overlay').style.display = 'none';
+  if(NOM.animFrame){ cancelAnimationFrame(NOM.animFrame); NOM.animFrame = null; }
+  NOM.route = null; NOM.steps = []; NOM.dest = null;
+}
+
+function NOM_showSelector() {
+  document.getElementById('nom-selector').style.display = 'block';
+  document.getElementById('nom-nav').style.display = 'none';
+}
+
+function NOM_showNav() {
+  document.getElementById('nom-selector').style.display = 'none';
+  const nav = document.getElementById('nom-nav');
+  nav.style.display = 'flex';
+  // Init canvas
+  if(!NOM.canvas){
+    NOM.canvas = document.getElementById('nom-canvas');
+    NOM.ctx = NOM.canvas.getContext('2d');
+  }
+  NOM_resizeCanvas();
+  NOM_drawLoop();
+}
+
+function NOM_resizeCanvas() {
+  const c = NOM.canvas;
+  if(!c) return;
+  const rect = c.getBoundingClientRect();
+  c.width = rect.width * window.devicePixelRatio;
+  c.height = rect.height * window.devicePixelRatio;
+  NOM.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+}
+
+function NOM_toggleRace() {
+  NOM.raceMode = !NOM.raceMode;
+  const btn = document.getElementById('nom-race-btn');
+  if(NOM.raceMode){
+    btn.textContent = 'ON';
+    btn.style.background = 'rgba(0,229,255,0.15)';
+    btn.style.borderColor = '#00e5ff';
+    btn.style.color = '#00e5ff';
+  } else {
+    btn.textContent = 'OFF';
+    btn.style.background = '#1a3040';
+    btn.style.borderColor = '#0a2530';
+    btn.style.color = '#4a8898';
+  }
+  NOM_buildLists();
+}
+
+function NOM_buildLists() {
+  // Tramo list (LPE points)
+  const tramoList = document.getElementById('nom-tramo-list');
+  if(tramoList){
+    tramoList.innerHTML = ST.tramos.map(t => {
+      const dest = NOM.raceMode
+        ? {lat: t.start[0], lng: t.start[1], name: 'LPE ' + t.name}
+        : {lat: (t.start[0]+t.end[0])/2, lng: (t.start[1]+t.end[1])/2, name: t.name};
+      return `<div onclick='NOM_setDest(${JSON.stringify(dest)})' style="background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="color:#ffffff;font-size:11px;font-weight:700;">${t.name}</div>
+          <div style="color:#4a8898;font-size:8px;margin-top:2px;">${NOM.raceMode ? '→ Largada (LPE)' : '→ Centro del tramo'}</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      </div>`;
+    }).join('');
+  }
+
+  // Points list
+  const ptList = document.getElementById('nom-point-list');
+  if(ptList){
+    if(!ST.points.length){
+      ptList.innerHTML = '<div style="color:#4a8898;font-size:9px;text-align:center;padding:12px;">Sin puntos marcados</div>';
+    } else {
+      ptList.innerHTML = ST.points.map(pt => {
+        const dest = {lat: pt.lat, lng: pt.lng, name: `#${pt.number} — ${pt.tramo}`};
+        const tagLabels={'curva-der':'↱D','curva-izq':'↰I','lomo':'Lomo','vado':'Vado','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pais','panoramica':'Pan','parking':'P'};
+        const tags = (pt.tags||[]).map(t=>tagLabels[t]||t).join(' ');
+        const stars = pt.stars ? '★'.repeat(pt.stars) : '';
+        return `<div onclick='NOM_setDest(${JSON.stringify(dest)})' style="background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="color:#ffffff;font-size:11px;font-weight:700;">#${pt.number} <span style="color:#4a8898;font-size:9px;">${pt.tramo}</span></div>
+            <div style="color:#4a8898;font-size:8px;margin-top:2px;">${[stars,tags,pt.notes].filter(Boolean).join(' · ').substring(0,40)}</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+async function NOM_setDest(dest) {
+  NOM.dest = dest;
+  NOM_showNav();
+  document.getElementById('nom-instr-text').textContent = 'Calculando ruta...';
+  document.getElementById('nom-instr-dist').textContent = '';
+  await NOM_fetchRoute();
+}
+
+async function NOM_fetchRoute() {
+  if(!ST.gpsPos || !NOM.dest){ return; }
+  const {lat:oLat, lng:oLng} = ST.gpsPos;
+  const {lat:dLat, lng:dLng, name} = NOM.dest;
+  const url = `https://router.project-osrm.org/route/v1/driving/${oLng},${oLat};${dLng},${dLat}?steps=true&geometries=geojson&overview=full&annotations=false`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data.code !== 'Ok' || !data.routes.length){
+      NOM_noRoute(); return;
+    }
+    NOM.route = data.routes[0];
+    NOM.steps = data.routes[0].legs[0].steps;
+    NOM.stepIdx = 0;
+    NOM_updateStats();
+    NOM_updateInstruction();
+  } catch(e) {
+    NOM_noRoute();
+  }
+}
+
+function NOM_noRoute() {
+  document.getElementById('nom-instr-text').textContent = 'Sin conexión — flecha directa';
+  document.getElementById('nom-arrow').textContent = '↑';
+  NOM_updateStats();
+}
+
+function NOM_recalc() {
+  document.getElementById('nom-instr-text').textContent = 'Recalculando...';
+  NOM_fetchRoute();
+}
+
+function NOM_updateStats() {
+  if(!ST.gpsPos || !NOM.dest) return;
+  const speed = ST.lastSpeed || 0; // km/h
+
+  if(NOM.route){
+    const distKm = (NOM.route.distance / 1000).toFixed(1);
+    const durMin = Math.round(NOM.route.duration / 60);
+    const eta = new Date(Date.now() + NOM.route.duration * 1000);
+    const etaStr = eta.getHours().toString().padStart(2,'0')+':'+eta.getMinutes().toString().padStart(2,'0');
+    document.getElementById('nom-dist-total').textContent = distKm + ' km';
+    document.getElementById('nom-eta').textContent = etaStr;
+    document.getElementById('nom-time-left').textContent = durMin < 60 ? durMin + ' min' : Math.floor(durMin/60)+'h '+(durMin%60)+'m';
+  } else {
+    // Straight line fallback
+    const R = 6371;
+    const dLat = (NOM.dest.lat - ST.gpsPos.lat) * Math.PI/180;
+    const dLng = (NOM.dest.lng - ST.gpsPos.lng) * Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(ST.gpsPos.lat*Math.PI/180)*Math.cos(NOM.dest.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+    const dist = R * 2 * Math.asin(Math.sqrt(a));
+    document.getElementById('nom-dist-total').textContent = dist.toFixed(1) + ' km';
+    if(speed > 2){
+      const mins = Math.round((dist / speed) * 60);
+      const eta = new Date(Date.now() + mins*60000);
+      document.getElementById('nom-eta').textContent = eta.getHours().toString().padStart(2,'0')+':'+eta.getMinutes().toString().padStart(2,'0');
+      document.getElementById('nom-time-left').textContent = mins < 60 ? mins+' min' : Math.floor(mins/60)+'h '+(mins%60)+'m';
+    } else {
+      document.getElementById('nom-eta').textContent = '--:--';
+      document.getElementById('nom-time-left').textContent = '--';
+    }
+  }
+}
+
+function NOM_updateInstruction() {
+  if(!NOM.steps.length) return;
+  // Find current step based on GPS position
+  if(ST.gpsPos && NOM.stepIdx < NOM.steps.length){
+    const step = NOM.steps[NOM.stepIdx];
+    const maneuver = step.maneuver;
+    const type = maneuver.type;
+    const modifier = maneuver.modifier || '';
+    // Arrow based on maneuver
+    const arrows = {
+      'turn left': '↰', 'turn right': '↱', 'turn sharp left': '↩', 'turn sharp right': '↪',
+      'turn slight left': '↖', 'turn slight right': '↗', 'straight': '↑',
+      'arrive': '🏁', 'depart': '↑', 'roundabout': '↻', 'merge': '↑',
+    };
+    const key = modifier ? type+' '+modifier : type;
+    document.getElementById('nom-arrow').textContent = arrows[key] || '↑';
+    const distM = step.distance;
+    const distStr = distM >= 1000 ? (distM/1000).toFixed(1)+' km' : Math.round(distM)+' m';
+    document.getElementById('nom-instr-text').textContent = step.name || 'Continuar';
+    document.getElementById('nom-instr-dist').textContent = 'En ' + distStr;
+    // Auto-advance step if close enough
+    if(distM < 30 && NOM.stepIdx < NOM.steps.length - 1) NOM.stepIdx++;
+  }
+}
+
+function NOM_drawLoop() {
+  if(!NOM.active || document.getElementById('nom-nav').style.display === 'none') return;
+  NOM_draw();
+  NOM_updateStats();
+  NOM_updateInstruction();
+  NOM.animFrame = requestAnimationFrame(NOM_drawLoop);
+}
+
+function NOM_draw() {
+  const canvas = NOM.canvas;
+  const ctx = NOM.ctx;
+  if(!canvas || !ctx) return;
+  const W = canvas.width / window.devicePixelRatio;
+  const H = canvas.height / window.devicePixelRatio;
+
+  // Clear
+  ctx.fillStyle = '#060d14';
+  ctx.fillRect(0, 0, W, H);
+
+  if(!ST.gpsPos || !NOM.dest) return;
+
+  // Simple projection centered on GPS position
+  const cx = W/2, cy = H * 0.55;
+  const scale = 4000; // pixels per degree approx
+
+  const project = (lat, lng) => {
+    const cos = Math.cos(ST.gpsPos.lat * Math.PI/180);
+    const x = cx + (lng - ST.gpsPos.lng) * scale * cos;
+    const y = cy - (lat - ST.gpsPos.lat) * scale;
+    return {x, y};
+  };
+
+  // Draw OSRM route
+  if(NOM.route && NOM.route.geometry && NOM.route.geometry.coordinates){
+    const coords = NOM.route.geometry.coordinates;
+    ctx.beginPath();
+    coords.forEach(([lng, lat], i) => {
+      const {x, y} = project(lat, lng);
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 4;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.globalAlpha = 0.85;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  } else {
+    // Straight line fallback
+    const dest = project(NOM.dest.lat, NOM.dest.lng);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(dest.x, dest.y);
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // GPS position dot
+  ctx.beginPath(); ctx.arc(cx, cy, 14, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(0,229,255,0.12)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(0,229,255,0.25)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI*2);
+  ctx.fillStyle = '#00e5ff'; ctx.fill();
+
+  // Destination dot
+  const dest = project(NOM.dest.lat, NOM.dest.lng);
+  ctx.beginPath(); ctx.arc(dest.x, dest.y, 8, 0, Math.PI*2);
+  ctx.fillStyle = '#00ff88'; ctx.fill();
+  ctx.beginPath(); ctx.arc(dest.x, dest.y, 12, 0, Math.PI*2);
+  ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2; ctx.stroke();
+
+  // Destination label
+  ctx.fillStyle = 'rgba(6,13,20,0.88)';
+  const lw = ctx.measureText(NOM.dest.name).width + 12;
+  ctx.fillRect(dest.x - lw/2, dest.y - 28, lw, 16);
+  ctx.fillStyle = '#00ff88';
+  ctx.font = 'bold 9px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(NOM.dest.name, dest.x, dest.y - 20);
+
+  // North indicator
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 10px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('N', W - 20, 20);
+  ctx.beginPath();
+  ctx.moveTo(W-20, 32); ctx.lineTo(W-20, 50);
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+// Hook GPS updates into nomade
+const _NOM_origGPS = navigator.geolocation ? true : false;
+function NOM_onGPSUpdate(lat, lng, speedKmh) {
+  ST.lastSpeed = speedKmh;
+  if(NOM.active && NOM.dest){
+    // Check if we need to advance step
+    NOM_updateInstruction();
+    // Recalc every 100m if navigating
+    if(NOM.route && ST.gpsPos){
+      const d = Math.hypot(lat - ST.gpsPos.lat, lng - ST.gpsPos.lng) * 111000;
+      if(d > 100) NOM_fetchRoute();
+    }
+  }
+}
+
+// ══ END MODO NÓMADE ══
+
 // ══ WEATHER & SUN ══
 function toggleDay(i){
   const detail = document.getElementById('day-detail-'+i);
@@ -3087,5 +3497,81 @@ async function loadOSMRoads() {
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
 </script>
+
+<!-- ══ MODO NÓMADE ══ -->
+<div id="nom-overlay" style="display:none;position:fixed;inset:0;z-index:200;background:#060d14;flex-direction:column;">
+
+  <!-- Header -->
+  <div style="background:#040c10;border-bottom:1px solid #0a2530;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div>
+      <div style="color:#00e5ff;font-size:13px;font-weight:700;letter-spacing:2px;">🧭 MODO NÓMADE</div>
+      <div style="color:#4a8898;font-size:9px;letter-spacing:1px;margin-top:1px;">Navegación por rutas reales</div>
+    </div>
+    <button onclick="NOM_close()" style="background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:8px 14px;color:#c8dce8;font-size:11px;cursor:pointer;">✕ CERRAR</button>
+  </div>
+
+  <!-- Destination selector (shown when not navigating) -->
+  <div id="nom-selector" style="flex:1;overflow-y:auto;padding:12px 16px;">
+    <div style="color:#4a8898;font-size:8px;letter-spacing:2px;margin-bottom:8px;">ELEGIR DESTINO</div>
+    
+    <!-- Toggle modo carrera -->
+    <div style="background:#0a1520;border:1px solid #1a3040;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="color:#ffffff;font-size:10px;font-weight:700;">RESPETAR SENTIDO DE CARRERA</div>
+        <div style="color:#4a8898;font-size:8px;margin-top:2px;">Navegar siempre al LPE del tramo</div>
+      </div>
+      <button id="nom-race-btn" onclick="NOM_toggleRace()" style="background:#1a3040;border:1px solid #0a2530;border-radius:20px;padding:5px 14px;color:#4a8898;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:1px;min-width:60px;">OFF</button>
+    </div>
+
+    <!-- LPEs / Tramos -->
+    <div style="color:#00e5ff;font-size:8px;letter-spacing:1.5px;margin-bottom:6px;">LARGADAS DE TRAMO</div>
+    <div id="nom-tramo-list" style="margin-bottom:16px;"></div>
+
+    <!-- Puntos marcados -->
+    <div style="color:#00e5ff;font-size:8px;letter-spacing:1.5px;margin-bottom:6px;">PUNTOS MARCADOS</div>
+    <div id="nom-point-list"></div>
+  </div>
+
+  <!-- Navigation panel (shown while navigating) -->
+  <div id="nom-nav" style="display:none;flex:1;flex-direction:column;">
+    <!-- Map -->
+    <div style="flex:1;position:relative;">
+      <canvas id="nom-canvas" style="width:100%;height:100%;display:block;"></canvas>
+      <!-- Recalc button -->
+      <button onclick="NOM_recalc()" style="position:absolute;top:12px;right:12px;background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:8px 12px;color:#00e5ff;font-size:9px;cursor:pointer;letter-spacing:1px;">↻ RECALCULAR</button>
+    </div>
+    <!-- Current instruction banner -->
+    <div id="nom-instruction" style="background:#001a30;border-top:2px solid #00e5ff;padding:12px 16px;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="nom-arrow" style="font-size:32px;min-width:40px;text-align:center;">↑</div>
+        <div>
+          <div id="nom-instr-text" style="color:#ffffff;font-size:13px;font-weight:700;">Calculando ruta...</div>
+          <div id="nom-instr-dist" style="color:#00e5ff;font-size:11px;margin-top:2px;font-family:monospace;"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Stats bar -->
+    <div style="background:#040c10;border-top:1px solid #0a2530;padding:10px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex-shrink:0;">
+      <div style="text-align:center;">
+        <div id="nom-dist-total" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">DISTANCIA</div>
+      </div>
+      <div style="text-align:center;">
+        <div id="nom-eta" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--:--</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">LLEGADA</div>
+      </div>
+      <div style="text-align:center;">
+        <div id="nom-time-left" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">TIEMPO</div>
+      </div>
+    </div>
+    <!-- Change dest button -->
+    <div style="background:#040c10;border-top:1px solid #0a2530;padding:8px 16px;flex-shrink:0;">
+      <button onclick="NOM_showSelector()" style="width:100%;background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px;color:#c8dce8;font-size:10px;cursor:pointer;letter-spacing:1px;">↩ CAMBIAR DESTINO</button>
+    </div>
+  </div>
+
+</div>
+
 </body>
 </html>
