@@ -3265,10 +3265,15 @@ function NOM_drawRoute(ctx){
 }
 
 function NOM_testMode(){
-  const center = unproj(M.W/2, M.H/2);
-  NOM.pinLat = center.lat;
-  NOM.pinLng = center.lng;
-  NOM_showPin(M.W/2, M.H*0.4, center.lat, center.lng);
+  // Ultra simple: directly manipulate the DOM
+  const pin = document.getElementById('nom-pin');
+  if(!pin){ alert('nom-pin NOT FOUND'); return; }
+  pin.style.display = 'block';
+  pin.style.left = '50%';
+  pin.style.top = '40%';
+  pin.style.transform = 'translate(-50%, -50%)';
+  document.getElementById('nom-pin-coords').textContent = 'Test mode';
+  alert('Pin shown - check screen');
 }
 
 // ══ FIN NÓMADE ══
