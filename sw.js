@@ -1,4 +1,4 @@
-const CACHE = 'tapir-v3';
+const CACHE = 'tapir-v4';
 const ASSETS = [
   '/huellas-de-tapir/',
   '/huellas-de-tapir/index.html'
