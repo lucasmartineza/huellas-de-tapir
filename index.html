@@ -3120,25 +3120,44 @@ const NOM = { active:false, dest:null, route:null, steps:[], stepIdx:0, routeCoo
 function NOM_initLongPress(){
   const canvas = document.getElementById('map-canvas');
   if(!canvas) return;
+  let startX = 0, startY = 0;
+
   const start = function(e){
     NOM_hidePin();
     const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX; startY = touch.clientY;
     const rect = canvas.getBoundingClientRect();
     const sx = touch.clientX - rect.left;
     const sy = touch.clientY - rect.top;
+    if(NOM.longPressTimer) clearTimeout(NOM.longPressTimer);
     NOM.longPressTimer = setTimeout(function(){
+      NOM.longPressTimer = null;
       const geo = unproj(sx, sy);
       NOM.pinLat = geo.lat; NOM.pinLng = geo.lng;
+      // Vibrate if supported
+      if(navigator.vibrate) navigator.vibrate(40);
       NOM_showPin(touch.clientX, touch.clientY, geo.lat, geo.lng);
     }, 600);
   };
-  const cancel = function(){ if(NOM.longPressTimer){ clearTimeout(NOM.longPressTimer); NOM.longPressTimer=null; } };
+
+  const cancel = function(e){
+    if(NOM.longPressTimer){ clearTimeout(NOM.longPressTimer); NOM.longPressTimer=null; }
+  };
+
+  const move = function(e){
+    // Only cancel if moved more than 10px
+    const touch = e.touches ? e.touches[0] : e;
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
+    if(Math.sqrt(dx*dx+dy*dy) > 10) cancel();
+  };
+
   canvas.addEventListener('touchstart', start, {passive:true});
-  canvas.addEventListener('touchend', cancel);
-  canvas.addEventListener('touchmove', cancel);
+  canvas.addEventListener('touchend', cancel, {passive:true});
+  canvas.addEventListener('touchmove', move, {passive:true});
   canvas.addEventListener('mousedown', start);
   canvas.addEventListener('mouseup', cancel);
-  canvas.addEventListener('mousemove', cancel);
+  canvas.addEventListener('mousemove', move);
 }
 
 function NOM_showPin(sx, sy, lat, lng){
