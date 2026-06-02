@@ -2481,7 +2481,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
   ${pages}
   
 <!-- ══ NÓMADE ══ -->
-<div id="nom-pin" style="display:none;position:fixed;z-index:190;transform:translate(-50%,-100%);pointer-events:all;">
+<div id="nom-pin" style="display:none;position:fixed;z-index:999;transform:translate(-50%,-100%);pointer-events:all;">
   <div style="background:#060d14;border:1.5px solid #00ffaa;border-radius:10px;padding:8px 14px;text-align:center;box-shadow:0 0 16px rgba(0,255,170,0.3);">
     <div id="nom-pin-coords" style="color:#4a8898;font-size:8px;letter-spacing:1px;margin-bottom:5px;"></div>
     <button onclick="NOM_navigate()" style="background:#00ffaa;color:#000;border:none;border-radius:7px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;">MIGRAR AQ&#205;</button>
@@ -3256,11 +3256,13 @@ function NOM_drawRoute(ctx){
 }
 
 function NOM_testMode(){
-  // Activate nomade at current map center for testing
   const center = unproj(M.W/2, M.H/2);
   NOM.pinLat = center.lat; NOM.pinLng = center.lng;
-  NOM_showPin(M.W/2, M.H/2 - 60, center.lat, center.lng);
-  toast('Longpress activo — tocá MIGRAR AQUÍ');
+  // Use fixed screen position: center-x, 40% from top
+  const sx = window.innerWidth / 2;
+  const sy = window.innerHeight * 0.4;
+  NOM_showPin(sx, sy, center.lat, center.lng);
+  toast('Popup aberto!');
 }
 
 // ══ FIN NÓMADE ══
