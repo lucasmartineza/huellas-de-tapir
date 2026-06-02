@@ -3256,13 +3256,7 @@ function NOM_drawRoute(ctx){
 }
 
 function NOM_testMode(){
-  const center = unproj(M.W/2, M.H/2);
-  NOM.pinLat = center.lat; NOM.pinLng = center.lng;
-  // Use fixed screen position: center-x, 40% from top
-  const sx = window.innerWidth / 2;
-  const sy = window.innerHeight * 0.4;
-  NOM_showPin(sx, sy, center.lat, center.lng);
-  toast('Popup aberto!');
+  alert('NOM_testMode ejecutado. M.W='+M.W+' M.H='+M.H+' M.lat='+M.lat.toFixed(4));
 }
 
 // ══ FIN NÓMADE ══
