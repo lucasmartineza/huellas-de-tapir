@@ -1180,7 +1180,7 @@ async function persistPhoto(pt) {
   if (pt.audio) await savePhoto('audio_'+pt.id, pt.audio);
 }
 
-async function loadStored() {
+async async function loadStored() {
   try {
     let d = null;
     try {
