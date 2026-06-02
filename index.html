@@ -3190,15 +3190,24 @@ async function NOM_fetchRoute(){
   if(!NOM.dest) return;
   const o = ST.gpsPos || unproj(M.W/2, M.H/2);
   if(!o){ document.getElementById('nom-bar-instr').textContent='Sin posicion'; return; }
+  document.getElementById('nom-bar-instr').textContent='Calculando ruta...';
   const url = 'https://router.project-osrm.org/route/v1/driving/'+o.lng.toFixed(6)+','+o.lat.toFixed(6)+';'+NOM.dest.lng.toFixed(6)+','+NOM.dest.lat.toFixed(6)+'?steps=true&geometries=geojson&overview=full';
   try {
-    const res = await fetch(url); const data = await res.json();
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), 8000);
+    const res = await fetch(url, {signal:ctrl.signal});
+    clearTimeout(timer);
+    const data = await res.json();
     if(data.code!=='Ok'||!data.routes.length){ NOM_noRoute(); return; }
     NOM.route = data.routes[0];
     NOM.steps = data.routes[0].legs[0].steps;
     NOM.routeCoords = data.routes[0].geometry.coordinates.map(function(p){ return [p[1],p[0]]; });
     NOM.stepIdx = 0; NOM_updateBar();
-  } catch(e){ NOM_noRoute(); }
+  } catch(e){
+    // Safari privacy block or network error - use straight line
+    NOM_noRoute();
+    toast('Sin ruta — usando linea directa');
+  }
 }
 
 function NOM_noRoute(){
@@ -3256,7 +3265,10 @@ function NOM_drawRoute(ctx){
 }
 
 function NOM_testMode(){
-  alert('NOM_testMode ejecutado. M.W='+M.W+' M.H='+M.H+' M.lat='+M.lat.toFixed(4));
+  const center = unproj(M.W/2, M.H/2);
+  NOM.pinLat = center.lat;
+  NOM.pinLng = center.lng;
+  NOM_showPin(M.W/2, M.H*0.4, center.lat, center.lng);
 }
 
 // ══ FIN NÓMADE ══
