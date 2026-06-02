@@ -520,6 +520,208 @@ if('serviceWorker' in navigator){
     .then(()=>console.log('SW registered'))
     .catch(e=>console.log('SW error',e));
 }
+
+// ══ NÓMADE ══
+
+const NOM = {
+  active: false,
+  dest: null,        // {lat, lng}
+  route: null,
+  steps: [],
+  stepIdx: 0,
+  routeCoords: [],   // [[lat,lng],...] for drawing on canvas
+  longPressTimer: null,
+  pinLat: null, pinLng: null,
+  pinScreenX: null, pinScreenY: null,
+};
+
+// ── Long press on canvas ──
+function NOM_initLongPress() {
+  const canvas = document.getElementById('map-canvas');
+  if(!canvas) return;
+
+  const start = function(e) {
+    NOM_hidePin();
+    const touch = e.touches ? e.touches[0] : e;
+    const rect = canvas.getBoundingClientRect();
+    const sx = touch.clientX - rect.left;
+    const sy = touch.clientY - rect.top;
+    NOM.longPressTimer = setTimeout(function() {
+      const geo = unproj(sx, sy);
+      NOM.pinLat = geo.lat;
+      NOM.pinLng = geo.lng;
+      NOM.pinScreenX = touch.clientX;
+      NOM.pinScreenY = touch.clientY;
+      NOM_showPin(touch.clientX, touch.clientY, geo.lat, geo.lng);
+    }, 600);
+  };
+  const cancel = function() {
+    if(NOM.longPressTimer){ clearTimeout(NOM.longPressTimer); NOM.longPressTimer = null; }
+  };
+  canvas.addEventListener('touchstart', start, {passive:true});
+  canvas.addEventListener('touchend', cancel);
+  canvas.addEventListener('touchmove', cancel);
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mouseup', cancel);
+  canvas.addEventListener('mousemove', cancel);
+}
+
+function NOM_showPin(sx, sy, lat, lng) {
+  const pin = document.getElementById('nom-pin');
+  pin.style.left = sx + 'px';
+  pin.style.top  = sy + 'px';
+  pin.style.display = 'block';
+  document.getElementById('nom-pin-coords').textContent =
+    lat.toFixed(5) + ', ' + lng.toFixed(5);
+}
+
+function NOM_hidePin() {
+  document.getElementById('nom-pin').style.display = 'none';
+}
+
+function NOM_navigate() {
+  NOM_hidePin();
+  if(NOM.pinLat === null) return;
+  NOM.dest = {lat: NOM.pinLat, lng: NOM.pinLng};
+  NOM.active = true;
+  NOM.stepIdx = 0;
+  NOM.route = null;
+  NOM.routeCoords = [];
+  document.getElementById('nom-bar').style.display = 'block';
+  document.getElementById('nom-bar-instr').textContent = 'Calculando ruta...';
+  NOM_fetchRoute();
+}
+
+function NOM_stop() {
+  NOM.active = false;
+  NOM.dest = null;
+  NOM.route = null;
+  NOM.routeCoords = [];
+  NOM.steps = [];
+  document.getElementById('nom-bar').style.display = 'none';
+  NOM_hidePin();
+}
+
+async function NOM_fetchRoute() {
+  if(!NOM.dest) return;
+  // Use GPS if available, otherwise use map center as origin
+  const o = ST.gpsPos || unproj(M.W/2, M.H/2);
+  const d = NOM.dest;
+  if(!o) { document.getElementById('nom-bar-instr').textContent = 'Sin posición de origen'; return; }
+  const url = 'https://router.project-osrm.org/route/v1/driving/' +
+    o.lng.toFixed(6)+','+o.lat.toFixed(6)+';'+
+    d.lng.toFixed(6)+','+d.lat.toFixed(6)+
+    '?steps=true&geometries=geojson&overview=full';
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
+    if(data.code !== 'Ok' || !data.routes.length) { NOM_noRoute(); return; }
+    NOM.route  = data.routes[0];
+    NOM.steps  = data.routes[0].legs[0].steps;
+    NOM.routeCoords = data.routes[0].geometry.coordinates.map(function(p){ return [p[1], p[0]]; });
+    NOM.stepIdx = 0;
+    NOM_updateBar();
+  } catch(e) { NOM_noRoute(); }
+}
+
+function NOM_noRoute() {
+  document.getElementById('nom-bar-instr').textContent = 'Sin ruta — línea directa';
+  document.getElementById('nom-bar-arrow').textContent = '↑';
+  NOM_updateStats();
+}
+
+function NOM_updateBar() {
+  NOM_updateInstruction();
+  NOM_updateStats();
+}
+
+function NOM_updateInstruction() {
+  if(!NOM.steps.length) return;
+  const step = NOM.steps[Math.min(NOM.stepIdx, NOM.steps.length - 1)];
+  const m = step.maneuver;
+  const arrowMap = {
+    'turn-left':'↰','turn-right':'↱','turn-sharp left':'↩','turn-sharp right':'↪',
+    'turn-slight left':'↖','turn-slight right':'↗','new name-straight':'↑',
+    'arrive':'🏁','depart':'↑','straight':'↑','roundabout':'↻',
+  };
+  const key = m.modifier ? m.type+'-'+m.modifier : m.type;
+  document.getElementById('nom-bar-arrow').textContent = arrowMap[key] || '↑';
+  const dm = step.distance >= 1000 ? (step.distance/1000).toFixed(1)+' km' : Math.round(step.distance)+' m';
+  document.getElementById('nom-bar-instr').textContent = step.name || 'Continuar';
+  document.getElementById('nom-bar-dist-step').textContent = 'En ' + dm;
+  if(step.distance < 30 && NOM.stepIdx < NOM.steps.length - 1) NOM.stepIdx++;
+}
+
+function NOM_updateStats() {
+  if(!NOM.dest) return;
+  if(NOM.route) {
+    const km   = (NOM.route.distance / 1000).toFixed(1);
+    const secs = NOM.route.duration;
+    const eta  = new Date(Date.now() + secs * 1000);
+    const mins = Math.round(secs / 60);
+    document.getElementById('nom-bar-dist').textContent = km + ' km';
+    document.getElementById('nom-bar-eta').textContent  =
+      eta.getHours().toString().padStart(2,'0') + ':' + eta.getMinutes().toString().padStart(2,'0');
+    document.getElementById('nom-bar-time').textContent =
+      mins < 60 ? mins + ' min' : Math.floor(mins/60) + 'h ' + (mins%60) + 'm';
+  } else {
+    const origin = ST.gpsPos || unproj(M.W/2, M.H/2);
+    if(origin && NOM.dest) {
+      const R = 6371;
+      const dLat = (NOM.dest.lat - origin.lat) * Math.PI/180;
+      const dLng = (NOM.dest.lng - origin.lng) * Math.PI/180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(origin.lat*Math.PI/180) *
+                Math.cos(NOM.dest.lat*Math.PI/180) * Math.sin(dLng/2)**2;
+      const dist = R * 2 * Math.asin(Math.sqrt(a));
+      document.getElementById('nom-bar-dist').textContent = dist.toFixed(1) + ' km';
+    }
+  }
+}
+
+// Called every GPS update
+function NOM_onGPS(lat, lng, spd) {
+  ST.lastSpeed = spd;
+  if(!NOM.active || !NOM.dest) return;
+  NOM_updateBar();
+  // Recalc every ~150m deviation
+  if(NOM.route && NOM.routeCoords.length > 0) {
+    const dLat = lat - ST.gpsPos.lat;
+    const dLng = lng - ST.gpsPos.lng;
+    if(Math.sqrt(dLat*dLat + dLng*dLng) * 111000 > 150) NOM_fetchRoute();
+  }
+}
+
+// Draw route on main map canvas
+function NOM_drawRoute(ctx) {
+  if(!NOM.active || !NOM.routeCoords.length) return;
+  ctx.save();
+  ctx.beginPath();
+  NOM.routeCoords.forEach(function(p, i) {
+    const s = proj(p[0], p[1]);
+    i === 0 ? ctx.moveTo(s.x, s.y) : ctx.lineTo(s.x, s.y);
+  });
+  ctx.strokeStyle = '#00ffaa';
+  ctx.lineWidth   = 5;
+  ctx.lineJoin    = 'round';
+  ctx.lineCap     = 'round';
+  ctx.globalAlpha = 0.75;
+  ctx.stroke();
+  // Destination dot
+  if(NOM.dest) {
+    const dp = proj(NOM.dest.lat, NOM.dest.lng);
+    ctx.beginPath(); ctx.arc(dp.x, dp.y, 10, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,255,170,0.2)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(dp.x, dp.y, 5, 0, Math.PI*2);
+    ctx.fillStyle = '#00ffaa'; ctx.fill();
+    ctx.globalAlpha = 0.7;
+    ctx.strokeStyle = '#00ffaa'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(dp.x, dp.y, 14, 0, Math.PI*2); ctx.stroke();
+  }
+  ctx.globalAlpha = 1.0;
+  ctx.restore();
+}
+
+// ══ FIN NÓMADE ══
 </script>
 </head>
 <body>
@@ -588,9 +790,6 @@ if('serviceWorker' in navigator){
     </div>
   </div>
   <div id="side-btns">
-    <button class="side-btn" onclick="NOM_open()" title="Modo Nómade" style="color:#00ffaa;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-    </button>
     <button class="side-btn" onclick="centerRace()" title="Centrar carrera" style="font-size:8px;letter-spacing:0.5px;color:#00e5ff;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -1264,6 +1463,7 @@ function startMap() {
   const rb = document.getElementById('roads-btn');
   if(rb){ rb.style.display = 'inline-block'; if(ST.roads&&ST.roads.length){ rb.classList.add('done'); rb.textContent=ST.roads.length+' CAMINOS OK'; } }
   initTouch();
+  NOM_initLongPress();
   startGPS();
   requestAnimationFrame(loop);
 }
@@ -1540,8 +1740,8 @@ function draw() {
     ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);  ctx.fillStyle=document.body.classList.contains('light')?'#0044cc':'#00e5ff'; ctx.fill();
     ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
   }
+  NOM_drawRoute(ctx);
 }
-
 function drawFlag(lat, lng, isStart, ssLabel) {
   const {x, y} = proj(lat, lng);
   const ctx = M.ctx;
@@ -1714,6 +1914,7 @@ function startGPS() {
     const spdEl = document.getElementById('spd-val');
     if(spdEl) spdEl.textContent = spdKmh;
     ST.lastSpeed = spdKmh;
+    NOM_onGPS(newLat, newLng, spdKmh);
 
     // Calculate bearing if moving fast enough (>1.4 m/s = ~5 km/h)
     if (ST.gpsPos && speed > 1.4) {
@@ -2480,902 +2681,39 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
   </div>
   ${pages}
   
-<!-- ══ MODO NÓMADE ══ -->
-<div id="nom-overlay" style="display:none;position:fixed;inset:0;z-index:200;background:#060d14;flex-direction:column;font-family:monospace;">
-  <div style="background:#040c10;border-bottom:1px solid #0a2530;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-    <div>
-      <div style="color:#00e5ff;font-size:13px;font-weight:700;letter-spacing:2px;">&#x1F9ED; MODO NÓMADE</div>
-      <div style="color:#4a8898;font-size:9px;letter-spacing:1px;margin-top:1px;">Navegación por rutas reales</div>
-    </div>
-    <button onclick="NOM_close()" style="background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:8px 14px;color:#c8dce8;font-size:11px;cursor:pointer;">&#x2715; CERRAR</button>
+
+<!-- ══ NÓMADE ══ -->
+<div id="nom-pin" style="display:none;position:fixed;z-index:190;transform:translate(-50%,-100%);pointer-events:all;">
+  <div style="background:#060d14;border:1.5px solid #00ffaa;border-radius:10px;padding:8px 14px;text-align:center;box-shadow:0 0 16px rgba(0,255,170,0.3);">
+    <div id="nom-pin-coords" style="color:#4a8898;font-size:8px;letter-spacing:1px;margin-bottom:5px;"></div>
+    <button onclick="NOM_navigate()" style="background:#00ffaa;color:#000;border:none;border-radius:7px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;">MIGRAR AQUÍ</button>
   </div>
-  <div id="nom-selector" style="flex:1;overflow-y:auto;padding:12px 16px;">
-    <div style="color:#4a8898;font-size:8px;letter-spacing:2px;margin-bottom:8px;">ELEGIR DESTINO</div>
-    <div style="background:#0a1520;border:1px solid #1a3040;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="color:#ffffff;font-size:10px;font-weight:700;">RESPETAR SENTIDO DE CARRERA</div>
-        <div style="color:#4a8898;font-size:8px;margin-top:2px;">Navegar siempre al LPE del tramo</div>
-      </div>
-      <button id="nom-race-btn" onclick="NOM_toggleRace()" style="background:#1a3040;border:1px solid #0a2530;border-radius:20px;padding:5px 14px;color:#4a8898;font-size:9px;font-weight:700;cursor:pointer;min-width:60px;">OFF</button>
+  <div style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid #00ffaa;margin:0 auto;"></div>
+</div>
+
+<!-- Nav bar (shown during navigation) -->
+<div id="nom-bar" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;z-index:190;background:#060d14;border:1.5px solid #00ffaa;border-radius:12px;padding:10px 14px;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div id="nom-bar-arrow" style="font-size:28px;min-width:36px;text-align:center;">↑</div>
+    <div style="flex:1;">
+      <div id="nom-bar-instr" style="color:#ffffff;font-size:12px;font-weight:700;">Calculando...</div>
+      <div id="nom-bar-dist-step" style="color:#00ffaa;font-size:10px;margin-top:1px;font-family:monospace;"></div>
     </div>
-    <div style="color:#00e5ff;font-size:8px;letter-spacing:1.5px;margin-bottom:6px;">LARGADAS DE TRAMO</div>
-    <div id="nom-tramo-list" style="margin-bottom:16px;"></div>
-    <div style="color:#00e5ff;font-size:8px;letter-spacing:1.5px;margin-bottom:6px;">PUNTOS MARCADOS</div>
-    <div id="nom-point-list"></div>
+    <button onclick="NOM_stop()" style="background:transparent;border:1px solid #ff3355;border-radius:8px;padding:6px 10px;color:#ff3355;font-size:9px;cursor:pointer;letter-spacing:1px;flex-shrink:0;">✕ SALIR DEL MODO</button>
   </div>
-  <div id="nom-nav" style="display:none;flex:1;flex-direction:column;">
-    <div style="flex:1;position:relative;min-height:200px;">
-      <canvas id="nom-canvas" style="width:100%;height:100%;display:block;"></canvas>
-      <button onclick="NOM_recalc()" style="position:absolute;top:12px;right:12px;background:rgba(4,12,16,0.85);border:1px solid #1a3040;border-radius:8px;padding:8px 12px;color:#00e5ff;font-size:9px;cursor:pointer;letter-spacing:1px;">&#x21BB; RECALCULAR</button>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;border-top:1px solid #0a2530;padding-top:8px;">
+    <div style="text-align:center;">
+      <div id="nom-bar-dist" style="color:#00ffaa;font-size:16px;font-weight:700;font-family:monospace;">--</div>
+      <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">DISTANCIA</div>
     </div>
-    <div id="nom-instruction" style="background:#001a30;border-top:2px solid #00e5ff;padding:12px 16px;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div id="nom-arrow" style="font-size:32px;min-width:40px;text-align:center;">&#x2191;</div>
-        <div>
-          <div id="nom-instr-text" style="color:#ffffff;font-size:13px;font-weight:700;">Calculando ruta...</div>
-          <div id="nom-instr-dist" style="color:#00e5ff;font-size:11px;margin-top:2px;"></div>
-        </div>
-      </div>
+    <div style="text-align:center;">
+      <div id="nom-bar-eta" style="color:#00ffaa;font-size:16px;font-weight:700;font-family:monospace;">--:--</div>
+      <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">LLEGADA</div>
     </div>
-    <div style="background:#040c10;border-top:1px solid #0a2530;padding:10px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex-shrink:0;">
-      <div style="text-align:center;">
-        <div id="nom-dist-total" style="color:#00e5ff;font-size:18px;font-weight:700;">--</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">DISTANCIA</div>
-      </div>
-      <div style="text-align:center;">
-        <div id="nom-eta" style="color:#00e5ff;font-size:18px;font-weight:700;">--:--</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">LLEGADA</div>
-      </div>
-      <div style="text-align:center;">
-        <div id="nom-time-left" style="color:#00e5ff;font-size:18px;font-weight:700;">--</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">TIEMPO</div>
-      </div>
-    </div>
-    <div style="background:#040c10;border-top:1px solid #0a2530;padding:8px 16px;flex-shrink:0;">
-      <button onclick="NOM_showSelector()" style="width:100%;background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px;color:#c8dce8;font-size:10px;cursor:pointer;letter-spacing:1px;">&#x21A9; CAMBIAR DESTINO</button>
+    <div style="text-align:center;">
+      <div id="nom-bar-time" style="color:#00ffaa;font-size:16px;font-weight:700;font-family:monospace;">--</div>
+      <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">TIEMPO</div>
     </div>
   </div>
 </div>
-</body></html>`);
-  win.document.close();
-  if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
-}
-
-
-function genKMZ(){
-  if(!ST.points.length){toast('Sin puntos para exportar');return;}
-
-  const typeIcon = {
-    photo:  'http://maps.google.com/mapfiles/kml/paddle/blu-circle.png',
-    video:  'http://maps.google.com/mapfiles/kml/paddle/red-circle.png',
-    both:   'http://maps.google.com/mapfiles/kml/paddle/ylw-stars.png',
-    null:   'http://maps.google.com/mapfiles/kml/paddle/wht-circle.png',
-  };
-
-  // Build KML string
-  let kml = `<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2">
-<Document>
-  <name>Huella de Tapir — ${ST.kmzName}</name>
-  <description>Recce exportado el ${new Date().toLocaleDateString('es-AR')}</description>
-
-  <Style id="photo"><IconStyle><Icon><href>${typeIcon.photo}</href></Icon></IconStyle></Style>
-  <Style id="video"><IconStyle><Icon><href>${typeIcon.video}</href></Icon></IconStyle></Style>
-  <Style id="both"><IconStyle><Icon><href>${typeIcon.both}</href></Icon></IconStyle></Style>
-  <Style id="none"><IconStyle><Icon><href>${typeIcon.null}</href></Icon></IconStyle></Style>
-`;
-
-  // One folder per tramo
-  const groups={};
-  ST.points.forEach(pt=>{const k=pt.tramo||'Sin tramo';if(!groups[k])groups[k]=[];groups[k].push(pt);});
-  const orderedKeys=[...ST.tramos.map(t=>t.name).filter(n=>groups[n]),...Object.keys(groups).filter(k=>!ST.tramos.find(t=>t.name===k))];
-
-  orderedKeys.forEach(key=>{
-    const pts=groups[key];
-    const tramo=ST.tramos.find(t=>t.name===key);
-    kml+=`  <Folder><name>${escXML(key)}</name>
-`;
-
-    // Include original route as LineString
-    if(tramo && tramo.route && tramo.route.length>1){
-      const coords=tramo.route.map(p=>`${p[1].toFixed(6)},${p[0].toFixed(6)},0`).join(' ');
-      kml+=`    <Placemark>
-      <name>${escXML(key)} — Ruta</name>
-      <Style><LineStyle><color>ff00e5ff</color><width>3</width></LineStyle></Style>
-      <LineString><tessellate>1</tessellate><coordinates>${coords}</coordinates></LineString>
-    </Placemark>
-`;
-    }
-
-    // Each user point
-    pts.forEach(pt=>{
-      const styleId=pt.type||'none';
-      const tl=pt.type==='photo'?'Foto':pt.type==='video'?'Video':pt.type==='both'?'Foto+Video':'Sin tipo';
-      const distDesc=(pt.distFromStart!==null&&pt.distFromStart!==undefined)
-        ? `${pt.distFromStart}km desde largada · ${pt.distToEnd}km hasta llegada` : '';
-      const tagLabels={'curva-der':'Curva Der','curva-izq':'Curva Izq','lomo':'Lomo','vado':'Vado','u-der':'U Der','u-izq':'U Izq','ese':'Ese','paisaje':'Paisaje','panoramica':'Panorámica','parking':'Parking'};
-      const tagsStr = (pt.tags||[]).map(t=>tagLabels[t]||t).join(', ');
-      const starsStr = pt.stars ? '★'.repeat(pt.stars)+'☆'.repeat(5-pt.stars) : '';
-      const desc=[tl, starsStr, tagsStr, distDesc, pt.notes].filter(Boolean).join(' | ');
-      kml+=`    <Placemark>
-      <name>#${pt.number} — ${tl}${pt.stars?` ${starsStr}`:''}</name>
-      <description>${escXML(desc)}</description>
-      <styleUrl>#${styleId}</styleUrl>
-      <ExtendedData>
-        <Data name="tipo"><value>${tl}</value></Data>
-        <Data name="tramo"><value>${escXML(key)}</value></Data>
-        ${pt.stars?`<Data name="relevancia"><value>${starsStr}</value></Data>`:''}
-        ${tagsStr?`<Data name="obstaculos"><value>${escXML(tagsStr)}</value></Data>`:''}
-        ${pt.distFromStart!==null&&pt.distFromStart!==undefined?`<Data name="dist_largada_km"><value>${pt.distFromStart}</value></Data>
-        <Data name="dist_llegada_km"><value>${pt.distToEnd}</value></Data>`:''}
-        ${pt.notes?`<Data name="notas"><value>${escXML(pt.notes)}</value></Data>`:''}
-        <Data name="timestamp"><value>${pt.ts}</value></Data>
-      </ExtendedData>
-      <Point><coordinates>${pt.lng.toFixed(6)},${pt.lat.toFixed(6)},0</coordinates></Point>
-    </Placemark>
-`;
-    });
-
-    kml+=`  </Folder>
-`;
-  });
-
-  kml+=`</Document>
-</kml>`;
-
-  // Build ZIP (KMZ) in pure JS
-  const kmlBytes = new TextEncoder().encode(kml);
-  const kmzBytes = buildZip([{ name:'doc.kml', data:kmlBytes }]);
-  const blob = new Blob([kmzBytes], {type:'application/vnd.google-earth.kmz'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href=url; a.download=`HuellaDeTapir_${ST.kmzName.replace(/\.kmz?$/i,'')}_V2.20260602_1536.kmz`;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
-  toast('KMZ exportado ✓');
-}
-
-function escXML(s){
-  if(!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function buildZip(files){
-  // Build a minimal ZIP (store, no compression) - works for KMZ
-  const parts=[];
-  const centralDir=[];
-  let offset=0;
-
-  files.forEach(({name,data})=>{
-    const nameBytes=new TextEncoder().encode(name);
-    const now=new Date();
-    const dosDate=((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
-    const dosTime=(now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1);
-
-    // CRC32
-    const crc=crc32(data);
-
-    // Local file header
-    const lh=new DataView(new ArrayBuffer(30+nameBytes.length));
-    lh.setUint32(0,0x04034b50,true);  // signature
-    lh.setUint16(4,20,true);           // version needed
-    lh.setUint16(6,0,true);            // flags
-    lh.setUint16(8,0,true);            // compression (store)
-    lh.setUint16(10,dosTime,true);
-    lh.setUint16(12,dosDate,true);
-    lh.setUint32(14,crc,true);
-    lh.setUint32(18,data.length,true); // compressed size
-    lh.setUint32(22,data.length,true); // uncompressed size
-    lh.setUint16(26,nameBytes.length,true);
-    lh.setUint16(28,0,true);           // extra length
-    new Uint8Array(lh.buffer,30).set(nameBytes);
-
-    // Central directory entry
-    const cd=new DataView(new ArrayBuffer(46+nameBytes.length));
-    cd.setUint32(0,0x02014b50,true);
-    cd.setUint16(4,20,true); cd.setUint16(6,20,true);
-    cd.setUint16(8,0,true); cd.setUint16(10,0,true);
-    cd.setUint16(12,dosTime,true); cd.setUint16(14,dosDate,true);
-    cd.setUint32(16,crc,true);
-    cd.setUint32(20,data.length,true); cd.setUint32(24,data.length,true);
-    cd.setUint16(28,nameBytes.length,true);
-    cd.setUint16(30,0,true); cd.setUint16(32,0,true);
-    cd.setUint16(34,0,true); cd.setUint32(38,0,true);
-    cd.setUint32(42,offset,true);
-    new Uint8Array(cd.buffer,46).set(nameBytes);
-
-    parts.push(new Uint8Array(lh.buffer), data);
-    centralDir.push(new Uint8Array(cd.buffer));
-    offset+=30+nameBytes.length+data.length;
-  });
-
-  // End of central directory
-  const cdSize=centralDir.reduce((s,b)=>s+b.length,0);
-  const eocd=new DataView(new ArrayBuffer(22));
-  eocd.setUint32(0,0x06054b50,true);
-  eocd.setUint16(4,0,true); eocd.setUint16(6,0,true);
-  eocd.setUint16(8,files.length,true); eocd.setUint16(10,files.length,true);
-  eocd.setUint32(12,cdSize,true); eocd.setUint32(16,offset,true);
-  eocd.setUint16(20,0,true);
-
-  const all=[...parts,...centralDir,new Uint8Array(eocd.buffer)];
-  const total=all.reduce((s,b)=>s+b.length,0);
-  const out=new Uint8Array(total); let pos=0;
-  all.forEach(b=>{out.set(b,pos);pos+=b.length;});
-  return out;
-}
-
-function crc32(buf){
-  let c=0xFFFFFFFF;
-  if(!crc32.table){
-    crc32.table=new Uint32Array(256);
-    for(let i=0;i<256;i++){let v=i;for(let j=0;j<8;j++)v=v&1?(0xEDB88320^(v>>>1)):(v>>>1);crc32.table[i]=v;}
-  }
-  for(let i=0;i<buf.length;i++) c=crc32.table[(c^buf[i])&0xFF]^(c>>>8);
-  return (c^0xFFFFFFFF)>>>0;
-}
-
-async function newSession(){
-  if(!confirm('⚠ ATENCIÓN\n\nEsto eliminará TODOS los puntos de esta sesión.\n¿Estás seguro?')) return;
-  await deleteAllPhotos();
-  localStorage.removeItem(STORE);
-  try { const idb=await openDB(); idb.transaction(META_STORE,'readwrite').objectStore(META_STORE).delete('session'); } catch(e) {}
-  location.reload();
-}
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden' && ST.tramos.length) persist();
-});
-
-// ══ TRAMO PANEL ══
-let tramoPanelOpen = true;
-let activeTramoIdx = -1;
-
-function buildTramoPanel() {
-  const container = document.getElementById('tramo-panel-items');
-  if (!container || !ST.tramos.length) return;
-  const sorted = ST.tramos.map((t, i) => ({t, i})).sort((a, b) => {
-    const na = parseInt((a.t.name.match(/[0-9]+/) || [0])[0]);
-    const nb = parseInt((b.t.name.match(/[0-9]+/) || [0])[0]);
-    return na - nb;
-  });
-  container.innerHTML = sorted.map(({t, i}) => {
-    const pts = ST.points.filter(p => p.tramo === t.name).length;
-    return `<div class="tramo-panel-item" id="tpi-${i}" onclick="selectTramo(${i})">
-      <div class="tramo-panel-name" style="color:#ffffff;">${t.name}</div>
-      <div class="tramo-panel-pts">${pts} pto${pts!==1?'s':''}</div>
-    </div>`;
-  }).join('');
-}
-
-function selectTramo(idx) {
-  activeTramoIdx = idx;
-  ST.tramos.forEach((t, i) => {
-    const el = document.getElementById('tpi-'+i);
-    if (el) el.className = 'tramo-panel-item' + (i===idx?' tpi-active':'');
-  });
-  const t = ST.tramos[idx];
-  if (!t || !t.route || t.route.length < 2) return;
-  const lats=t.route.map(p=>p[0]), lngs=t.route.map(p=>p[1]);
-  const minLat=Math.min(...lats), maxLat=Math.max(...lats);
-  const minLng=Math.min(...lngs), maxLng=Math.max(...lngs);
-  M.lat=(minLat+maxLat)/2; M.lng=(minLng+maxLng)/2;
-  const dLat=maxLat-minLat||0.01, dLng=maxLng-minLng||0.01;
-  const cos=Math.cos(M.lat*Math.PI/180);
-  M.scale=Math.min((M.H-140)*0.75/dLat, M.W*0.65/(dLng*cos));
-  M.following=false; M.navMode=false; // don't auto-follow after selecting a tramo
-}
-
-function toggleTramoPanel() {
-  tramoPanelOpen = !tramoPanelOpen;
-  document.getElementById('tramo-list-panel').classList.toggle('collapsed', !tramoPanelOpen);
-  document.getElementById('tramo-arrow').innerHTML = tramoPanelOpen
-    ? '<polyline points="15 18 9 12 15 6"/>'
-    : '<polyline points="9 18 15 12 9 6"/>';
-}
-
-// ══ THEME ══
-function toggleTheme(){
-  const isLight = document.body.classList.toggle('light');
-  document.getElementById('theme-btn').textContent = isLight ? '◐' : '◑';
-  localStorage.setItem('tapir-theme', isLight ? 'light' : 'dark');
-}
-function initTheme(){
-  const saved = localStorage.getItem('tapir-theme');
-  if(saved === 'light'){
-    document.body.classList.add('light');
-    const btn = document.getElementById('theme-btn');
-    if(btn) btn.textContent = '◐';
-  }
-}
-
-// ══ OBSTACLE TAGS & STARS ══
-const OBS_ICONS = {'curva-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMTggUTYgNCAyMiA0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE5IDEuNSBMMjIgNCBMMTkgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA D'},'curva-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTI0IDE4IFEyNCA0IDggNCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSAxLjUgTDggNCBMMTEgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA I'},'lomo':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTggTDggMTggUTE1IDQgMjIgMTggTDI4IDE4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+',label:'LOMO'},'vado':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgOCBMOCA4IFExNSAyMCAyMiA4IEwyOCA4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTggMTUgUTE1IDExIDIyIDE1IiBzdHJva2U9IiMwMGEwYzgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOCIvPjxwYXRoIGQ9Ik0xMCAxOSBRMTUgMTYgMjAgMTkiIHN0cm9rZT0iIzAwYTBjOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+',label:'VADO'},'u-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkgMyBMOSAxNCBROSAyMCAxNSAyMCBRMjEgMjAgMjEgMTQgTDIxIDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNyAzIEwxNyAxNCBRMTcgMTcgMTUgMTcgUTEzIDE3IDEzIDE0IEwxMyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xOCAwLjUgTDIxIDMgTDI0IDAuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+',label:'U DER'},'u-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIxIDMgTDIxIDE0IFEyMSAyMCAxNSAyMCBROSAyMCA5IDE0IEw5IDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMyAzIEwxMyAxNCBRMTMgMTcgMTUgMTcgUTE3IDE3IDE3IDE0IEwxNyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xMiAwLjUgTDkgMyBMNiAwLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==',label:'U IZQ'},'ese':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMjAgUTYgMTIgMTUgMTEgUTI0IDEwIDI0IDIiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMjEgMiBMMjQgMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTYgMjAgTDkgMjAiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',label:'ESE'},'paisaje':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiByeD0iMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0zIDE1IEw5IDkgTDE0IDEzIEwxOSA4IEwyNyAxNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMjIiIGN5PSI3IiByPSIyLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjIiLz48L3N2Zz4=',label:'PAISAJE'},'panoramica':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTEgUTIgMyAxNSAzIFEyOCAzIDI4IDExIFEyOCAxOSAxNSAxOSBRMiAxOSAyIDExWiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02IDExIFE2IDYgMTUgNiBRMjQgNiAyNCAxMSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjIsMS41IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjUiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjExIiByPSIyIiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=',label:'PANOR.'},'parking':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iNCIgeT0iMiIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0xMSA2IEwxMSAxNiBNMTEgNiBMMTYgNiBRMjAgNiAyMCAxMCBRMjAgMTQgMTYgMTQgTDExIDE0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'PARKING'}};
-
-
-function toggleObs(btn){
-  btn.classList.toggle('sel');
-  if(ST.curPt){
-    const obs = btn.getAttribute('data-obs');
-    if(!ST.curPt.tags) ST.curPt.tags = [];
-    const idx = ST.curPt.tags.indexOf(obs);
-    if(idx >= 0) ST.curPt.tags.splice(idx,1);
-    else ST.curPt.tags.push(obs);
-  }
-}
-
-function setStar(n){
-  if(ST.curPt) ST.curPt.stars = n;
-  document.querySelectorAll('.star-btn').forEach(b => {
-    b.classList.toggle('lit', parseInt(b.getAttribute('data-star')) <= n);
-  });
-}
-
-function loadObsAndStars(){
-  try {
-    document.querySelectorAll('.obs-btn').forEach(b => b.classList.remove('sel'));
-    document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('lit'));
-    if(!ST.curPt) return;
-    (ST.curPt.tags||[]).forEach(tag => {
-      const btn = document.querySelector('.obs-btn[data-obs="'+tag+'"]');
-      if(btn) btn.classList.add('sel');
-    });
-    if(ST.curPt.stars) setStar(ST.curPt.stars);
-  } catch(e) { console.warn('loadObsAndStars:', e); }
-}
-
-// ══ SUN ARC TOGGLE ══
-function toggleSunArc(){
-  WX.hideSun = !WX.hideSun;
-  const btn = document.getElementById('sun-arc-btn');
-  if(btn){
-    btn.style.opacity = WX.hideSun ? '0.3' : '1.0';
-    btn.textContent = WX.hideSun ? '○ POSICIÓN DEL SOL' : '☀ POSICIÓN DEL SOL';
-  }
-}
-
-// ══ PHOTO SAVE TO CAMERA ROLL ══
-
-function saveAndUsePhoto() {
-  // Save original to camera roll via share API
-  if (window._photoOriginal && navigator.share) {
-    fetch(window._photoOriginal)
-      .then(r => r.blob())
-      .then(blob => {
-        const file = new File([blob], 'tapir_photo.jpg', {type:'image/jpeg'});
-        navigator.share({ files: [file] }).catch(()=>{});
-      }).catch(()=>{});
-  } else if (window._photoOriginal) {
-    // Fallback: open image so user can long-press save
-    const a = document.createElement('a');
-    a.href = window._photoOriginal;
-    a.download = 'tapir_photo.jpg';
-    a.click();
-  }
-  document.getElementById('photo-save-row').style.display = 'none';
-}
-
-function justUsePhoto() {
-  document.getElementById('photo-save-row').style.display = 'none';
-  window._photoOriginal = null;
-}
-
-// ══ AUTO BACKUP (JSON checkpoint every 3 points) ══
-
-function autoBackup() {
-  try {
-    const backup = {
-      v: 2,
-      ts: new Date().toISOString(),
-      kmzName: ST.kmzName,
-      nextN: ST.nextN,
-      points: ST.points.map(pt => ({
-        id: pt.id, number: pt.number,
-        lat: pt.lat, lng: pt.lng,
-        tramo: pt.tramo,
-        distFromStart: pt.distFromStart,
-        distToEnd: pt.distToEnd,
-        type: pt.type,
-        hasPhoto: !!(pt.photo || pt._photo),
-        tags: pt.tags || [],
-        stars: pt.stars || 0,
-        notes: pt.notes || '',
-        ts: pt.ts
-      }))
-    };
-    localStorage.setItem('tapir-backup', JSON.stringify(backup));
-    localStorage.setItem('tapir-backup-count', ST.points.length);
-  } catch(e) { console.warn('autoBackup error:', e); }
-}
-
-function checkAutoBackup() {
-  if (ST.points.length > 0 && ST.points.length % 3 === 0) {
-    autoBackup();
-  }
-}
-
-function restoreFromBackup() {
-  try {
-    const raw = localStorage.getItem('tapir-backup');
-    if (!raw) return false;
-    const backup = JSON.parse(raw);
-    if (!backup.points || !backup.points.length) return false;
-    ST.points = backup.points;
-    ST.nextN = backup.nextN || (Math.max(...backup.points.map(p=>p.number)) + 1);
-    ST.kmzName = backup.kmzName || ST.kmzName;
-    persist();
-    toast('Backup restaurado: ' + backup.points.length + ' puntos');
-    return true;
-  } catch(e) { console.warn('restoreFromBackup error:', e); return false; }
-}
-
-// ══ WEATHER & SUN ══
-function toggleDay(i){
-  const detail = document.getElementById('day-detail-'+i);
-  const arrow  = document.getElementById('day-arrow-'+i);
-  if(!detail) return;
-  const open = detail.style.display !== 'none';
-  detail.style.display = open ? 'none' : 'block';
-  if(arrow) arrow.textContent = open ? '›' : '⌄';
-}
-
-
-const WX = { sunRise:null, sunSet:null, hourly:[], daily:[], hideSun:false };
-
-function getDayOfYear() {
-  const now = new Date();
-  return Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-}
-
-function calcSunTimes(lat, lng) {
-  // NOAA Solar Calculator — accurate to ~1 min
-  const now = new Date();
-  const JD  = now / 86400000 + 2440587.5;
-  const t   = (JD - 2451545.0) / 36525.0;
-  const L0  = (280.46646 + t * 36000.76983) % 360;
-  const M   = (357.52911 + t * 35999.05029) * Math.PI / 180;
-  const C   = (1.914602 - t * 0.004817) * Math.sin(M) + 0.019993 * Math.sin(2*M);
-  const sunLon = (L0 + C) * Math.PI / 180;
-  const eps    = (23.439291 - t * 0.013004) * Math.PI / 180;
-  const decl   = Math.asin(Math.sin(eps) * Math.sin(sunLon));
-  const y      = Math.tan(eps/2) ** 2;
-  const L0r    = L0 * Math.PI / 180;
-  const eot    = (y*Math.sin(2*L0r) - 2*0.016708634*Math.sin(M)
-                + 4*0.016708634*y*Math.sin(M)*Math.cos(2*L0r)
-                - 0.5*y*y*Math.sin(4*L0r)
-                - 1.25*0.016708634**2*Math.sin(2*M)) * 4 * 180/Math.PI;
-  const latR   = lat * Math.PI / 180;
-  const cosHA  = (Math.cos(90.833*Math.PI/180) - Math.sin(latR)*Math.sin(decl))
-                 / (Math.cos(latR) * Math.cos(decl));
-  if(Math.abs(cosHA) > 1) return null;
-  const HA = Math.acos(cosHA) * 180 / Math.PI;
-  const solarNoonUTC = 720 - 4*lng - eot; // minutes from midnight UTC
-  const tzOffMin = -now.getTimezoneOffset(); // local offset in minutes (+180 for UTC-3)
-  const riseMin  = solarNoonUTC - HA*4 + tzOffMin;
-  const setMin   = solarNoonUTC + HA*4 + tzOffMin;
-  const toD = m => new Date(now.getFullYear(), now.getMonth(), now.getDate(),
-                            Math.floor(m/60), Math.round(m%60));
-  return { rise: toD(riseMin), set: toD(setMin) };
-}
-
-function calcSunAzimuth(t, lat, dayN) {
-  // t: 0=sunrise, 1=sunset. Returns azimuth in radians from north, clockwise
-  const declR = 23.45 * Math.sin((284 + dayN) * 2*Math.PI/365) * Math.PI/180;
-  const latR  = lat * Math.PI / 180;
-  const ha    = (t - 0.5) * Math.PI * 1.8;
-  const sinAlt = Math.sin(latR)*Math.sin(declR) + Math.cos(latR)*Math.cos(declR)*Math.cos(ha);
-  const alt   = Math.asin(Math.max(-1, Math.min(1, sinAlt)));
-  const az    = Math.atan2(-Math.cos(declR)*Math.sin(ha),
-                            Math.cos(latR)*Math.sin(declR) - Math.sin(latR)*Math.cos(declR)*Math.cos(ha));
-  return { az: az + Math.PI, alt }; // az from north
-}
-
-function toggleWeather() {
-  const panel = document.getElementById('weather-panel');
-  const btn   = document.getElementById('weather-btn');
-  const open  = panel.style.display === 'flex';
-  panel.style.display = open ? 'none' : 'flex';
-  btn.style.color      = open ? '#ffcc44' : '#000';
-  btn.style.background = open ? 'transparent' : '#ffcc44';
-  if(!open && !WX.hourly.length) refreshWeather();
-}
-
-async function refreshWeather() {
-  const lat = ST.gpsPos ? ST.gpsPos.lat : M.lat;
-  const lng = ST.gpsPos ? ST.gpsPos.lng : M.lng;
-  if(!lat){ toast('Sin posición GPS'); return; }
-  const sun = calcSunTimes(lat, lng);
-  if(sun){ WX.sunRise = sun.rise; WX.sunSet = sun.set; }
-  const fmt = d => d ? d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0') : '--:--';
-  const rEl = document.getElementById('wp-rise');
-  const sEl = document.getElementById('wp-set');
-  if(rEl) rEl.textContent = fmt(WX.sunRise);
-  if(sEl) sEl.textContent = fmt(WX.sunSet);
-  if(!navigator.onLine){ renderHours(); return; }
-  try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}&hourly=temperature_2m,precipitation,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&forecast_days=3&timezone=auto`;
-    const res  = await fetch(url);
-    const data = await res.json();
-    WX.hourly  = data.hourly.time.map((t,i) => ({
-      hour: new Date(t).getHours(),
-      day: new Date(t).getDate(),
-      temp: Math.round(data.hourly.temperature_2m[i]),
-      rain: data.hourly.precipitation[i],
-      wind: Math.round(data.hourly.windspeed_10m[i])
-    })).filter(h => {
-      const today = new Date().getDate();
-      return h.day === today && h.hour >= 5 && h.hour <= 17;
-    });
-    WX.daily = data.daily ? data.daily.time.map((t,i) => ({
-      date: new Date(t),
-      tmax: Math.round(data.daily.temperature_2m_max[i]),
-      tmin: Math.round(data.daily.temperature_2m_min[i]),
-      rain: data.daily.precipitation_sum[i],
-      wind: Math.round(data.daily.windspeed_10m_max[i])
-    })) : [];
-  } catch(e) { console.warn('Weather error:', e); }
-  renderHours();
-}
-
-function renderHours() {
-  const el = document.getElementById('wp-hours');
-  if(!el) return;
-  const nowH = new Date().getHours();
-  if(!WX.hourly.length){
-    el.innerHTML = '<div style="padding:12px;color:#4a8898;font-size:8px;text-align:center;">Sin conexión</div>';
-    return;
-  }
-  // Render 3-day summary
-  const d3el = document.getElementById('wp-3day');
-  if(d3el && WX.daily.length > 0){
-    const days = ['Hoy','Mañana','Pasado'];
-    const dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-    d3el.innerHTML = WX.daily.map((d,i) => {
-      const name = i===0 ? 'HOY' : i===1 ? 'MAÑANA' : dayNames[d.date.getDay()].toUpperCase();
-      const dateStr = d.date.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
-      return `<div style="border-bottom:1px solid rgba(26,48,64,0.4);">
-        <div onclick="toggleDay(${i})" style="display:flex;justify-content:space-between;align-items:center;
-          padding:7px 10px;cursor:pointer;">
-          <div>
-            <span style="color:#ffcc44;font-size:9px;font-weight:bold;letter-spacing:1px;">${name}</span>
-            <span style="color:#4a8898;font-size:7.5px;margin-left:6px;">${dateStr}</span>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <span style="color:#ffffff;font-size:11px;font-weight:bold;">${d.tmax}°</span>
-            <span style="color:#4a8898;font-size:10px;">${d.tmin}°</span>
-            <span style="color:#4a8898;font-size:10px;" id="day-arrow-${i}">›</span>
-          </div>
-        </div>
-        <div id="day-detail-${i}" style="display:${i===0?'block':'none'};padding:0 10px 8px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-            <div style="background:rgba(0,229,255,0.05);border:1px solid #0a2530;border-radius:6px;padding:6px 8px;">
-              <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">LLUVIA</div>
-              <div style="color:#00a0c8;font-size:14px;font-weight:bold;margin-top:2px;">${d.rain}<span style="font-size:9px;color:#4a8898;"> mm</span></div>
-            </div>
-            <div style="background:rgba(0,229,255,0.05);border:1px solid #0a2530;border-radius:6px;padding:6px 8px;">
-              <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">VIENTO</div>
-              <div style="color:#c8dce8;font-size:14px;font-weight:bold;margin-top:2px;">${d.wind}<span style="font-size:9px;color:#4a8898;"> km/h</span></div>
-            </div>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-    // Auto-expand today
-    const arr0 = document.getElementById('day-arrow-0');
-    if(arr0) arr0.textContent = '⌄';
-  }
-  el.innerHTML = WX.hourly.map(h => {
-    const cur = h.hour === nowH;
-    const s = cur ? 'background:rgba(255,204,68,0.07);' : '';
-    const tc = cur ? '#ffcc44' : '';
-    return `<div style="display:grid;grid-template-columns:30px 1fr 1fr 1fr;padding:5px 8px;
-              align-items:center;border-bottom:1px solid rgba(26,48,64,0.5);${s}">
-      <span style="color:${tc||'#4a8898'};font-size:9px;">${h.hour.toString().padStart(2,'0')}h</span>
-      <span style="color:${tc||'#fff'};font-size:11px;font-weight:bold;text-align:center;">${h.temp}°</span>
-      <span style="color:#00a0c8;font-size:9px;text-align:center;">${h.rain}</span>
-      <span style="color:#c8dce8;font-size:9px;text-align:center;">${h.wind}</span>
-    </div>`;
-  }).join('');
-}
-
-// ══ OSM ROADS ══
-
-async function saveRoads(roads) {
-  try {
-    const d = await openDB();
-    const tx = d.transaction(ROADS_STORE, 'readwrite');
-    tx.objectStore(ROADS_STORE).put(roads, 'roads');
-    await new Promise((res,rej) => { tx.oncomplete=res; tx.onerror=rej; });
-  } catch(e) { console.warn('saveRoads error:', e); }
-}
-
-async function loadRoads() {
-  try {
-    const d = await openDB();
-    return new Promise((res) => {
-      const tx = d.transaction(ROADS_STORE, 'readonly');
-      const req = tx.objectStore(ROADS_STORE).get('roads');
-      req.onsuccess = () => res(req.result || []);
-      req.onerror   = () => res([]);
-    });
-  } catch(e) { return []; }
-}
-
-async function loadOSMRoads() {
-  const btn = document.getElementById('roads-btn');
-  if (!navigator.onLine) { toast('Sin conexión'); return; }
-  if (!ST.tramos.length) { toast('Cargá un KMZ primero'); return; }
-
-  btn.classList.add('loading');
-  btn.textContent = 'DESCARGANDO...';
-
-  // Bounding box of all tramos + 0.05° buffer (~5km)
-  const allLats = ST.tramos.flatMap(t => t.route.map(p=>p[0]));
-  const allLngs = ST.tramos.flatMap(t => t.route.map(p=>p[1]));
-  // Buffer around ALL tramos (not GPS position) — ~20km margin
-  const S = (Math.min(...allLats) - 0.20).toFixed(5);
-  const N = (Math.max(...allLats) + 0.20).toFixed(5);
-  const W = (Math.min(...allLngs) - 0.20).toFixed(5);
-  const E = (Math.max(...allLngs) + 0.20).toFixed(5);
-  toast('Descargando caminos del área de la carrera...');
-
-  const query = `[out:json][timeout:25];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential)$"](${S},${W},${N},${E}););out geom;`;
-  const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
-
-  try {
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-
-    // Convert OSM ways to array of coordinate arrays
-    const roads = (data.elements || [])
-      .filter(el => el.type === 'way' && el.geometry && el.geometry.length > 1)
-      .map(el => el.geometry.map(pt => [pt.lat, pt.lon]));
-
-    ST.roads = roads;
-    await saveRoads(roads);
-
-    btn.classList.remove('loading');
-    btn.classList.add('done');
-    btn.textContent = roads.length + ' CAMINOS OK';
-    toast(roads.length + ' caminos cargados');
-  } catch(e) {
-    btn.classList.remove('loading');
-    btn.textContent = 'CARGAR CAMINOS';
-    toast('Error al cargar caminos');
-    console.error(e);
-  }
-}
-
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
-
-// ══ MODO NÓMADE ══════════════════════════════
-
-const NOM = { active:false, raceMode:false, dest:null, route:null, steps:[], stepIdx:0, canvas:null, ctx:null, animFrame:null };
-
-function NOM_open(){
-  NOM.active = true;
-  const ov = document.getElementById('nom-overlay');
-  ov.style.display = 'flex';
-  NOM_showSelector();
-  NOM_buildLists();
-}
-
-function NOM_close(){
-  NOM.active = false;
-  document.getElementById('nom-overlay').style.display = 'none';
-  if(NOM.animFrame){ cancelAnimationFrame(NOM.animFrame); NOM.animFrame = null; }
-  NOM.route = null; NOM.steps = []; NOM.dest = null;
-}
-
-function NOM_showSelector(){
-  document.getElementById('nom-selector').style.display = 'block';
-  document.getElementById('nom-nav').style.display = 'none';
-}
-
-function NOM_showNav(){
-  document.getElementById('nom-selector').style.display = 'none';
-  const nav = document.getElementById('nom-nav');
-  nav.style.display = 'flex';
-  if(!NOM.canvas){
-    NOM.canvas = document.getElementById('nom-canvas');
-    NOM.ctx = NOM.canvas.getContext('2d');
-  }
-  NOM_resizeCanvas();
-  if(NOM.animFrame) cancelAnimationFrame(NOM.animFrame);
-  NOM.animFrame = requestAnimationFrame(NOM_drawLoop);
-}
-
-function NOM_resizeCanvas(){
-  const cvs = NOM.canvas; if(!cvs) return;
-  const r = cvs.getBoundingClientRect();
-  cvs.width = r.width * devicePixelRatio;
-  cvs.height = r.height * devicePixelRatio;
-}
-
-function NOM_toggleRace(){
-  NOM.raceMode = !NOM.raceMode;
-  const btn = document.getElementById('nom-race-btn');
-  if(NOM.raceMode){ btn.textContent='ON'; btn.style.background='rgba(0,229,255,0.15)'; btn.style.borderColor='#00e5ff'; btn.style.color='#00e5ff'; }
-  else { btn.textContent='OFF'; btn.style.background='#1a3040'; btn.style.borderColor='#0a2530'; btn.style.color='#4a8898'; }
-  NOM_buildLists();
-}
-
-function NOM_buildLists(){
-  function makeItem(lat, lng, name, line1, line2, container){
-    const d = document.createElement('div');
-    d.style.cssText = 'background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;';
-    d.onclick = function(){ NOM_setDest({lat:lat, lng:lng, name:name}); };
-    const info = document.createElement('div');
-    const t1 = document.createElement('div');
-    t1.style.cssText = 'color:#fff;font-size:11px;font-weight:700;';
-    t1.textContent = line1;
-    const t2 = document.createElement('div');
-    t2.style.cssText = 'color:#4a8898;font-size:8px;margin-top:2px;';
-    t2.textContent = line2;
-    info.appendChild(t1); info.appendChild(t2);
-    const icon = document.createElement('div');
-    icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>';
-    d.appendChild(info); d.appendChild(icon);
-    container.appendChild(d);
-  }
-  const tl = document.getElementById('nom-tramo-list');
-  if(tl){
-    tl.innerHTML = '';
-    ST.tramos.forEach(function(t){
-      const lat = NOM.raceMode ? t.start[0] : (t.start[0]+t.end[0])/2;
-      const lng = NOM.raceMode ? t.start[1] : (t.start[1]+t.end[1])/2;
-      const name = NOM.raceMode ? 'LPE '+t.name : t.name;
-      makeItem(lat, lng, name, t.name, NOM.raceMode ? 'Largada (LPE)' : 'Centro del tramo', tl);
-    });
-  }
-  const pl = document.getElementById('nom-point-list');
-  if(pl){
-    pl.innerHTML = '';
-    if(!ST.points.length){
-      const empty = document.createElement('div');
-      empty.style.cssText = 'color:#4a8898;font-size:9px;text-align:center;padding:12px;';
-      empty.textContent = 'Sin puntos marcados';
-      pl.appendChild(empty);
-      return;
-    }
-    const tagL = {'curva-der':'CD','curva-izq':'CI','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P'};
-    ST.points.forEach(function(pt){
-      const tags = (pt.tags||[]).map(function(t){ return tagL[t]||t; }).join(' ');
-      const stars = pt.stars ? '★'.repeat(pt.stars) : '';
-      const sub = [stars, tags, pt.notes].filter(Boolean).join(' - ').substring(0,40);
-      makeItem(pt.lat, pt.lng, '#'+pt.number+' '+pt.tramo, '#'+pt.number+' '+pt.tramo, sub||'sin notas', pl);
-    });
-  }
-}
-
-function NOM_setDest(dest){
-  NOM.dest = dest;
-  NOM_showNav();
-  document.getElementById('nom-instr-text').textContent = 'Calculando ruta...';
-  document.getElementById('nom-instr-dist').textContent = '';
-  NOM_fetchRoute();
-}
-
-async function NOM_fetchRoute(){
-  if(!ST.gpsPos || !NOM.dest) return;
-  const url = 'https://router.project-osrm.org/route/v1/driving/'+ST.gpsPos.lng+','+ST.gpsPos.lat+';'+NOM.dest.lng+','+NOM.dest.lat+'?steps=true&geometries=geojson&overview=full';
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if(data.code !== 'Ok' || !data.routes.length){ NOM_noRoute(); return; }
-    NOM.route = data.routes[0];
-    NOM.steps = data.routes[0].legs[0].steps;
-    NOM.stepIdx = 0;
-    NOM_updateStats();
-    NOM_updateInstruction();
-  } catch(e){ NOM_noRoute(); }
-}
-
-function NOM_noRoute(){
-  document.getElementById('nom-instr-text').textContent = 'Sin ruta — línea directa';
-  document.getElementById('nom-arrow').textContent = '↑';
-  NOM_updateStats();
-}
-
-function NOM_recalc(){ NOM_fetchRoute(); }
-
-function NOM_updateStats(){
-  if(!ST.gpsPos || !NOM.dest) return;
-  if(NOM.route){
-    const km = (NOM.route.distance/1000).toFixed(1);
-    const mins = Math.round(NOM.route.duration/60);
-    const eta = new Date(Date.now()+NOM.route.duration*1000);
-    document.getElementById('nom-dist-total').textContent = km+' km';
-    document.getElementById('nom-eta').textContent = eta.getHours().toString().padStart(2,'0')+':'+eta.getMinutes().toString().padStart(2,'0');
-    document.getElementById('nom-time-left').textContent = mins<60 ? mins+' min' : Math.floor(mins/60)+'h '+(mins%60)+'m';
-  } else {
-    const R=6371, dLat=(NOM.dest.lat-ST.gpsPos.lat)*Math.PI/180, dLng=(NOM.dest.lng-ST.gpsPos.lng)*Math.PI/180;
-    const a=Math.sin(dLat/2)**2+Math.cos(ST.gpsPos.lat*Math.PI/180)*Math.cos(NOM.dest.lat*Math.PI/180)*Math.sin(dLng/2)**2;
-    const dist=R*2*Math.asin(Math.sqrt(a));
-    document.getElementById('nom-dist-total').textContent = dist.toFixed(1)+' km';
-    const spd = ST.lastSpeed||0;
-    if(spd>2){
-      const mins=Math.round(dist/spd*60), eta=new Date(Date.now()+mins*60000);
-      document.getElementById('nom-eta').textContent = eta.getHours().toString().padStart(2,'0')+':'+eta.getMinutes().toString().padStart(2,'0');
-      document.getElementById('nom-time-left').textContent = mins<60?mins+' min':Math.floor(mins/60)+'h '+(mins%60)+'m';
-    } else { document.getElementById('nom-eta').textContent='--:--'; document.getElementById('nom-time-left').textContent='--'; }
-  }
-}
-
-function NOM_updateInstruction(){
-  if(!NOM.steps.length) return;
-  const step = NOM.steps[Math.min(NOM.stepIdx, NOM.steps.length-1)];
-  const arrows = {'turn':{'left':'↰','right':'↱','sharp left':'↩','sharp right':'↪','slight left':'↖','slight right':'↗'},'arrive':'🏁','depart':'↑','straight':'↑','roundabout':'↻','merge':'↑'};
-  const m = step.maneuver;
-  let arrow = '↑';
-  if(m.type==='turn' && m.modifier && arrows.turn[m.modifier]) arrow = arrows.turn[m.modifier];
-  else if(arrows[m.type]) arrow = arrows[m.type];
-  document.getElementById('nom-arrow').textContent = arrow;
-  const d = step.distance >= 1000 ? (step.distance/1000).toFixed(1)+' km' : Math.round(step.distance)+' m';
-  document.getElementById('nom-instr-text').textContent = step.name || 'Continuar';
-  document.getElementById('nom-instr-dist').textContent = 'En '+d;
-  if(step.distance < 30 && NOM.stepIdx < NOM.steps.length-1) NOM.stepIdx++;
-}
-
-function NOM_drawLoop(){
-  if(!NOM.active) return;
-  NOM_draw();
-  NOM_updateStats();
-  NOM_updateInstruction();
-  NOM.animFrame = requestAnimationFrame(NOM_drawLoop);
-}
-
-function NOM_draw(){
-  const cvs=NOM.canvas, ctx=NOM.ctx; if(!cvs||!ctx) return;
-  const dpr=devicePixelRatio||1;
-  const W=cvs.width/dpr, H=cvs.height/dpr;
-  ctx.fillStyle='#060d14'; ctx.fillRect(0,0,W,H);
-  if(!ST.gpsPos||!NOM.dest) return;
-  const cx=W/2, cy=H*0.55;
-  const cos=Math.cos(ST.gpsPos.lat*Math.PI/180);
-  const scale=W*0.6/Math.max(0.001,Math.abs(NOM.dest.lng-ST.gpsPos.lng)*cos+0.001);
-  const proj=(lat,lng)=>({x:cx+(lng-ST.gpsPos.lng)*scale*cos, y:cy-(lat-ST.gpsPos.lat)*scale});
-
-  // Grid
-  ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=0.5;
-  for(let i=0;i<5;i++){
-    const x=W*i/4; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
-    const y=H*i/4; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
-  }
-
-  // Route
-  if(NOM.route&&NOM.route.geometry){
-    const coords=NOM.route.geometry.coordinates;
-    ctx.beginPath();
-    coords.forEach(([lng,lat],i)=>{ const p=proj(lat,lng); i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); });
-    ctx.strokeStyle='#00ff88'; ctx.lineWidth=4; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.globalAlpha=0.85; ctx.stroke(); ctx.globalAlpha=1;
-  } else {
-    const d=proj(NOM.dest.lat,NOM.dest.lng);
-    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(d.x,d.y);
-    ctx.strokeStyle='#00ff88'; ctx.lineWidth=2; ctx.setLineDash([8,6]); ctx.stroke(); ctx.setLineDash([]);
-  }
-
-  // Dest
-  const dp=proj(NOM.dest.lat,NOM.dest.lng);
-  ctx.beginPath(); ctx.arc(dp.x,dp.y,10,0,Math.PI*2); ctx.fillStyle='rgba(0,255,136,0.15)'; ctx.fill();
-  ctx.beginPath(); ctx.arc(dp.x,dp.y,5,0,Math.PI*2); ctx.fillStyle='#00ff88'; ctx.fill();
-  ctx.fillStyle='rgba(6,13,20,0.88)';
-  const lw=ctx.measureText(NOM.dest.name).width+10;
-  ctx.fillRect(dp.x-lw/2, dp.y-28, lw, 15);
-  ctx.fillStyle='#00ff88'; ctx.font='bold 8px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(NOM.dest.name, dp.x, dp.y-21);
-
-  // GPS dot
-  ctx.beginPath(); ctx.arc(cx,cy,14,0,Math.PI*2); ctx.fillStyle='rgba(0,229,255,0.1)'; ctx.fill();
-  ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fillStyle='#00e5ff'; ctx.fill();
-
-  // North
-  ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='bold 9px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('N', W-16, 16);
-}
-
-// ══ FIN MODO NÓMADE ══
-</script>
 </body>
-</html>
