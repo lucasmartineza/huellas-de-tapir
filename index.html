@@ -981,7 +981,7 @@ async function persistPhoto(pt) {
   if (pt.audio) await savePhoto('audio_'+pt.id, pt.audio);
 }
 
-async async function loadStored() {
+async function loadStored() {
   try {
     let d = null;
     try {
@@ -3202,24 +3202,50 @@ function NOM_toggleRace(){
 }
 
 function NOM_buildLists(){
+  function makeItem(lat, lng, name, line1, line2, container){
+    const d = document.createElement('div');
+    d.style.cssText = 'background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;';
+    d.onclick = function(){ NOM_setDest({lat:lat, lng:lng, name:name}); };
+    const info = document.createElement('div');
+    const t1 = document.createElement('div');
+    t1.style.cssText = 'color:#fff;font-size:11px;font-weight:700;';
+    t1.textContent = line1;
+    const t2 = document.createElement('div');
+    t2.style.cssText = 'color:#4a8898;font-size:8px;margin-top:2px;';
+    t2.textContent = line2;
+    info.appendChild(t1); info.appendChild(t2);
+    const icon = document.createElement('div');
+    icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>';
+    d.appendChild(info); d.appendChild(icon);
+    container.appendChild(d);
+  }
   const tl = document.getElementById('nom-tramo-list');
-  if(tl) tl.innerHTML = ST.tramos.map((t,i) => {
-    const lat = NOM.raceMode ? t.start[0] : (t.start[0]+t.end[0])/2;
-    const lng = NOM.raceMode ? t.start[1] : (t.start[1]+t.end[1])/2;
-    const name = NOM.raceMode ? 'LPE '+t.name : t.name;
-    return '<div onclick="NOM_setDest({lat:'+lat+',lng:'+lng+',name:''+name.replace(/'/g,'')+''})" style="background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;"><div><div style='color:#fff;font-size:11px;font-weight:700;'>'+t.name+'</div><div style='color:#4a8898;font-size:8px;margin-top:2px;'>'+( NOM.raceMode ? '→ Largada' : '→ Centro del tramo')+'</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>';
-  }).join('');
-
+  if(tl){
+    tl.innerHTML = '';
+    ST.tramos.forEach(function(t){
+      const lat = NOM.raceMode ? t.start[0] : (t.start[0]+t.end[0])/2;
+      const lng = NOM.raceMode ? t.start[1] : (t.start[1]+t.end[1])/2;
+      const name = NOM.raceMode ? 'LPE '+t.name : t.name;
+      makeItem(lat, lng, name, t.name, NOM.raceMode ? 'Largada (LPE)' : 'Centro del tramo', tl);
+    });
+  }
   const pl = document.getElementById('nom-point-list');
   if(pl){
-    if(!ST.points.length){ pl.innerHTML='<div style="color:#4a8898;font-size:9px;text-align:center;padding:12px;">Sin puntos marcados</div>'; return; }
-    const tagL={'curva-der':'CD','curva-izq':'CI','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P'};
-    pl.innerHTML = ST.points.map(pt => {
-      const tags = (pt.tags||[]).map(t=>tagL[t]||t).join(' ');
+    pl.innerHTML = '';
+    if(!ST.points.length){
+      const empty = document.createElement('div');
+      empty.style.cssText = 'color:#4a8898;font-size:9px;text-align:center;padding:12px;';
+      empty.textContent = 'Sin puntos marcados';
+      pl.appendChild(empty);
+      return;
+    }
+    const tagL = {'curva-der':'CD','curva-izq':'CI','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P'};
+    ST.points.forEach(function(pt){
+      const tags = (pt.tags||[]).map(function(t){ return tagL[t]||t; }).join(' ');
       const stars = pt.stars ? '★'.repeat(pt.stars) : '';
-      const sub = [stars, tags, pt.notes].filter(Boolean).join(' · ').substring(0,40);
-      return '<div onclick="NOM_setDest({lat:'+pt.lat+',lng:'+pt.lng+',name:'#'+pt.number+' '+pt.tramo.replace(/'/g,'')+''}" style="background:#0a1520;border:1px solid #1a3040;border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;"><div><div style='color:#fff;font-size:11px;font-weight:700;'>#'+pt.number+' <span style='color:#4a8898;font-size:9px;'>'+pt.tramo+'</span></div><div style='color:#4a8898;font-size:8px;margin-top:2px;'>'+sub+'</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>';
-    }).join('');
+      const sub = [stars, tags, pt.notes].filter(Boolean).join(' - ').substring(0,40);
+      makeItem(pt.lat, pt.lng, '#'+pt.number+' '+pt.tramo, '#'+pt.number+' '+pt.tramo, sub||'sin notas', pl);
+    });
   }
 }
 
