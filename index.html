@@ -938,7 +938,7 @@ function deleteAllPhotos() {
 async function persist() {
   try {
     const light = ST.tramos.map(t => ({
-      name:t.name, color:t.color, route:t.routeSimple,
+      name:t.name, color:t.color, route:t.routeSimple || t.route || [],
       start:t.start, end:t.end, bbox:t.bbox
     }));
     const pointsMeta = ST.points.map(p => {
@@ -977,7 +977,7 @@ async function persistPhoto(pt) {
   if (pt.audio) await savePhoto('audio_'+pt.id, pt.audio);
 }
 
-async function loadStored() {
+async async function loadStored() {
   try {
     let d = null;
     try {
@@ -1005,7 +1005,22 @@ async function loadStored() {
 }
 // ══ BOOT ══
 window.addEventListener('load', async () => {
-  const had = await loadStored();
+  let had = await loadStored();
+  // If IDB failed but we have a localStorage backup, offer to restore
+  if (!had) {
+    const bk = localStorage.getItem('tapir-backup');
+    if (bk) {
+      try {
+        const parsed = JSON.parse(bk);
+        if (parsed.points && parsed.points.length > 0) {
+          had = true;
+          ST.points = parsed.points;
+          ST.nextN = parsed.nextN || (Math.max(...parsed.points.map(p=>p.number||0)) + 1);
+          ST.kmzName = parsed.kmzName || ST.kmzName;
+        }
+      } catch(e) {}
+    }
+  }
   if (had) {
     document.getElementById('load-status').textContent =
       ST.kmzName + ' — ' + ST.points.length + ' punto' + (ST.points.length!==1?'s':'') + ' guardados';
@@ -1745,13 +1760,14 @@ function centerGPS() {
   if (ST.gpsPos) {
     M.lat=ST.gpsPos.lat; M.lng=ST.gpsPos.lng; M.following=true;
     if(!M.navMode && !M.compass){
-      M.navMode=true;
-      if(ST.lastBearing) M.rot=-ST.lastBearing;
-      toast('Modo navegación');
+      // 1er tap: solo centrar, mantener rotación libre
+      toast('Centrado en GPS');
     } else if(M.navMode && !M.compass){
+      // 2do tap: modo brújula
       M.navMode=false; M.compass=true;
       startCompass(); toast('Modo brújula');
-    } else {
+    } else if(M.compass){
+      // 3er tap: norte fijo
       M.navMode=false; M.compass=false;
       stopCompass(); M.rot=0; toast('Norte fijo');
     }
@@ -2112,7 +2128,7 @@ function renderTramoImage(tramo, pts, W, H) {
   ctx.fillStyle = '#0d1520';
   ctx.fillRect(0, 0, W, H);
 
-  if (tramo.route.length < 2) return oc.toDataURL('image/jpeg', 0.92);
+  if (tramo.route.length < 2) return oc.toDataURL('image/jpeg', 0.75);
 
   // Calculate bounds with padding
   const pad = 0.12;
@@ -2241,7 +2257,7 @@ function renderTramoImage(tramo, pts, W, H) {
   ctx.fillText('N',cx,cy-6);
   ctx.fillStyle='#888'; ctx.fillText('S',cx,cy+6);
 
-  return oc.toDataURL('image/jpeg', 0.92);
+  return oc.toDataURL('image/jpeg', 0.75);
 }
 
 async function genPDF(){
@@ -2515,14 +2531,19 @@ function genKMZ(){
       const tl=pt.type==='photo'?'Foto':pt.type==='video'?'Video':pt.type==='both'?'Foto+Video':'Sin tipo';
       const distDesc=(pt.distFromStart!==null&&pt.distFromStart!==undefined)
         ? `${pt.distFromStart}km desde largada · ${pt.distToEnd}km hasta llegada` : '';
-      const desc=[tl, distDesc, pt.notes].filter(Boolean).join(' | ');
+      const tagLabels={'curva-der':'Curva Der','curva-izq':'Curva Izq','lomo':'Lomo','vado':'Vado','u-der':'U Der','u-izq':'U Izq','ese':'Ese','paisaje':'Paisaje','panoramica':'Panorámica','parking':'Parking'};
+      const tagsStr = (pt.tags||[]).map(t=>tagLabels[t]||t).join(', ');
+      const starsStr = pt.stars ? '★'.repeat(pt.stars)+'☆'.repeat(5-pt.stars) : '';
+      const desc=[tl, starsStr, tagsStr, distDesc, pt.notes].filter(Boolean).join(' | ');
       kml+=`    <Placemark>
-      <name>#${pt.number} — ${tl}</name>
+      <name>#${pt.number} — ${tl}${pt.stars?` ${starsStr}`:''}</name>
       <description>${escXML(desc)}</description>
       <styleUrl>#${styleId}</styleUrl>
       <ExtendedData>
         <Data name="tipo"><value>${tl}</value></Data>
         <Data name="tramo"><value>${escXML(key)}</value></Data>
+        ${pt.stars?`<Data name="relevancia"><value>${starsStr}</value></Data>`:''}
+        ${tagsStr?`<Data name="obstaculos"><value>${escXML(tagsStr)}</value></Data>`:''}
         ${pt.distFromStart!==null&&pt.distFromStart!==undefined?`<Data name="dist_largada_km"><value>${pt.distFromStart}</value></Data>
         <Data name="dist_llegada_km"><value>${pt.distToEnd}</value></Data>`:''}
         ${pt.notes?`<Data name="notas"><value>${escXML(pt.notes)}</value></Data>`:''}
@@ -2546,7 +2567,7 @@ function genKMZ(){
   const blob = new Blob([kmzBytes], {type:'application/vnd.google-earth.kmz'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href=url; a.download=`HuellaDeTapir_${ST.kmzName.replace(/\.kmz?$/i,'')}_recce.kmz`;
+  a.href=url; a.download=`HuellaDeTapir_${ST.kmzName.replace(/\.kmz?$/i,'')}_V2.20260602_1536.kmz`;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
   toast('KMZ exportado ✓');
@@ -2793,7 +2814,7 @@ function autoBackup() {
         distFromStart: pt.distFromStart,
         distToEnd: pt.distToEnd,
         type: pt.type,
-        photo: pt.photo || pt._photo || null,
+        hasPhoto: !!(pt.photo || pt._photo),
         tags: pt.tags || [],
         stars: pt.stars || 0,
         notes: pt.notes || '',
