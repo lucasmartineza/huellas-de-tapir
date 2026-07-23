@@ -591,6 +591,9 @@ if('serviceWorker' in navigator){
     <button class="side-btn" onclick="NOM_testMode()" title="Nómade" style="color:#00ffaa;font-size:7px;letter-spacing:0.5px;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
     </button>
+    <button class="side-btn" onclick="MIG_open()" title="Tapir Migrante" style="color:#00ff88;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+    </button>
     <button class="side-btn" onclick="centerRace()" title="Centrar carrera" style="font-size:8px;letter-spacing:0.5px;color:#00e5ff;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -1714,6 +1717,7 @@ function startGPS() {
     const spdEl = document.getElementById('spd-val');
     if(spdEl) spdEl.textContent = spdKmh;
     NOM_onGPS(newLat, newLng, spdKmh);
+    MIG_onGPS(newLat, newLng, spdKmh);
 
     // Calculate bearing if moving fast enough (>1.4 m/s = ~5 km/h)
     if (ST.gpsPos && speed > 1.4) {
@@ -2504,6 +2508,84 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
     <div style="text-align:center;"><div id="nom-bar-time" style="color:#00ffaa;font-size:16px;font-weight:700;font-family:monospace;">--</div><div style="color:#4a8898;font-size:7px;letter-spacing:1px;">TIEMPO</div></div>
   </div>
 </div>
+
+<!-- ══ TAPIR MIGRANTE ══ -->
+<div id="mig-overlay" style="display:none;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;">
+
+  <!-- PANTALLA A: Selector de destino -->
+  <div id="mig-selector" style="display:flex;flex-direction:column;height:100%;">
+    <div style="background:rgba(0,0,0,0.95);border-bottom:1px solid #0a2530;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div style="color:#00e5ff;font-size:13px;font-weight:700;letter-spacing:2px;">&#x1F9A3; TAPIR MIGRANTE</div>
+        <div style="color:#4a8898;font-size:8px;letter-spacing:1.5px;margin-top:2px;">ELEGÍ TU DESTINO</div>
+      </div>
+      <button onclick="MIG_close()" style="background:transparent;border:1px solid #ff3355;border-radius:8px;padding:8px 14px;color:#ff3355;font-size:10px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x2715; SALIR</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:12px 14px;background:#060d14;">
+      <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;margin-bottom:7px;">LARGADAS DE TRAMO</div>
+      <div id="mig-tramo-list"></div>
+      <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;margin:14px 0 7px;">PUNTOS MARCADOS</div>
+      <div id="mig-point-list"></div>
+    </div>
+  </div>
+
+  <!-- PANTALLA B: Navegando -->
+  <div id="mig-nav" style="display:none;flex-direction:column;height:100%;">
+
+    <!-- Instrucción -->
+    <div id="mig-instr-bar" style="background:#001a24;border-bottom:2px solid #00e5ff;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0;min-height:88px;">
+      <div id="mig-arrow" style="font-size:44px;min-width:52px;text-align:center;line-height:1;">&#x2191;</div>
+      <div>
+        <div id="mig-instr-text" style="color:#fff;font-size:15px;font-weight:700;letter-spacing:0.3px;">Calculando ruta...</div>
+        <div id="mig-instr-dist" style="color:#00e5ff;font-size:13px;margin-top:5px;letter-spacing:1px;"></div>
+        <div id="mig-instr-street" style="color:#4a8898;font-size:9px;margin-top:3px;"></div>
+      </div>
+    </div>
+
+    <!-- Stats principales -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #0a2530;flex-shrink:0;">
+      <div style="padding:14px 16px;border-right:1px solid #0a2530;">
+        <div id="mig-dist-rem" style="color:#00e5ff;font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(0,229,255,0.4);">--</div>
+        <div style="color:#4a8898;font-size:7.5px;letter-spacing:2px;margin-top:5px;">DISTANCIA RESTANTE</div>
+      </div>
+      <div style="padding:14px 16px;">
+        <div id="mig-time-rem" style="color:#00e5ff;font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(0,229,255,0.4);">--</div>
+        <div style="color:#4a8898;font-size:7.5px;letter-spacing:2px;margin-top:5px;">TIEMPO RESTANTE</div>
+      </div>
+    </div>
+
+    <!-- Mini mapa -->
+    <div style="flex:1;position:relative;background:#060d14;overflow:hidden;">
+      <canvas id="mig-canvas" style="width:100%;height:100%;display:block;"></canvas>
+      <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.88);border:1px solid #00e5ff;border-radius:9px;padding:7px 12px;text-align:center;">
+        <div id="mig-eta" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--:--</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:1px;">LLEGADA EST.</div>
+      </div>
+      <button onclick="MIG_recalc()" style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.85);border:1px solid #0a2530;border-radius:8px;padding:7px 10px;color:#4a8898;font-size:9px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x21BB; RECALC</button>
+    </div>
+
+    <!-- Stats secundarios -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #0a2530;flex-shrink:0;">
+      <div style="padding:11px 8px;text-align:center;border-right:1px solid #0a2530;">
+        <div id="mig-speed" style="font-size:22px;font-weight:700;font-family:monospace;line-height:1;color:#00ff88;transition:color 0.3s;">0</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM/H</div>
+      </div>
+      <div style="padding:11px 8px;text-align:center;border-right:1px solid #0a2530;">
+        <div id="mig-dist-rec" style="color:#fff;font-size:22px;font-weight:700;font-family:monospace;line-height:1;">0.0</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM RECORRIDOS</div>
+      </div>
+      <div style="padding:11px 8px;text-align:center;">
+        <div id="mig-recalc-status" style="color:#00ffaa;font-size:11px;font-weight:700;font-family:monospace;line-height:1;">&#x21BB; AUTO</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">RECALCULA 200M</div>
+      </div>
+    </div>
+
+    <!-- Botón salir -->
+    <button onclick="MIG_close()" style="width:100%;padding:17px;background:rgba(255,51,85,0.08);border:none;border-top:1px solid #ff3355;color:#ff3355;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:monospace;flex-shrink:0;">&#x2715; &nbsp; SALIR DE TAPIR MIGRANTE</button>
+
+  </div>
+</div>
+
 </body></html>`);
   win.document.close();
   if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
@@ -3278,6 +3360,355 @@ function NOM_testMode(){
 }
 
 // ══ FIN NÓMADE ══
+
+// ══ TAPIR MIGRANTE ══════════════════════════════════════
+
+const MIG = {
+  active: false,
+  dest: null,
+  route: null,
+  steps: [],
+  stepIdx: 0,
+  routeCoords: [],
+  distRecorrido: 0,
+  lastPos: null,
+  canvas: null,
+  ctx: null,
+  animFrame: null,
+  mapScale: 3000,
+};
+
+function MIG_open() {
+  MIG.active = false;
+  MIG.dest = null; MIG.route = null; MIG.steps = []; MIG.routeCoords = [];
+  MIG.distRecorrido = 0; MIG.lastPos = null;
+  const ov = document.getElementById('mig-overlay');
+  ov.style.display = 'flex';
+  MIG_showSelector();
+  MIG_buildLists();
+}
+
+function MIG_close() {
+  MIG.active = false;
+  document.getElementById('mig-overlay').style.display = 'none';
+  if(MIG.animFrame){ cancelAnimationFrame(MIG.animFrame); MIG.animFrame = null; }
+}
+
+function MIG_showSelector() {
+  document.getElementById('mig-selector').style.display = 'flex';
+  document.getElementById('mig-nav').style.display = 'none';
+}
+
+function MIG_showNav() {
+  document.getElementById('mig-selector').style.display = 'none';
+  const nav = document.getElementById('mig-nav');
+  nav.style.display = 'flex';
+  MIG.active = true;
+  // Init canvas
+  if(!MIG.canvas) {
+    MIG.canvas = document.getElementById('mig-canvas');
+    MIG.ctx = MIG.canvas.getContext('2d');
+  }
+  MIG_resizeCanvas();
+  if(MIG.animFrame) cancelAnimationFrame(MIG.animFrame);
+  MIG.animFrame = requestAnimationFrame(MIG_loop);
+}
+
+function MIG_resizeCanvas() {
+  const cvs = MIG.canvas; if(!cvs) return;
+  const r = cvs.getBoundingClientRect();
+  cvs.width = Math.round(r.width * devicePixelRatio);
+  cvs.height = Math.round(r.height * devicePixelRatio);
+}
+
+function MIG_buildLists() {
+  function makeItem(name, sub, onTap, container) {
+    const d = document.createElement('div');
+    d.style.cssText = 'background:#0a1520;border:1px solid #0a2530;border-radius:10px;padding:13px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;';
+    d.ontouchstart = function(){ d.style.background='rgba(0,229,255,0.06)'; d.style.borderColor='rgba(0,229,255,0.3)'; };
+    d.ontouchend   = function(){ d.style.background='#0a1520'; d.style.borderColor='#0a2530'; onTap(); };
+    d.onclick      = onTap;
+    const info = document.createElement('div');
+    const t1 = document.createElement('div');
+    t1.style.cssText = 'color:#fff;font-size:14px;font-weight:700;letter-spacing:0.3px;';
+    t1.textContent = name;
+    const t2 = document.createElement('div');
+    t2.style.cssText = 'color:#4a8898;font-size:9px;margin-top:3px;';
+    t2.textContent = sub;
+    info.appendChild(t1); info.appendChild(t2);
+    const arr = document.createElement('div');
+    arr.style.cssText = 'color:#00e5ff;font-size:20px;';
+    arr.textContent = '›';
+    d.appendChild(info); d.appendChild(arr);
+    container.appendChild(d);
+  }
+
+  const tl = document.getElementById('mig-tramo-list');
+  if(tl) {
+    tl.innerHTML = '';
+    ST.tramos.forEach(function(t) {
+      makeItem(t.name, 'LPE · Largada del especial', function() {
+        MIG_setDest({lat: t.start[0], lng: t.start[1], name: t.name});
+      }, tl);
+    });
+  }
+
+  const pl = document.getElementById('mig-point-list');
+  if(pl) {
+    pl.innerHTML = '';
+    if(!ST.points.length) {
+      pl.innerHTML = '<div style="color:#4a8898;font-size:9px;text-align:center;padding:16px;">Sin puntos marcados</div>';
+      return;
+    }
+    const tagL = {'curva-der':'CD','curva-izq':'CI','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P'};
+    ST.points.forEach(function(pt) {
+      const tags  = (pt.tags||[]).map(function(t){ return tagL[t]||t; }).join(' · ');
+      const stars = pt.stars ? '★'.repeat(pt.stars) : '';
+      const sub   = [stars, tags, pt.tramo].filter(Boolean).join(' · ').substring(0,48);
+      makeItem('#'+pt.number+' — '+pt.tramo, sub, function() {
+        MIG_setDest({lat: pt.lat, lng: pt.lng, name: '#'+pt.number+' '+pt.tramo});
+      }, pl);
+    });
+  }
+}
+
+function MIG_setDest(dest) {
+  MIG.dest = dest;
+  MIG.distRecorrido = 0;
+  MIG.lastPos = ST.gpsPos ? {lat:ST.gpsPos.lat, lng:ST.gpsPos.lng} : null;
+  MIG_showNav();
+  MIG_fetchRoute();
+}
+
+async function MIG_fetchRoute() {
+  if(!MIG.dest) return;
+  const o = ST.gpsPos || (M.lat ? {lat:M.lat, lng:M.lng} : null);
+  if(!o) { document.getElementById('mig-instr-text').textContent = 'Esperando GPS...'; return; }
+  document.getElementById('mig-instr-text').textContent = 'Calculando ruta...';
+  document.getElementById('mig-instr-dist').textContent = '';
+  const url = 'https://router.project-osrm.org/route/v1/driving/'
+    + o.lng.toFixed(6)+','+o.lat.toFixed(6)+';'
+    + MIG.dest.lng.toFixed(6)+','+MIG.dest.lat.toFixed(6)
+    + '?steps=true&geometries=geojson&overview=full';
+  try {
+    const ctrl  = new AbortController();
+    const timer = setTimeout(function(){ ctrl.abort(); }, 8000);
+    const res   = await fetch(url, {signal: ctrl.signal});
+    clearTimeout(timer);
+    const data  = await res.json();
+    if(data.code !== 'Ok' || !data.routes.length) { MIG_noRoute(); return; }
+    MIG.route      = data.routes[0];
+    MIG.steps      = data.routes[0].legs[0].steps;
+    MIG.routeCoords = data.routes[0].geometry.coordinates.map(function(p){ return [p[1], p[0]]; });
+    MIG.stepIdx    = 0;
+    MIG_updateStats();
+    MIG_updateInstr();
+  } catch(e) { MIG_noRoute(); }
+}
+
+function MIG_noRoute() {
+  document.getElementById('mig-instr-text').textContent = 'Sin ruta — línea directa';
+  document.getElementById('mig-instr-dist').textContent = '';
+  document.getElementById('mig-arrow').textContent = '↑';
+  MIG_updateStats();
+}
+
+function MIG_recalc() {
+  MIG.route = null; MIG.steps = []; MIG.routeCoords = []; MIG.stepIdx = 0;
+  MIG_fetchRoute();
+}
+
+function MIG_updateInstr() {
+  if(!MIG.steps.length) return;
+  const step = MIG.steps[Math.min(MIG.stepIdx, MIG.steps.length-1)];
+  const m    = step.maneuver;
+  const arrowMap = {
+    'turn-left':'↰','turn-right':'↱',
+    'turn-sharp left':'↩','turn-sharp right':'↪',
+    'turn-slight left':'↖','turn-slight right':'↗',
+    'arrive':'&#x1F3C1;','depart':'↑','straight':'↑','roundabout':'↻','merge':'↑'
+  };
+  const key = m.modifier ? m.type+'-'+m.modifier : m.type;
+  document.getElementById('mig-arrow').innerHTML = arrowMap[key] || '↑';
+  const dm = step.distance >= 1000
+    ? (step.distance/1000).toFixed(1)+' km'
+    : Math.round(step.distance)+' m';
+  document.getElementById('mig-instr-text').textContent = 'EN '+dm;
+  document.getElementById('mig-instr-dist').textContent = step.name || '';
+  document.getElementById('mig-instr-street').textContent = '';
+  if(step.distance < 30 && MIG.stepIdx < MIG.steps.length-1) MIG.stepIdx++;
+}
+
+function MIG_updateStats() {
+  if(!MIG.dest) return;
+  if(MIG.route) {
+    const km   = (MIG.route.distance/1000).toFixed(1);
+    const secs = MIG.route.duration;
+    const mins = Math.round(secs/60);
+    const eta  = new Date(Date.now() + secs*1000);
+    document.getElementById('mig-dist-rem').textContent = km+' km';
+    document.getElementById('mig-time-rem').textContent = mins < 60 ? mins+' min' : Math.floor(mins/60)+'h '+(mins%60)+'m';
+    document.getElementById('mig-eta').textContent = eta.getHours().toString().padStart(2,'0')+':'+eta.getMinutes().toString().padStart(2,'0');
+  } else if(ST.gpsPos && MIG.dest) {
+    const R = 6371;
+    const dLat = (MIG.dest.lat - ST.gpsPos.lat)*Math.PI/180;
+    const dLng = (MIG.dest.lng - ST.gpsPos.lng)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(ST.gpsPos.lat*Math.PI/180)*Math.cos(MIG.dest.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+    const dist = R*2*Math.asin(Math.sqrt(a));
+    document.getElementById('mig-dist-rem').textContent = dist.toFixed(1)+' km';
+  }
+  document.getElementById('mig-dist-rec').textContent = MIG.distRecorrido.toFixed(1);
+}
+
+// Called on every GPS update
+function MIG_onGPS(lat, lng, spd) {
+  // Update speedometer with color
+  const spdEl = document.getElementById('mig-speed');
+  if(spdEl) {
+    spdEl.textContent = spd;
+    spdEl.style.color = spd > 110 ? '#ffcc44' : '#00ff88';
+    spdEl.style.textShadow = spd > 110
+      ? '0 0 12px rgba(255,204,68,0.6)'
+      : '0 0 12px rgba(0,255,136,0.4)';
+  }
+  if(!MIG.active || !MIG.dest) return;
+
+  // Accumulate distance
+  if(MIG.lastPos) {
+    const R = 6371;
+    const dLat = (lat - MIG.lastPos.lat)*Math.PI/180;
+    const dLng = (lng - MIG.lastPos.lng)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(MIG.lastPos.lat*Math.PI/180)*Math.cos(lat*Math.PI/180)*Math.sin(dLng/2)**2;
+    MIG.distRecorrido += R*2*Math.asin(Math.sqrt(a));
+  }
+  MIG.lastPos = {lat, lng};
+
+  MIG_updateInstr();
+  MIG_updateStats();
+
+  // Auto-recalc if deviated > 200m from route
+  if(MIG.routeCoords.length > 0) {
+    const R2 = 6371;
+    const nearest = MIG.routeCoords.reduce(function(best, p) {
+      const dLat = (lat-p[0])*Math.PI/180;
+      const dLng = (lng-p[1])*Math.PI/180;
+      const a2 = Math.sin(dLat/2)**2 + Math.cos(lat*Math.PI/180)*Math.cos(p[0]*Math.PI/180)*Math.sin(dLng/2)**2;
+      const d = R2*2*Math.asin(Math.sqrt(a2))*1000; // meters
+      return d < best ? d : best;
+    }, Infinity);
+    if(nearest > 200) MIG_fetchRoute();
+  }
+}
+
+function MIG_loop() {
+  if(!MIG.active) return;
+  MIG_draw();
+  MIG.animFrame = requestAnimationFrame(MIG_loop);
+}
+
+function MIG_draw() {
+  const cvs = MIG.canvas, ctx = MIG.ctx;
+  if(!cvs || !ctx) return;
+  const dpr = devicePixelRatio || 1;
+  const W = cvs.width/dpr, H = cvs.height/dpr;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#060d14';
+  ctx.fillRect(0, 0, W, H);
+
+  const gps = ST.gpsPos;
+  if(!gps || !MIG.dest) {
+    ctx.fillStyle = '#4a8898';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Esperando GPS...', W/2, H/2);
+    return;
+  }
+
+  const cx = W/2, cy = H*0.6;
+  const cos = Math.cos(gps.lat * Math.PI/180);
+  // Auto-scale to show both GPS and dest
+  const dLat = Math.abs(MIG.dest.lat - gps.lat);
+  const dLng = Math.abs(MIG.dest.lng - gps.lng) * cos;
+  const maxD = Math.max(dLat, dLng, 0.001);
+  const scale = Math.min(W, H) * 0.35 / maxD;
+
+  const proj = function(lat, lng) {
+    return {
+      x: cx + (lng - gps.lng) * scale * cos,
+      y: cy - (lat - gps.lat) * scale
+    };
+  };
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 1;
+  for(let i=0; i<5; i++){
+    ctx.beginPath(); ctx.moveTo(W*i/4,0); ctx.lineTo(W*i/4,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,H*i/4); ctx.lineTo(W,H*i/4); ctx.stroke();
+  }
+
+  // Route
+  if(MIG.routeCoords.length > 1) {
+    ctx.beginPath();
+    MIG.routeCoords.forEach(function(p, i) {
+      const pt = proj(p[0], p[1]);
+      i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+    });
+    ctx.strokeStyle = 'rgba(0,255,136,0.18)';
+    ctx.lineWidth = 10; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.beginPath();
+    MIG.routeCoords.forEach(function(p, i) {
+      const pt = proj(p[0], p[1]);
+      i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+    });
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 3.5;
+    ctx.stroke();
+  } else if(MIG.dest) {
+    // Straight line fallback
+    const dp = proj(MIG.dest.lat, MIG.dest.lng);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(dp.x, dp.y);
+    ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2;
+    ctx.setLineDash([8,6]); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // Destination
+  const dp = proj(MIG.dest.lat, MIG.dest.lng);
+  ctx.beginPath(); ctx.arc(dp.x, dp.y, 10, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(0,255,136,0.12)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(dp.x, dp.y, 5, 0, Math.PI*2);
+  ctx.fillStyle = '#00ff88'; ctx.fill();
+  ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(dp.x, dp.y, 13, 0, Math.PI*2); ctx.stroke();
+  // Dest label
+  ctx.font = 'bold 8px monospace';
+  const lw = ctx.measureText(MIG.dest.name).width + 10;
+  ctx.fillStyle = 'rgba(0,0,0,0.88)';
+  ctx.fillRect(dp.x - lw/2, dp.y - 26, lw, 14);
+  ctx.fillStyle = '#00ff88';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(MIG.dest.name, dp.x, dp.y - 19);
+
+  // GPS dot
+  ctx.beginPath(); ctx.arc(cx, cy, 16, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(0,229,255,0.07)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(0,229,255,0.2)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI*2);
+  ctx.fillStyle = '#00e5ff'; ctx.fill();
+
+  // North
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.font = '9px monospace'; ctx.textAlign = 'right';
+  ctx.textBaseline = 'top';
+  ctx.fillText('N', W-8, 8);
+
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+// ══ FIN TAPIR MIGRANTE ══
 </script>
 </body>
 </html>
