@@ -2505,84 +2505,6 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
     <div style="text-align:center;"><div id="nom-bar-time" style="color:#00ffaa;font-size:16px;font-weight:700;font-family:monospace;">--</div><div style="color:#4a8898;font-size:7px;letter-spacing:1px;">TIEMPO</div></div>
   </div>
 </div>
-
-<!-- ══ TAPIR MIGRANTE ══ -->
-<div id="mig-overlay" style="display:none;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;">
-
-  <!-- PANTALLA A: Selector de destino -->
-  <div id="mig-selector" style="display:flex;flex-direction:column;height:100%;">
-    <div style="background:rgba(0,0,0,0.95);border-bottom:1px solid #0a2530;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-      <div>
-        <div style="color:#00e5ff;font-size:13px;font-weight:700;letter-spacing:2px;">&#x1F9A3; TAPIR MIGRANTE</div>
-        <div style="color:#4a8898;font-size:8px;letter-spacing:1.5px;margin-top:2px;">ELEGÍ TU DESTINO</div>
-      </div>
-      <button onclick="MIG_close()" style="background:transparent;border:1px solid #ff3355;border-radius:8px;padding:8px 14px;color:#ff3355;font-size:10px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x2715; SALIR</button>
-    </div>
-    <div style="flex:1;overflow-y:auto;padding:12px 14px;background:#060d14;">
-      <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;margin-bottom:7px;">LARGADAS DE TRAMO</div>
-      <div id="mig-tramo-list"></div>
-      <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;margin:14px 0 7px;">PUNTOS MARCADOS</div>
-      <div id="mig-point-list"></div>
-    </div>
-  </div>
-
-  <!-- PANTALLA B: Navegando -->
-  <div id="mig-nav" style="display:none;flex-direction:column;height:100%;">
-
-    <!-- Instrucción -->
-    <div id="mig-instr-bar" style="background:#001a24;border-bottom:2px solid #00e5ff;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0;min-height:88px;">
-      <div id="mig-arrow" style="font-size:44px;min-width:52px;text-align:center;line-height:1;">&#x2191;</div>
-      <div>
-        <div id="mig-instr-text" style="color:#fff;font-size:15px;font-weight:700;letter-spacing:0.3px;">Calculando ruta...</div>
-        <div id="mig-instr-dist" style="color:#00e5ff;font-size:13px;margin-top:5px;letter-spacing:1px;"></div>
-        <div id="mig-instr-street" style="color:#4a8898;font-size:9px;margin-top:3px;"></div>
-      </div>
-    </div>
-
-    <!-- Stats principales -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #0a2530;flex-shrink:0;">
-      <div style="padding:14px 16px;border-right:1px solid #0a2530;">
-        <div id="mig-dist-rem" style="color:#00e5ff;font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(0,229,255,0.4);">--</div>
-        <div style="color:#4a8898;font-size:7.5px;letter-spacing:2px;margin-top:5px;">DISTANCIA RESTANTE</div>
-      </div>
-      <div style="padding:14px 16px;">
-        <div id="mig-time-rem" style="color:#00e5ff;font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(0,229,255,0.4);">--</div>
-        <div style="color:#4a8898;font-size:7.5px;letter-spacing:2px;margin-top:5px;">TIEMPO RESTANTE</div>
-      </div>
-    </div>
-
-    <!-- Mini mapa -->
-    <div style="flex:1;position:relative;background:#060d14;overflow:hidden;">
-      <canvas id="mig-canvas" style="width:100%;height:100%;display:block;"></canvas>
-      <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.88);border:1px solid #00e5ff;border-radius:9px;padding:7px 12px;text-align:center;">
-        <div id="mig-eta" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--:--</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:1px;">LLEGADA EST.</div>
-      </div>
-      <button onclick="MIG_recalc()" style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.85);border:1px solid #0a2530;border-radius:8px;padding:7px 10px;color:#4a8898;font-size:9px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x21BB; RECALC</button>
-    </div>
-
-    <!-- Stats secundarios -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #0a2530;flex-shrink:0;">
-      <div style="padding:11px 8px;text-align:center;border-right:1px solid #0a2530;">
-        <div id="mig-speed" style="font-size:22px;font-weight:700;font-family:monospace;line-height:1;color:#00ff88;transition:color 0.3s;">0</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM/H</div>
-      </div>
-      <div style="padding:11px 8px;text-align:center;border-right:1px solid #0a2530;">
-        <div id="mig-dist-rec" style="color:#fff;font-size:22px;font-weight:700;font-family:monospace;line-height:1;">0.0</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM RECORRIDOS</div>
-      </div>
-      <div style="padding:11px 8px;text-align:center;">
-        <div id="mig-recalc-status" style="color:#00ffaa;font-size:11px;font-weight:700;font-family:monospace;line-height:1;">&#x21BB; AUTO</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">RECALCULA 200M</div>
-      </div>
-    </div>
-
-    <!-- Botón salir -->
-    <button onclick="MIG_close()" style="width:100%;padding:17px;background:rgba(255,51,85,0.08);border:none;border-top:1px solid #ff3355;color:#ff3355;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:monospace;flex-shrink:0;">&#x2715; &nbsp; SALIR DE TAPIR MIGRANTE</button>
-
-  </div>
-</div>
-
 </body></html>`);
   win.document.close();
   if(btn){btn.textContent='GENERAR PDF';btn.disabled=false;}
@@ -3360,6 +3282,7 @@ function NOM_testMode(){
 
 // ══ TAPIR MIGRANTE ══════════════════════════════════════
 
+
 const MIG = {
   active: false,
   dest: null,
@@ -3380,8 +3303,7 @@ function MIG_open() {
   MIG.dest = null; MIG.route = null; MIG.steps = []; MIG.routeCoords = [];
   MIG.distRecorrido = 0; MIG.lastPos = null;
   const ov = document.getElementById('mig-overlay');
-  if(!ov){ alert('mig-overlay NOT FOUND'); return; }
-  ov.style.cssText = 'display:flex;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;';
+  ov.style.display = 'flex';
   MIG_showSelector();
   MIG_buildLists();
 }
@@ -3707,6 +3629,85 @@ function MIG_draw() {
 }
 
 // ══ FIN TAPIR MIGRANTE ══
+
 </script>
+<!-- ══ TAPIR MIGRANTE ══ -->
+<div id="mig-overlay" style="display:none;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;">
+
+  <!-- PANTALLA A: Selector de destino -->
+  <div id="mig-selector" style="display:flex;flex-direction:column;height:100%;">
+    <div style="background:rgba(0,0,0,0.95);border-bottom:1px solid #0a2530;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div style="color:#00e5ff;font-size:13px;font-weight:700;letter-spacing:2px;">&#x1F9A3; TAPIR MIGRANTE</div>
+        <div style="color:#4a8898;font-size:8px;letter-spacing:1.5px;margin-top:2px;">ELEGÍ TU DESTINO</div>
+      </div>
+      <button onclick="MIG_close()" style="background:transparent;border:1px solid #ff3355;border-radius:8px;padding:8px 14px;color:#ff3355;font-size:10px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x2715; SALIR</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:12px 14px;background:#060d14;">
+      <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;margin-bottom:7px;">LARGADAS DE TRAMO</div>
+      <div id="mig-tramo-list"></div>
+      <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;margin:14px 0 7px;">PUNTOS MARCADOS</div>
+      <div id="mig-point-list"></div>
+    </div>
+  </div>
+
+  <!-- PANTALLA B: Navegando -->
+  <div id="mig-nav" style="display:none;flex-direction:column;height:100%;">
+
+    <!-- Instrucción -->
+    <div id="mig-instr-bar" style="background:#001a24;border-bottom:2px solid #00e5ff;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0;min-height:88px;">
+      <div id="mig-arrow" style="font-size:44px;min-width:52px;text-align:center;line-height:1;">&#x2191;</div>
+      <div>
+        <div id="mig-instr-text" style="color:#fff;font-size:15px;font-weight:700;letter-spacing:0.3px;">Calculando ruta...</div>
+        <div id="mig-instr-dist" style="color:#00e5ff;font-size:13px;margin-top:5px;letter-spacing:1px;"></div>
+        <div id="mig-instr-street" style="color:#4a8898;font-size:9px;margin-top:3px;"></div>
+      </div>
+    </div>
+
+    <!-- Stats principales -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #0a2530;flex-shrink:0;">
+      <div style="padding:14px 16px;border-right:1px solid #0a2530;">
+        <div id="mig-dist-rem" style="color:#00e5ff;font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(0,229,255,0.4);">--</div>
+        <div style="color:#4a8898;font-size:7.5px;letter-spacing:2px;margin-top:5px;">DISTANCIA RESTANTE</div>
+      </div>
+      <div style="padding:14px 16px;">
+        <div id="mig-time-rem" style="color:#00e5ff;font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(0,229,255,0.4);">--</div>
+        <div style="color:#4a8898;font-size:7.5px;letter-spacing:2px;margin-top:5px;">TIEMPO RESTANTE</div>
+      </div>
+    </div>
+
+    <!-- Mini mapa -->
+    <div style="flex:1;position:relative;background:#060d14;overflow:hidden;">
+      <canvas id="mig-canvas" style="width:100%;height:100%;display:block;"></canvas>
+      <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.88);border:1px solid #00e5ff;border-radius:9px;padding:7px 12px;text-align:center;">
+        <div id="mig-eta" style="color:#00e5ff;font-size:18px;font-weight:700;font-family:monospace;">--:--</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:1px;">LLEGADA EST.</div>
+      </div>
+      <button onclick="MIG_recalc()" style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.85);border:1px solid #0a2530;border-radius:8px;padding:7px 10px;color:#4a8898;font-size:9px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x21BB; RECALC</button>
+    </div>
+
+    <!-- Stats secundarios -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #0a2530;flex-shrink:0;">
+      <div style="padding:11px 8px;text-align:center;border-right:1px solid #0a2530;">
+        <div id="mig-speed" style="font-size:22px;font-weight:700;font-family:monospace;line-height:1;color:#00ff88;transition:color 0.3s;">0</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM/H</div>
+      </div>
+      <div style="padding:11px 8px;text-align:center;border-right:1px solid #0a2530;">
+        <div id="mig-dist-rec" style="color:#fff;font-size:22px;font-weight:700;font-family:monospace;line-height:1;">0.0</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM RECORRIDOS</div>
+      </div>
+      <div style="padding:11px 8px;text-align:center;">
+        <div id="mig-recalc-status" style="color:#00ffaa;font-size:11px;font-weight:700;font-family:monospace;line-height:1;">&#x21BB; AUTO</div>
+        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">RECALCULA 200M</div>
+      </div>
+    </div>
+
+    <!-- Botón salir -->
+    <button onclick="MIG_close()" style="width:100%;padding:17px;background:rgba(255,51,85,0.08);border:none;border-top:1px solid #ff3355;color:#ff3355;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:monospace;flex-shrink:0;">&#x2715; &nbsp; SALIR DE TAPIR MIGRANTE</button>
+
+  </div>
+</div>
+
+
 </body>
 </html>
