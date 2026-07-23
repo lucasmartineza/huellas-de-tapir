@@ -2503,7 +2503,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 <div id="nom-pin" style="display:none;position:fixed;z-index:999;transform:translate(-50%,-100%);pointer-events:all;">
   <div style="background:#060d14;border:1.5px solid #00ffaa;border-radius:10px;padding:8px 14px;text-align:center;box-shadow:0 0 16px rgba(0,255,170,0.3);">
     <div id="nom-pin-coords" style="color:#4a8898;font-size:8px;letter-spacing:1px;margin-bottom:5px;"></div>
-    <button onclick="NOM_navigate()" style="background:#00ffaa;color:#000;border:none;border-radius:7px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;">MIGRAR AQ&#205;</button>
+    <button onclick="NOM_navigate()" style="background:#00ffaa;color:#000;border:none;border-radius:7px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;">&#x1F9ED; MIGRAR AQU&#205;</button>
   </div>
   <div style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid #00ffaa;margin:0 auto;"></div>
 </div>
@@ -3105,7 +3105,8 @@ async function loadOSMRoads() {
   const E = (Math.max(...allLngs) + 0.45).toFixed(5);
   toast('Descargando caminos — área extendida 50km...');
 
-  const query = `[out:json][timeout:60];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road|service)$"](${S},${W},${N},${E}););out geom;`;
+  // Split into two queries: major roads first, then local
+  const query = `[out:json][timeout:60];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road)$"](${S},${W},${N},${E}););out geom;`;
   const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
 
   try {
@@ -3157,7 +3158,6 @@ function NOM_initLongPress(){
       const geo = unproj(sx, sy);
       NOM.pinLat = geo.lat; NOM.pinLng = geo.lng;
       if(navigator.vibrate) navigator.vibrate(40);
-      toast('Destino fijado');
       NOM_showPin(touch.clientX, touch.clientY, geo.lat, geo.lng);
     }, 600);
   };
@@ -3192,11 +3192,14 @@ function NOM_hidePin(){ document.getElementById('nom-pin').style.display='none';
 function NOM_navigate(){
   NOM_hidePin();
   if(NOM.pinLat===null) return;
-  NOM.dest = {lat:NOM.pinLat, lng:NOM.pinLng};
-  NOM.active = true; NOM.stepIdx = 0; NOM.route = null; NOM.routeCoords = [];
-  document.getElementById('nom-bar').style.display = 'block';
-  document.getElementById('nom-bar-instr').textContent = 'Calculando ruta...';
-  NOM_fetchRoute();
+  // Use MIG for navigation (full screen, Google Maps style)
+  MIG.dest = {lat:NOM.pinLat, lng:NOM.pinLng, name:'Destino seleccionado'};
+  MIG.active = false; MIG.route = null; MIG.steps = []; MIG.routeCoords = [];
+  MIG.distRecorrido = 0; MIG.lastPos = ST.gpsPos ? {lat:ST.gpsPos.lat, lng:ST.gpsPos.lng} : null;
+  const ov = document.getElementById('mig-overlay');
+  if(ov) ov.style.cssText = 'display:flex;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;';
+  MIG_showNav();
+  MIG_fetchRoute();
 }
 
 function NOM_stop(){
