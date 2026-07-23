@@ -1556,6 +1556,7 @@ function draw() {
     ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
   }
   NOM_drawRoute(ctx);
+  MIG_drawRoute(ctx);
 }
 function drawFlag(lat, lng, isStart, ssLabel) {
   const {x, y} = proj(lat, lng);
