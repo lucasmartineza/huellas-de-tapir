@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v3.5</title>
+<title>Huella de Tapir v3.6</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -157,11 +157,10 @@ body.light .odo-val { text-shadow:none; }
 
 #topbar {
   position:fixed; top:0; left:0; right:0; z-index:50;
-  background:var(--bg-topbar);
+  background:rgba(7,11,15,0.99);
   border-bottom:1px solid rgba(0,229,255,0.12);
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
   height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 14px;
-  box-shadow:0 2px 20px rgba(0,0,0,0.5);
+  box-shadow:0 2px 16px rgba(0,0,0,0.5);
 }
 .topbar-title { font-size:13px; font-weight:700; letter-spacing:3px; color:var(--color-accent); text-transform:uppercase; }
 .gps-pill {
@@ -198,11 +197,10 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 
 #bottombar {
   position:fixed; bottom:0; left:0; right:0; z-index:50;
-  background:var(--bg-bottombar);
-  border-top:1px solid rgba(0,229,255,0.10);
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  background:rgba(7,11,15,0.99);
+  border-top:1px solid rgba(0,229,255,0.12);
   height:72px; display:flex; align-items:center; justify-content:space-around; padding:0 8px;
-  box-shadow:0 -2px 20px rgba(0,0,0,0.6);
+  box-shadow:0 -4px 24px rgba(0,0,0,0.7);
 }
 .nav-btn {
   display:flex; flex-direction:column; align-items:center; gap:4px;
@@ -626,9 +624,9 @@ if('serviceWorker' in navigator){
     </svg>
   </div>
   <div id="topbar">
-    <div style="display:flex;flex-direction:column;gap:1px;">
-      <span class="topbar-title">Huella de Tapir <span style="font-size:10px;opacity:0.6;letter-spacing:1px;">v3.5</span></span>
-      <button onclick="toggleSunArc()" id="sun-arc-btn" style="background:transparent;border:none;color:#ffcc44;font-size:14px;cursor:pointer;padding:0;opacity:0.8;line-height:1;">☀</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="topbar-title">Huella de Tapir <span style="font-size:10px;opacity:0.55;letter-spacing:1px;">v3.6</span></span>
+      <button onclick="toggleSunArc()" id="sun-arc-btn" style="background:transparent;border:none;color:#ffcc44;font-size:13px;cursor:pointer;padding:0;opacity:0.75;line-height:1;flex-shrink:0;">☀</button>
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
