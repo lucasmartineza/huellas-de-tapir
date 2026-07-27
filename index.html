@@ -6,16 +6,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v3.0</title>
+<title>Huella de Tapir v3.3</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 
 :root {
-  --bg-primary: #000;
-  --bg-screen: #000;
-  --bg-topbar: rgba(0,0,0,0.9);
-  --bg-bottombar: rgba(0,0,0,0.92);
+  --bg-primary: #080c10;
+  --bg-screen: #080c10;
+  --bg-topbar: rgba(8,12,16,0.95);
+  --bg-bottombar: rgba(8,12,16,0.97);
   --bg-panel: rgba(0,0,0,0.92);
   --bg-sheet: #040c10;
   --bg-card: #040c10;
@@ -130,8 +130,8 @@ html,body { height:100%; background:var(--bg-screen); color:var(--color-accent);
 }
 body.light .odometer { background:rgba(255,255,255,0.92); border-color:#a0aab8; }
 .odo-val {
-  font-family:monospace; font-size:26px; font-weight:700;
-  color:var(--color-accent); letter-spacing:1px;
+  font-family:monospace; font-size:28px; font-weight:700;
+  color:var(--color-accent); letter-spacing:0px;
   text-shadow: 0 0 8px rgba(0,229,255,0.8), 0 0 20px rgba(0,229,255,0.4);
   line-height:1;
 }
@@ -158,7 +158,7 @@ body.light .odo-val { text-shadow:none; }
 #topbar {
   position:fixed; top:0; left:0; right:0; z-index:50;
   background:var(--bg-topbar); border-bottom:1px solid var(--border-main);
-  height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 14px;
+  height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 12px;
 }
 .topbar-title { font-size:13px; font-weight:700; letter-spacing:3px; color:var(--color-accent); text-transform:uppercase; }
 .gps-pill {
@@ -174,17 +174,18 @@ body.light .odo-val { text-shadow:none; }
 .nomade-btn {
   position:fixed; left:50%; transform:translateX(-50%);
   bottom:168px; z-index:49;
-  background:rgba(0,255,136,0.1); border:1.5px solid #00ff88;
-  border-radius:16px; padding:8px 20px; cursor:pointer;
+  background:rgba(0,255,136,0.08); border:1.5px solid rgba(0,255,136,0.6);
+  border-radius:20px; padding:8px 20px; cursor:pointer;
   display:flex; flex-direction:row; align-items:center; gap:8px;
   pointer-events:all; color:#00ff88; white-space:nowrap;
+  backdrop-filter:blur(8px);
 }
 body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; color:#006633; }
 .nomade-btn img { width:28px; height:28px; object-fit:contain; }
 .nomade-btn span { font-size:9px; letter-spacing:2px; font-family:monospace; font-weight:700; }
 .side-btn {
-  width:42px; height:42px; border-radius:10px;
-  background:var(--bg-topbar); border:1px solid var(--border-main);
+  width:44px; height:44px; border-radius:12px;
+  background:rgba(8,12,16,0.88); border:1px solid var(--border-main);
   display:flex; align-items:center; justify-content:center;
   cursor:pointer; color:var(--color-dim);
 }
@@ -193,10 +194,10 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 #bottombar {
   position:fixed; bottom:0; left:0; right:0; z-index:50;
   background:var(--bg-bottombar); border-top:1px solid var(--border-main);
-  height:78px; display:flex; align-items:center; justify-content:space-around; padding:0 12px;
+  height:72px; display:flex; align-items:center; justify-content:space-around; padding:0 8px;
 }
 .nav-btn {
-  display:flex; flex-direction:column; align-items:center; gap:3px;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
   background:none; border:none; color:var(--color-dim); cursor:pointer;
   font-size:9px; letter-spacing:1px; text-transform:uppercase; min-width:54px;
 }
@@ -212,8 +213,8 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 #mark-btn svg { width:26px; height:26px; }
 
 /* SHEET */
-.obs-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:10px;}
-.obs-btn{background:var(--bg-obs);border:1px solid var(--border-main);border-radius:7px;padding:5px 3px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
+.obs-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:12px;}
+.obs-btn{background:#0d141a;border:1px solid #0d1e28;border-radius:8px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
 .obs-btn.sel{background:rgba(0,229,255,0.1);border-color:var(--color-accent);}
 .obs-btn svg{width:30px;height:22px;color:#c8dce8;}
 .obs-btn.sel svg{color:var(--color-accent);}
@@ -225,7 +226,7 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 .star-btn.lit svg{fill:#ffcc44;stroke:#ffcc44;}
 #sheet {
   position:fixed; bottom:0; left:0; right:0; z-index:201;
-  background:var(--bg-card); border-top:1px solid var(--border-main); border-radius:16px 16px 0 0;
+  background:#080c10; border-top:2px solid rgba(0,229,255,0.15)(--border-main); border-radius:16px 16px 0 0;
   padding:0 20px 36px; transform:translateY(100%);
   transition:transform 0.26s ease; max-height:91vh; overflow-y:auto;
 }
@@ -238,8 +239,8 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 
 .type-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
 .type-chip {
-  background:var(--bg-obs); border:1px solid var(--border-main); border-radius:9px;
-  padding:11px 4px; display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:#0d141a; border:1px solid #0d1e28; border-radius:10px;
+  padding:10px 4px; display:flex; flex-direction:column; align-items:center; gap:4px;
   cursor:pointer; color:var(--color-dim); font-size:9px; letter-spacing:1px; text-transform:uppercase;
 }
 .type-chip svg { width:18px; height:18px; }
@@ -305,8 +306,8 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 
 .sh-actions { display:flex; gap:10px; }
 .btn-save {
-  flex:1; background:#00e5ff; color:#000; border:none; border-radius:9px;
-  padding:14px; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
+  flex:1; background:rgba(0,229,255,0.1); color:var(--color-accent); border:1.5px solid var(--color-accent); border-radius:12px;
+  padding:13px; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
 }
 .btn-save:active { opacity:.8; }
 .btn-del {
@@ -341,7 +342,7 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 .pt-empty { text-align:center; padding:50px 20px; color:var(--color-dim); font-size:11px; letter-spacing:2px; text-transform:uppercase; line-height:2.5; }
 
 .pt-card {
-  background:var(--bg-card); border:1px solid var(--border-main); border-radius:10px;
+  background:rgba(8,12,16,0.96); border:1px solid var(--border-main); border-radius:10px;
   padding:10px; display:flex; gap:9px; cursor:pointer; align-items:flex-start; margin-bottom:5px;
 }
 .pt-card:active { border-color:#00e5ff22; }
@@ -483,7 +484,7 @@ body.light .tramo-panel-name { color: #0a0a08 !important; }
 body.light .tramo-panel-pts { color: #555548 !important; }
 body.light .tramo-panel-hdr { color: #333328 !important; }
 body.light .topbar-title { color: #003399 !important; }
-body.light .sh-num { color: #003399 !important; }
+body.light .sh-num { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; color:var(--color-accent); letter-spacing:1px; }
 body.light .fl { color: #003399 !important; }
 body.light .sh-tramo-tag { border-color: #003399 !important; color: #003399 !important; }
 body.light .dist-pill span { color: #003399 !important; }
@@ -588,7 +589,7 @@ if('serviceWorker' in navigator){
   </div>
   <div id="topbar">
     <div style="display:flex;flex-direction:column;gap:1px;">
-      <span class="topbar-title">Huella de Tapir <span style="font-size:10px;opacity:0.6;letter-spacing:1px;">v3.0</span></span>
+      <span class="topbar-title">Huella de Tapir <span style="font-size:10px;opacity:0.6;letter-spacing:1px;">v3.3</span></span>
       <button onclick="toggleSunArc()" id="sun-arc-btn" style="background:transparent;border:none;color:#ffcc44;font-size:7px;letter-spacing:1.5px;cursor:pointer;text-align:left;padding:0;font-family:monospace;opacity:0.8;">☀ POSICIÓN DEL SOL</button>
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
@@ -1620,9 +1621,18 @@ function drawMarker(pt) {
   const lm=document.body.classList.contains('light');
   const col=pt.type==='photo'?(lm?'#003399':'#00e5ff'):pt.type==='video'?(lm?'#0055cc':'#0080ff'):pt.type==='both'?(lm?'#006633':'#00ffaa'):(lm?'#334466':'#334466');
   const r=15;
-  M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2); M.ctx.fillStyle=col+'20'; M.ctx.fill();
-  M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2); M.ctx.strokeStyle=col; M.ctx.lineWidth=2; M.ctx.stroke();
-  M.ctx.fillStyle=col; M.ctx.font='bold 10px monospace';
+  // Outer glow ring (accent color)
+  M.ctx.beginPath(); M.ctx.arc(x,y,r+2,0,Math.PI*2);
+  M.ctx.strokeStyle=col; M.ctx.lineWidth=1.5; M.ctx.globalAlpha=0.35; M.ctx.stroke();
+  M.ctx.globalAlpha=1.0;
+  // White fill
+  M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2);
+  M.ctx.fillStyle='#ffffff'; M.ctx.fill();
+  // Accent border
+  M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2);
+  M.ctx.strokeStyle=col; M.ctx.lineWidth=2; M.ctx.stroke();
+  // Black number
+  M.ctx.fillStyle='#000000'; M.ctx.font='bold 10px monospace';
   M.ctx.textAlign='center'; M.ctx.textBaseline='middle';
   M.ctx.fillText(pt.number,x,y);
 }
@@ -2478,7 +2488,7 @@ body.light .tramo-panel-name { color: #0a0a08 !important; }
 body.light .tramo-panel-pts { color: #555548 !important; }
 body.light .tramo-panel-hdr { color: #333328 !important; }
 body.light .topbar-title { color: #003399 !important; }
-body.light .sh-num { color: #003399 !important; }
+body.light .sh-num { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; color:var(--color-accent); letter-spacing:1px; }
 body.light .fl { color: #003399 !important; }
 body.light .sh-tramo-tag { border-color: #003399 !important; color: #003399 !important; }
 body.light .dist-pill span { color: #003399 !important; }
