@@ -2,11 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v3.7</title>
+<title>Huella de Tapir v3.8</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -122,7 +122,7 @@ html,body { height:100%; background:var(--bg-screen); color:var(--color-accent);
 }
 .roseta:active { opacity:0.7; }
 .odometer {
-  position:fixed; bottom:82px; left:50%; transform:translateX(-50%); z-index:49;
+  position:fixed; bottom:calc(82px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); z-index:49;
   display:none; flex-direction:row; align-items:center; gap:16px;
   pointer-events:all;
   background:rgba(6,13,20,0.85); padding:8px 18px; border-radius:30px;
@@ -175,7 +175,7 @@ body.light .odo-val { text-shadow:none; }
 }
 .nomade-btn {
   position:fixed; left:50%; transform:translateX(-50%);
-  bottom:168px; z-index:49;
+  bottom:calc(168px + env(safe-area-inset-bottom)); z-index:49;
   background:rgba(0,255,136,0.08); border:1.5px solid rgba(0,255,136,0.6);
   border-radius:20px; padding:8px 20px; cursor:pointer;
   display:flex; flex-direction:row; align-items:center; gap:8px;
@@ -197,11 +197,12 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 
 #bottombar {
   position:fixed; bottom:0; left:0; right:0; z-index:50;
-  background:rgba(7,11,15,0.99) !important;
+  background:rgba(7,11,15,0.99);
   border-top:1px solid rgba(0,229,255,0.12);
-  height:72px; display:flex !important; align-items:center; justify-content:space-around; padding:0 8px;
+  height:calc(72px + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  display:flex; align-items:center; justify-content:space-around; padding-left:8px; padding-right:8px;
   box-shadow:0 -4px 24px rgba(0,0,0,0.7);
-  visibility:visible !important; opacity:1 !important;
 }
 .nav-btn {
   display:flex; flex-direction:column; align-items:center; gap:4px;
@@ -626,7 +627,7 @@ if('serviceWorker' in navigator){
   </div>
   <div id="topbar">
     <div style="display:flex;align-items:center;gap:8px;">
-      <span class="topbar-title" style="display:inline;white-space:nowrap;">HUELLA DE TAPIR <span style="font-size:10px;opacity:0.55;letter-spacing:1px;font-weight:400;">v3.7</span></span>
+      <span class="topbar-title" style="display:inline;white-space:nowrap;">HUELLA DE TAPIR <span style="font-size:10px;opacity:0.55;letter-spacing:1px;font-weight:400;">v3.8</span></span>
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
