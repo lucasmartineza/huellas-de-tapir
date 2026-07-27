@@ -1,8 +1,6 @@
-const CACHE = 'tapir-v5';
+const CACHE = 'tapir-v6';
 
-self.addEventListener('install', e => {
-  self.skipWaiting();
-});
+self.addEventListener('install', e => { self.skipWaiting(); });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
@@ -14,12 +12,10 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Always fetch index.html from network (never cache it)
   if(e.request.url.includes('index.html') || e.request.mode === 'navigate'){
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;
   }
-  // Everything else: network first, cache fallback
   e.respondWith(
     fetch(e.request).then(response => {
       if(response && response.status === 200){

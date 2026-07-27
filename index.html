@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v3.6</title>
+<title>Huella de Tapir v3.7</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -197,10 +197,11 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 
 #bottombar {
   position:fixed; bottom:0; left:0; right:0; z-index:50;
-  background:rgba(7,11,15,0.99);
+  background:rgba(7,11,15,0.99) !important;
   border-top:1px solid rgba(0,229,255,0.12);
-  height:72px; display:flex; align-items:center; justify-content:space-around; padding:0 8px;
+  height:72px; display:flex !important; align-items:center; justify-content:space-around; padding:0 8px;
   box-shadow:0 -4px 24px rgba(0,0,0,0.7);
+  visibility:visible !important; opacity:1 !important;
 }
 .nav-btn {
   display:flex; flex-direction:column; align-items:center; gap:4px;
@@ -625,8 +626,7 @@ if('serviceWorker' in navigator){
   </div>
   <div id="topbar">
     <div style="display:flex;align-items:center;gap:8px;">
-      <span class="topbar-title">Huella de Tapir <span style="font-size:10px;opacity:0.55;letter-spacing:1px;">v3.6</span></span>
-      <button onclick="toggleSunArc()" id="sun-arc-btn" style="background:transparent;border:none;color:#ffcc44;font-size:13px;cursor:pointer;padding:0;opacity:0.75;line-height:1;flex-shrink:0;">☀</button>
+      <span class="topbar-title" style="display:inline;white-space:nowrap;">HUELLA DE TAPIR <span style="font-size:10px;opacity:0.55;letter-spacing:1px;font-weight:400;">v3.7</span></span>
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
