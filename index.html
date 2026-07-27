@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir</title>
+<title>Huella de Tapir v3.0</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -588,7 +588,7 @@ if('serviceWorker' in navigator){
   </div>
   <div id="topbar">
     <div style="display:flex;flex-direction:column;gap:1px;">
-      <span class="topbar-title">Huella de Tapir</span>
+      <span class="topbar-title">Huella de Tapir <span style="font-size:10px;opacity:0.6;letter-spacing:1px;">v3.0</span></span>
       <button onclick="toggleSunArc()" id="sun-arc-btn" style="background:transparent;border:none;color:#ffcc44;font-size:7px;letter-spacing:1.5px;cursor:pointer;text-align:left;padding:0;font-family:monospace;opacity:0.8;">☀ POSICIÓN DEL SOL</button>
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
@@ -811,6 +811,9 @@ if('serviceWorker' in navigator){
     <div class="obs-btn" data-obs="ese" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 20 Q6 12 15 11 Q24 10 24 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M21 2 L24 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6 20 L9 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>ESE</span></div>
     <div class="obs-btn" data-obs="paisaje" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="24" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 15 L9 9 L14 13 L19 8 L27 15" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2"/></svg><span>PAISAJE</span></div>
     <div class="obs-btn" data-obs="panoramica" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 11 Q2 3 15 3 Q28 3 28 11 Q28 19 15 19 Q2 19 2 11Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M6 11 Q6 6 15 6 Q24 6 24 11" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" fill="none" opacity="0.5"/><circle cx="15" cy="11" r="2" fill="currentColor" opacity="0.6"/></svg><span>PANORÁM.</span></div>
+    <div class="obs-btn" data-obs="guadal" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="14" r="4" fill="currentColor" opacity="0.3"/><circle cx="16" cy="10" r="5" fill="currentColor" opacity="0.4"/><circle cx="22" cy="14" r="4" fill="currentColor" opacity="0.3"/><circle cx="15" cy="7" r="3.5" fill="currentColor" opacity="0.5"/><line x1="5" y1="19" x2="25" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="4" y1="16" x2="8" y2="19" stroke="currentColor" stroke-width="1" opacity="0.4"/><line x1="26" y1="16" x2="22" y2="19" stroke="currentColor" stroke-width="1" opacity="0.4"/></svg><span>GUADAL</span></div>
+    <div class="obs-btn" data-obs="multipunto" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 18 Q6 12 15 11 Q24 10 24 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="6" cy="18" r="2.5" fill="currentColor"/><circle cx="15" cy="11" r="2.5" fill="currentColor"/><circle cx="24" cy="4" r="2.5" fill="currentColor"/></svg><span>MULTI<br>PTO</span></div>
+    <div class="obs-btn" data-obs="cruce" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8 L28 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M15 8 L15 20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M10 20 L20 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg><span>CRUCE</span></div>
     <div class="obs-btn" data-obs="parking" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="2" width="22" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 6 L11 16 M11 6 L16 6 Q20 6 20 10 Q20 14 16 14 L11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>PARKING</span></div>
   </div>
   <label class="fl">RELEVANCIA</label>
@@ -907,7 +910,7 @@ const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null,
 const STORE = 'tapir5';
 
 // ══ MAP ══
-const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, canvas:null, ctx:null, tiles:{}, following:true, navMode:false, compass:false };
+const M = { lat:0, lng:0, scale:5000, rot:0, W:0, H:0, trackUp:false, canvas:null, ctx:null, tiles:{}, following:true, navMode:false, compass:false };
 
 // ══ STORAGE — IndexedDB for photos, localStorage for metadata ══
 const DB_NAME = 'tapir_db', DB_VER = 4, DB_STORE = 'photos', ROADS_STORE = 'roads', META_STORE = 'meta';
@@ -1740,6 +1743,7 @@ function startGPS() {
       if (Math.abs(dLat) > 0.000001 || Math.abs(dLng) > 0.000001) {
         const bearing = Math.atan2(dLng, dLat); // radians, 0=north
         ST.lastBearing = bearing;
+        if (M.following && M.trackUp) M.rot = -bearing * Math.PI/180;
         if (M.following && M.navMode) {
           // Rotate map so direction of travel points up
           M.rot = -bearing;
@@ -1780,21 +1784,33 @@ function resetOdo() {
 }
 
 function centerGPS() {
-  if (ST.gpsPos) {
-    M.lat=ST.gpsPos.lat; M.lng=ST.gpsPos.lng; M.following=true;
-    if(!M.navMode && !M.compass){
-      // 1er tap: solo centrar, mantener rotación libre
-      toast('Centrado en GPS');
-    } else if(M.navMode && !M.compass){
-      // 2do tap: modo brújula
-      M.navMode=false; M.compass=true;
-      startCompass(); toast('Modo brújula');
-    } else if(M.compass){
-      // 3er tap: norte fijo
-      M.navMode=false; M.compass=false;
-      stopCompass(); M.rot=0; toast('Norte fijo');
-    }
-  } else toast('Sin señal GPS');
+  if(!ST.gpsPos){ toast('Sin señal GPS'); return; }
+  M.lat=ST.gpsPos.lat; M.lng=ST.gpsPos.lng; M.following=true;
+  const btn = document.getElementById('gps-btn');
+  if(!M.navMode && !M.compass && !M.trackUp){
+    // 1er tap: centrar + track-up (dirección de movimiento arriba)
+    M.trackUp=true; M.navMode=false; M.compass=false;
+    stopCompass();
+    if(ST.lastBearing) M.rot = -ST.lastBearing * Math.PI/180;
+    toast('Frente hacia arriba');
+    if(btn) btn.style.color='#00e5ff';
+  } else if(M.trackUp && !M.compass){
+    // 2do tap: modo brújula
+    M.trackUp=false; M.navMode=false; M.compass=true;
+    startCompass(); toast('Modo brújula');
+    if(btn) btn.style.color='#ffcc44';
+  } else if(M.compass){
+    // 3er tap: norte fijo
+    M.trackUp=false; M.navMode=false; M.compass=false;
+    stopCompass(); M.rot=0; toast('Norte fijo');
+    if(btn) btn.style.color='';
+  } else {
+    // 4to tap: vuelve a track-up
+    M.trackUp=true;
+    if(ST.lastBearing) M.rot = -ST.lastBearing * Math.PI/180;
+    toast('Frente hacia arriba');
+    if(btn) btn.style.color='#00e5ff';
+  }
 }
 
 function startCompass(){
@@ -2310,12 +2326,12 @@ async function genPDF(){
 
   // Build per-tramo pages
   const pages = orderedKeys.map(key=>{
-    const pts = groups[key].slice(0,10);
+    const pts = groups[key].slice(0,20);
     const mapImg = tramoImgs[key]
       ? `<img src="${tramoImgs[key]}" style="width:100%;height:100%;object-fit:contain;display:block;">`
       : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#336677;font-size:12px;">SIN MAPA</div>';
 
-    const photos = pts.filter(p=>p.photo).slice(0,10);
+    const photos = pts.filter(p=>p.photo).slice(0,20);
     const n = photos.length;
     const cols = n<=1?1 : n<=2?2 : n<=4?2 : n<=6?3 : 5;
     const rows = n<=1?1 : n<=2?1 : n<=4?2 : n<=6?2 : 2;
@@ -2579,7 +2595,7 @@ function genKMZ(){
       const tl=pt.type==='photo'?'Foto':pt.type==='video'?'Video':pt.type==='both'?'Foto+Video':'Sin tipo';
       const distDesc=(pt.distFromStart!==null&&pt.distFromStart!==undefined)
         ? `${pt.distFromStart}km desde largada · ${pt.distToEnd}km hasta llegada` : '';
-      const tagLabels={'curva-der':'Curva Der','curva-izq':'Curva Izq','lomo':'Lomo','vado':'Vado','u-der':'U Der','u-izq':'U Izq','ese':'Ese','paisaje':'Paisaje','panoramica':'Panorámica','parking':'Parking'};
+      const tagLabels={'curva-der':'Curva Der','curva-izq':'Curva Izq','lomo':'Lomo','vado':'Vado','u-der':'U Der','u-izq':'U Izq','ese':'Ese','paisaje':'Paisaje','panoramica':'Panorámica','parking':'Parking','guadal':'Guadal','multipunto':'Multi Pto','cruce':'Cruce'};
       const tagsStr = (pt.tags||[]).map(t=>tagLabels[t]||t).join(', ');
       const starsStr = pt.stars ? '★'.repeat(pt.stars)+'☆'.repeat(5-pt.stars) : '';
       const desc=[tl, starsStr, tagsStr, distDesc, pt.notes].filter(Boolean).join(' | ');
@@ -2776,7 +2792,10 @@ function initTheme(){
 }
 
 // ══ OBSTACLE TAGS & STARS ══
-const OBS_ICONS = {'curva-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMTggUTYgNCAyMiA0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE5IDEuNSBMMjIgNCBMMTkgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA D'},'curva-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTI0IDE4IFEyNCA0IDggNCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSAxLjUgTDggNCBMMTEgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA I'},'lomo':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTggTDggMTggUTE1IDQgMjIgMTggTDI4IDE4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+',label:'LOMO'},'vado':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgOCBMOCA4IFExNSAyMCAyMiA4IEwyOCA4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTggMTUgUTE1IDExIDIyIDE1IiBzdHJva2U9IiMwMGEwYzgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOCIvPjxwYXRoIGQ9Ik0xMCAxOSBRMTUgMTYgMjAgMTkiIHN0cm9rZT0iIzAwYTBjOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+',label:'VADO'},'u-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkgMyBMOSAxNCBROSAyMCAxNSAyMCBRMjEgMjAgMjEgMTQgTDIxIDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNyAzIEwxNyAxNCBRMTcgMTcgMTUgMTcgUTEzIDE3IDEzIDE0IEwxMyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xOCAwLjUgTDIxIDMgTDI0IDAuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+',label:'U DER'},'u-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIxIDMgTDIxIDE0IFEyMSAyMCAxNSAyMCBROSAyMCA5IDE0IEw5IDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMyAzIEwxMyAxNCBRMTMgMTcgMTUgMTcgUTE3IDE3IDE3IDE0IEwxNyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xMiAwLjUgTDkgMyBMNiAwLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==',label:'U IZQ'},'ese':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMjAgUTYgMTIgMTUgMTEgUTI0IDEwIDI0IDIiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMjEgMiBMMjQgMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTYgMjAgTDkgMjAiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',label:'ESE'},'paisaje':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiByeD0iMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0zIDE1IEw5IDkgTDE0IDEzIEwxOSA4IEwyNyAxNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMjIiIGN5PSI3IiByPSIyLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjIiLz48L3N2Zz4=',label:'PAISAJE'},'panoramica':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTEgUTIgMyAxNSAzIFEyOCAzIDI4IDExIFEyOCAxOSAxNSAxOSBRMiAxOSAyIDExWiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02IDExIFE2IDYgMTUgNiBRMjQgNiAyNCAxMSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjIsMS41IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjUiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjExIiByPSIyIiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=',label:'PANOR.'},'parking':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iNCIgeT0iMiIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0xMSA2IEwxMSAxNiBNMTEgNiBMMTYgNiBRMjAgNiAyMCAxMCBRMjAgMTQgMTYgMTQgTDExIDE0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'PARKING'}};
+const OBS_ICONS = {'curva-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMTggUTYgNCAyMiA0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE5IDEuNSBMMjIgNCBMMTkgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA D'},'curva-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTI0IDE4IFEyNCA0IDggNCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSAxLjUgTDggNCBMMTEgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA I'},'lomo':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTggTDggMTggUTE1IDQgMjIgMTggTDI4IDE4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+',label:'LOMO'},'vado':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgOCBMOCA4IFExNSAyMCAyMiA4IEwyOCA4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTggMTUgUTE1IDExIDIyIDE1IiBzdHJva2U9IiMwMGEwYzgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOCIvPjxwYXRoIGQ9Ik0xMCAxOSBRMTUgMTYgMjAgMTkiIHN0cm9rZT0iIzAwYTBjOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+',label:'VADO'},'u-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkgMyBMOSAxNCBROSAyMCAxNSAyMCBRMjEgMjAgMjEgMTQgTDIxIDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNyAzIEwxNyAxNCBRMTcgMTcgMTUgMTcgUTEzIDE3IDEzIDE0IEwxMyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xOCAwLjUgTDIxIDMgTDI0IDAuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+',label:'U DER'},'u-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIxIDMgTDIxIDE0IFEyMSAyMCAxNSAyMCBROSAyMCA5IDE0IEw5IDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMyAzIEwxMyAxNCBRMTMgMTcgMTUgMTcgUTE3IDE3IDE3IDE0IEwxNyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xMiAwLjUgTDkgMyBMNiAwLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==',label:'U IZQ'},'ese':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMjAgUTYgMTIgMTUgMTEgUTI0IDEwIDI0IDIiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMjEgMiBMMjQgMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTYgMjAgTDkgMjAiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',label:'ESE'},'paisaje':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiByeD0iMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0zIDE1IEw5IDkgTDE0IDEzIEwxOSA4IEwyNyAxNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMjIiIGN5PSI3IiByPSIyLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjIiLz48L3N2Zz4=',label:'PAISAJE'},'panoramica':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTEgUTIgMyAxNSAzIFEyOCAzIDI4IDExIFEyOCAxOSAxNSAxOSBRMiAxOSAyIDExWiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02IDExIFE2IDYgMTUgNiBRMjQgNiAyNCAxMSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjIsMS41IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjUiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjExIiByPSIyIiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=',label:'PANOR.'},'guadal':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxNCIgcj0iNCIgZmlsbD0iIzAwZTVmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTYiIGN5PSIxMCIgcj0iNSIgZmlsbD0iIzAwZTVmZiIgb3BhY2l0eT0iMC40Ii8+PGNpcmNsZSBjeD0iMjIiIGN5PSIxNCIgcj0iNCIgZmlsbD0iIzAwZTVmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTUiIGN5PSI3IiByPSIzLjUiIGZpbGw9IiMwMGU1ZmYiIG9wYWNpdHk9IjAuNSIvPjxsaW5lIHgxPSI1IiB5MT0iMTkiIHgyPSIyNSIgeTI9IjE5IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNiIvPjxsaW5lIHgxPSI0IiB5MT0iMTYiIHgyPSI4IiB5Mj0iMTkiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjQiLz48bGluZSB4MT0iMjYiIHkxPSIxNiIgeDI9IjIyIiB5Mj0iMTkiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4=',label:'Guadal'},
+  'multipunto':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMTggUTYgMTIgMTUgMTEgUTI0IDEwIDI0IDQiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSI2IiBjeT0iMTgiIHI9IjIuNSIgZmlsbD0iIzAwZTVmZiIvPjxjaXJjbGUgY3g9IjE1IiBjeT0iMTEiIHI9IjIuNSIgZmlsbD0iIzAwZTVmZiIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iNCIgcj0iMi41IiBmaWxsPSIjMDBlNWZmIi8+PC9zdmc+',label:'Multi Pto'},
+  'cruce':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgOCBMMjggOCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDggTDE1IDIwIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTAgMjAgTDIwIDIwIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==',label:'Cruce'},
+  'parking':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iNCIgeT0iMiIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0xMSA2IEwxMSAxNiBNMTEgNiBMMTYgNiBRMjAgNiAyMCAxMCBRMjAgMTQgMTYgMTQgTDExIDE0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'PARKING'}};
 
 
 function toggleObs(btn){
@@ -3192,14 +3211,46 @@ function NOM_hidePin(){ document.getElementById('nom-pin').style.display='none';
 function NOM_navigate(){
   NOM_hidePin();
   if(NOM.pinLat===null) return;
-  // Use MIG for navigation (full screen, Google Maps style)
-  MIG.dest = {lat:NOM.pinLat, lng:NOM.pinLng, name:'Destino seleccionado'};
-  MIG.active = false; MIG.route = null; MIG.steps = []; MIG.routeCoords = [];
-  MIG.distRecorrido = 0; MIG.lastPos = ST.gpsPos ? {lat:ST.gpsPos.lat, lng:ST.gpsPos.lng} : null;
+  const destName = 'Punto en mapa';
+  if(MIG_isOpen()){
+    // In MIG mode: set dest and switch to nav panel
+    MIG.dest = {lat:NOM.pinLat, lng:NOM.pinLng, name:destName};
+    MIG.route = null; MIG.steps = []; MIG.routeCoords = [];
+    MIG.distRecorrido = 0; MIG.lastPos = ST.gpsPos ? {lat:ST.gpsPos.lat,lng:ST.gpsPos.lng} : null;
+    // Show nav panel (with EMPEZAR button)
+    const ov = document.getElementById('mig-overlay');
+    if(ov) ov.style.cssText = 'display:flex;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;pointer-events:all;';
+    MIG_showNav();
+    toast('Toca EMPEZAR A MIGRAR');
+  } else {
+    // Not in MIG mode: use NOM bar
+    NOM.dest = {lat:NOM.pinLat, lng:NOM.pinLng};
+    NOM.active = true; NOM.stepIdx = 0; NOM.route = null; NOM.routeCoords = [];
+    document.getElementById('nom-bar').style.display = 'block';
+    document.getElementById('nom-bar-instr').textContent = 'Calculando ruta...';
+    NOM_fetchRoute();
+  }
+}
+
+function MIG_isOpen(){
   const ov = document.getElementById('mig-overlay');
-  if(ov) ov.style.cssText = 'display:flex;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;';
-  MIG_showNav();
+  return ov && ov.style.display !== 'none';
+}
+
+function MIG_startNav(){
+  // User tapped EMPEZAR A MIGRAR
+  if(!MIG.dest) return;
+  MIG.active = true;
+  MIG.stepIdx = 0;
+  // Make overlay opaque now that navigation started
+  const ov = document.getElementById('mig-overlay');
+  if(ov) ov.style.cssText = 'display:flex;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;pointer-events:all;';
+  // Hide start button, show stats
+  const startBar = document.getElementById('mig-start-bar');
+  if(startBar) startBar.style.display = 'none';
+  // Fetch route and start
   MIG_fetchRoute();
+  toast('¡Migrando!');
 }
 
 function NOM_stop(){
@@ -3324,29 +3375,20 @@ function MIG_open() {
   MIG.distRecorrido = 0; MIG.lastPos = null;
   const ov = document.getElementById('mig-overlay');
   if(!ov) return;
-  ov.style.cssText = 'display:flex;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;';
-  // Smart: if a marked point is near the map cursor, navigate there directly
-  const center = unproj(M.W/2, M.H/2);
-  const nearby = ST.points.find(function(pt){
-    const dlat = pt.lat - center.lat;
-    const dlng = (pt.lng - center.lng) * Math.cos(center.lat * Math.PI/180);
-    return Math.sqrt(dlat*dlat + dlng*dlng) * 111000 < 500;
-  });
-  if(nearby){
-    MIG.dest = {lat:nearby.lat, lng:nearby.lng, name:'#'+nearby.number+' — '+nearby.tramo};
-    MIG_showNav();
-    MIG_fetchRoute();
-    toast('Navegando a #'+nearby.number);
-  } else {
-    MIG.dest = null;
-    MIG_showSelector();
-    MIG_buildLists();
-  }
+  // Transparent overlay: map stays fully interactive underneath
+  ov.style.cssText = 'display:flex;position:fixed;inset:0;z-index:300;background:transparent;flex-direction:column;font-family:monospace;pointer-events:none;';
+  MIG.dest = null;
+  MIG_showSelector();
+  MIG_buildLists();
+  toast('Mantén presionado el mapa para elegir destino');
 }
 
 function MIG_close() {
   MIG.active = false;
-  document.getElementById('mig-overlay').style.display = 'none';
+  const ov = document.getElementById('mig-overlay');
+  if(ov) ov.style.display = 'none';
+  const startBar = document.getElementById('mig-start-bar');
+  if(startBar) startBar.style.display = 'block';
   if(MIG.animFrame){ cancelAnimationFrame(MIG.animFrame); MIG.animFrame = null; }
 }
 
@@ -3416,7 +3458,7 @@ function MIG_buildLists() {
       pl.innerHTML = '<div style="color:#4a8898;font-size:9px;text-align:center;padding:16px;">Sin puntos marcados</div>';
       return;
     }
-    const tagL = {'curva-der':'CD','curva-izq':'CI','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P'};
+    const tagL = {'curva-der':'CD','curva-izq':'CI','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P','guadal':'Gu','multipunto':'MP','cruce':'Cr'};
     ST.points.forEach(function(pt) {
       const tags  = (pt.tags||[]).map(function(t){ return tagL[t]||t; }).join(' · ');
       const stars = pt.stars ? '★'.repeat(pt.stars) : '';
@@ -3430,10 +3472,19 @@ function MIG_buildLists() {
 
 function MIG_setDest(dest) {
   MIG.dest = dest;
+  MIG.route = null; MIG.steps = []; MIG.routeCoords = [];
   MIG.distRecorrido = 0;
   MIG.lastPos = ST.gpsPos ? {lat:ST.gpsPos.lat, lng:ST.gpsPos.lng} : null;
+  // Show nav panel with EMPEZAR button (not yet navigating)
+  MIG.active = false;
+  const ov = document.getElementById('mig-overlay');
+  if(ov) ov.style.cssText = 'display:flex;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;pointer-events:all;';
+  const startBar = document.getElementById('mig-start-bar');
+  if(startBar) startBar.style.display = 'block';
   MIG_showNav();
+  // Pre-calculate route so it's ready when user taps EMPEZAR
   MIG_fetchRoute();
+  toast('Ruta lista — tocá EMPEZAR A MIGRAR');
 }
 
 async function MIG_fetchRoute() {
@@ -3697,26 +3748,33 @@ function MIG_drawRoute(ctx) {
 
 </script>
 <!-- ══ TAPIR MIGRANTE ══ -->
-<div id="mig-overlay" style="display:none;position:fixed;inset:0;z-index:300;background:#000;flex-direction:column;font-family:monospace;">
+<div id="mig-overlay" style="display:none;position:fixed;inset:0;z-index:300;background:transparent;flex-direction:column;font-family:monospace;pointer-events:none;">
 
   <!-- PANTALLA A: Selector de destino -->
-  <div id="mig-selector" style="display:flex;flex-direction:column;height:100%;">
-    <div style="background:rgba(0,0,0,0.95);border-bottom:1px solid #0a2530;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+  <div id="mig-selector" style="display:flex;flex-direction:column;height:100%;pointer-events:none;">
+    <!-- Top bar: title + close -->
+    <div style="background:rgba(6,13,20,0.92);border-bottom:1px solid #00ff88;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;pointer-events:all;">
       <div>
-        <div style="color:#00e5ff;font-size:13px;font-weight:700;letter-spacing:2px;">&#x1F9A3; TAPIR MIGRANTE</div>
-        <div style="color:#4a8898;font-size:8px;letter-spacing:1.5px;margin-top:2px;">ELEGÍ TU DESTINO</div>
+        <div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:2px;">&#x1F9ED; TAPIR MIGRANTE</div>
+        <div style="color:#4a8898;font-size:8px;letter-spacing:1px;margin-top:1px;">Mantén presionado el mapa para elegir destino</div>
       </div>
-      <button onclick="MIG_close()" style="background:transparent;border:1px solid #ff3355;border-radius:8px;padding:8px 14px;color:#ff3355;font-size:10px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x2715; SALIR</button>
+      <button onclick="MIG_close()" style="background:transparent;border:1px solid #ff3355;border-radius:8px;padding:7px 12px;color:#ff3355;font-size:10px;cursor:pointer;letter-spacing:1px;font-family:monospace;pointer-events:all;">&#x2715; SALIR</button>
     </div>
-    <div style="flex:1;overflow-y:auto;padding:12px 14px;background:#060d14;">
-      <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;margin-bottom:7px;">LARGADAS DE TRAMO</div>
-      <div id="mig-tramo-list"></div>
-      <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;margin:14px 0 7px;">PUNTOS MARCADOS</div>
-      <div id="mig-point-list"></div>
+    <!-- Spacer: map is visible here -->
+    <div style="flex:1;"></div>
+    <!-- Bottom: destination list -->
+    <div style="background:rgba(6,13,20,0.95);border-top:1px solid #0a2530;max-height:55%;overflow-y:auto;pointer-events:all;">
+      <div style="padding:10px 14px 4px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="color:#00e5ff;font-size:8px;letter-spacing:2px;">O ELEGÍ DE LA LISTA</div>
+      </div>
+      <div style="padding:0 14px 4px;color:#00e5ff;font-size:8px;letter-spacing:1.5px;">LARGADAS DE TRAMO</div>
+      <div id="mig-tramo-list" style="padding:0 14px 8px;"></div>
+      <div style="padding:0 14px 4px;color:#00e5ff;font-size:8px;letter-spacing:1.5px;">PUNTOS MARCADOS</div>
+      <div id="mig-point-list" style="padding:0 14px 12px;"></div>
     </div>
   </div>
 
-  <!-- PANTALLA B: Navegando -->
+    <!-- PANTALLA B: Navegando -->
   <div id="mig-nav" style="display:none;flex-direction:column;height:100%;">
 
     <!-- Instrucción -->
@@ -3768,7 +3826,13 @@ function MIG_drawRoute(ctx) {
     </div>
 
     <!-- Botón salir -->
-    <button onclick="MIG_close()" style="width:100%;padding:17px;background:rgba(255,51,85,0.08);border:none;border-top:1px solid #ff3355;color:#ff3355;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:monospace;flex-shrink:0;">&#x2715; &nbsp; SALIR DE TAPIR MIGRANTE</button>
+    <!-- EMPEZAR A MIGRAR button -->
+    <div id="mig-start-bar" style="background:#060d14;border-top:1px solid #0a2530;padding:10px 14px;flex-shrink:0;display:block;">
+      <button onclick="MIG_startNav()" id="mig-start-btn" style="width:100%;padding:14px;background:rgba(0,255,136,0.12);border:1.5px solid #00ff88;border-radius:12px;color:#00ff88;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:monospace;">
+        &#x1F9ED; EMPEZAR A MIGRAR
+      </button>
+    </div>
+    <button onclick="MIG_close()" style="width:100%;padding:14px;background:rgba(255,51,85,0.08);border:none;border-top:1px solid #ff3355;color:#ff3355;font-size:12px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:monospace;flex-shrink:0;">&#x2715; &nbsp; SALIR DE TAPIR MIGRANTE</button>
 
   </div>
 </div>
