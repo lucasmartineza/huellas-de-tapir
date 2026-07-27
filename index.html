@@ -749,7 +749,10 @@ if('serviceWorker' in navigator){
 <div id="overlay" onclick="closeSheet()"></div>
 <div id="sheet">
   <div class="handle"></div>
-  <div class="sh-num" id="sh-num">PUNTO #1</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px 4px;">
+    <div class="sh-num" id="sh-num">PUNTO #1</div>
+    <button onclick="closeSheet()" style="background:transparent;border:1px solid #1a3040;border-radius:8px;padding:6px 12px;color:#4a8898;font-size:10px;cursor:pointer;font-family:monospace;letter-spacing:1px;display:flex;align-items:center;gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>VOLVER</button>
+  </div>
   <div id="sh-tramo-tag" class="sh-tramo-tag"></div>
   <div class="sh-coord" id="sh-coord">0.000000, 0.000000</div>
   <div class="sh-dist" id="sh-dist" style="display:none">
@@ -796,8 +799,8 @@ if('serviceWorker' in navigator){
   </div>
   <input type="file" id="ci-camera"  accept="image/*" capture="environment" style="display:none" onchange="onPhoto(event)">
   <input type="file" id="ci-gallery" accept="image/*" style="display:none" onchange="onPhoto(event)">
-  <div class="photo-preview-wrap" id="photo-preview-wrap" style="display:none">
-    <img id="photo-prev" style="width:100%;border-radius:9px;display:block;">
+  <div class="photo-preview-wrap" id="photo-preview-wrap" style="display:none;">
+      <div id="photo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;"></div>
     <div class="photo-clear" onclick="clearPhoto()">✕</div>
   </div>
   <label class="fl">TIPO DE OBSTÁCULO</label>
@@ -994,7 +997,9 @@ function showSaveBar(msg, warn) {
 }
 
 async function persistPhoto(pt) {
-  if (pt.photo) await savePhoto('photo_'+pt.id, pt.photo);
+  if(pt.photos && pt.photos.length){
+    for(let i=0;i<pt.photos.length;i++) await savePhoto('photo_'+(i?i+'_':'')+pt.id, pt.photos[i]);
+  } else if(pt.photo){ await savePhoto('photo_'+pt.id, pt.photo); }
   if (pt.audio) await savePhoto('audio_'+pt.id, pt.audio);
 }
 
@@ -1915,14 +1920,11 @@ function openSheet(pt) {
     distRow.style.display='none';
   }
 
-  const prev=document.getElementById('photo-prev');
-  const wrap=document.getElementById('photo-preview-wrap');
-  const opts=document.getElementById('photo-opts-row');
-  if(pt.photo){
-    prev.src=pt.photo; wrap.style.display='block'; opts.style.display='none';
-  } else {
-    prev.src=''; wrap.style.display='none'; opts.style.display='grid';
-  }
+  // Multi-photo: migrate legacy pt.photo → pt.photos[]
+  if(pt.photo && !pt.photos) pt.photos=[pt.photo];
+  pt._photos = pt.photos ? [...pt.photos] : [];
+  document.getElementById('photo-opts-row').style.display = pt._photos.length<4 ? 'grid' : 'none';
+  renderPhotoGrid();
 
   refreshTypes(pt.type);
   const db=document.getElementById('btn-del');
@@ -1951,39 +1953,52 @@ function onPhoto(e) {
   const r=new FileReader();
   r.onload=ev=>{
     const original=ev.target.result;
-    // Compress to 20% of original dimensions before storing
     const img=new Image();
     img.onload=()=>{
-      const canvas=document.createElement('canvas');
-      canvas.width  = Math.round(img.naturalWidth  * 0.18);
-      canvas.height = Math.round(img.naturalHeight * 0.18);
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      const compressed = canvas.toDataURL('image/jpeg', 0.45);
-      document.getElementById('photo-prev').src=compressed;
-      document.getElementById('photo-preview-wrap').style.display='block';
-      document.getElementById('photo-opts-row').style.display='none';
-      document.getElementById('photo-save-row').style.display='flex';
-      if(ST.curPt) ST.curPt._photo=compressed;
-      // Store original for "Save to Camera Roll"
-      window._photoOriginal = original;
+      if(!ST.curPt) return;
+      if(!ST.curPt._photos) ST.curPt._photos=[...(ST.curPt.photos||[])];
+      if(ST.curPt._photos.length>=4){ toast('Máximo 4 fotos'); return; }
+      const cv=document.createElement('canvas');
+      cv.width=Math.round(img.naturalWidth*0.15);
+      cv.height=Math.round(img.naturalHeight*0.15);
+      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+      ST.curPt._photos.push(cv.toDataURL('image/jpeg',0.40));
+      window._photoOriginal=original;
+      renderPhotoGrid();
     };
     img.src=original;
   };
   r.readAsDataURL(f); e.target.value='';
 }
 
+function renderPhotoGrid() {
+  const wrap=document.getElementById('photo-preview-wrap');
+  const grid=document.getElementById('photo-grid');
+  if(!wrap||!grid||!ST.curPt) return;
+  const photos=ST.curPt._photos||ST.curPt.photos||[];
+  if(!photos.length){ wrap.style.display='none'; document.getElementById('photo-opts-row').style.display='grid'; return; }
+  wrap.style.display='block';
+  document.getElementById('photo-opts-row').style.display=photos.length<4?'grid':'none';
+  grid.innerHTML=photos.map((src,i)=>
+    '<div style="position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:6px;background:#0a1520;">'+
+    '<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;">'+
+    '<button onclick="removePhoto('+i+')" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.75);border:none;border-radius:50%;width:22px;height:22px;color:#ff3355;font-size:15px;cursor:pointer;line-height:1;padding:0;">×</button>'+
+    '</div>'
+  ).join('');
+}
+
+function removePhoto(idx) {
+  if(!ST.curPt) return;
+  if(!ST.curPt._photos) ST.curPt._photos=[...(ST.curPt.photos||[])];
+  ST.curPt._photos.splice(idx,1);
+  renderPhotoGrid();
+}
+
 async function clearPhoto() {
-  document.getElementById('photo-prev').src='';
-  document.getElementById('photo-preview-wrap').style.display='none';
-  document.getElementById('photo-opts-row').style.display='grid';
-  if(ST.curPt){
-    ST.curPt._photo=null;
-    if(ST.curPt.photo){ 
-      await deletePhoto('photo_'+ST.curPt.id);
-      ST.curPt.photo=null;
-      persist();
-    }
-  }
+  if(!ST.curPt) return;
+  ST.curPt._photos=[]; ST.curPt.photos=[]; ST.curPt.photo=null;
+  await deletePhoto('photo_'+ST.curPt.id);
+  persist(); renderPhotoGrid();
 }
 
 async function savePoint() {
@@ -1991,7 +2006,9 @@ async function savePoint() {
   const pt=ST.curPt;
   pt.type=shType;
   pt.notes=document.getElementById('notes-ta').value.trim();
-  if(pt._photo){ pt.photo=pt._photo; delete pt._photo; }
+  // Save photos array
+  if(pt._photos !== undefined){ pt.photos=pt._photos; delete pt._photos; }
+  pt.photo = pt.photos && pt.photos.length ? pt.photos[0] : null;
   if(REC.pendingB64){ pt.audio=REC.pendingB64; pt.audioDur=REC.elapsed; }
   try {
     await persistPhoto(pt);
