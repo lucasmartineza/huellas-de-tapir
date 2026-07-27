@@ -2348,16 +2348,21 @@ async function genPDF(){
       ? `<img src="${tramoImgs[key]}" style="width:100%;height:100%;object-fit:contain;display:block;">`
       : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#336677;font-size:12px;">SIN MAPA</div>';
 
-    const photos = pts.filter(p=>p.photo).slice(0,20);
+    // Collect ALL photos from all points (multi-photo support)
+    const allPhotos = [];
+    pts.forEach(pt => {
+      const srcs = pt.photos && pt.photos.length ? pt.photos : (pt.photo ? [pt.photo] : []);
+      srcs.forEach(src => allPhotos.push({src, num: pt.number}));
+    });
+    const photos = allPhotos.slice(0,20);
     const n = photos.length;
-    const cols = n<=1?1 : n<=2?2 : n<=4?2 : n<=6?3 : 5;
-    const rows = n<=1?1 : n<=2?1 : n<=4?2 : n<=6?2 : 2;
+    const cols = n<=1?1 : 2;
     const photoGrid = n
-      ? `<div style="display:grid;grid-template-columns:repeat(${cols},1fr);grid-template-rows:repeat(${rows},1fr);gap:4px;width:100%;height:100%;">${
-          photos.map(pt=>`
+      ? `<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:4px;width:100%;">${
+          photos.map(p=>`
             <div style="position:relative;overflow:hidden;border-radius:3px;border:1px solid #1a3040;">
-              <img src="${pt.photo}" style="width:100%;height:100%;object-fit:cover;display:block;">
-              <div style="position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,0.75);color:#00e5ff;font-size:9px;font-family:monospace;font-weight:700;padding:1px 4px;border-radius:2px;">#${pt.number}</div>
+              <img src="${p.src}" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block;">
+              <div style="position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,0.75);color:#00e5ff;font-size:9px;font-family:monospace;font-weight:700;padding:1px 4px;border-radius:2px;">#${p.num}</div>
             </div>`).join('')
         }</div>`
       : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#336677;font-size:12px;">SIN FOTOS</div>';
