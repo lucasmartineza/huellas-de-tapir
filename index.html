@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.6</title>
+<title>Huella de Tapir v4.7</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -525,7 +525,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.6 ══ */
+/* ══ VISUAL REDESIGN v4.7 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -638,37 +638,63 @@ if('serviceWorker' in navigator){
 
 <!-- LOAD -->
 <div id="screen-load">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 24px;gap:0;">
-    <!-- Logo -->
-    <div style="margin-bottom:32px;position:relative;">
-      <div style="width:96px;height:96px;border-radius:50%;background:#1c1b1b;border:2px solid rgba(0,229,255,0.3);display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(0,229,255,0.2);">
-        <svg width="56" height="56" viewBox="0 0 662 690" fill="#00e5ff" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 10px rgba(0,229,255,0.8));"><g transform="translate(0,690) scale(0.1,-0.1)"><path d="M3375 6326 c-245 -61 -462 -296 -607 -660 -53 -132 -110 -359 -160 -636 -29 -157 -31 -482 -5 -580 53 -194 129 -326 271 -465 159 -157 322 -222 580 -232 291 -12 503 63 677 239 113 114 195 249 242 398 64 206 64 382 -3 730 -19 98 -27 132 -64 285 -54 220 -126 398 -221 540 -139 208 -231 290 -410 366 -70 30 -212 37 -300 15z"/><path d="M847 5174 c-182 -44 -325 -185 -372 -367 -50 -196 -33 -479 46 -777 17 -63 34 -128 39 -145 6 -25 34 -101 92 -260 29 -76 117 -240 183 -340 82 -124 206 -252 295 -302 256 -146 576 -155 797 -21 118 71 232 196 302 331 58 112 66 151 65 332 0 134 -4 173 -22 240 -69 246 -174 445 -387 730 -87 117 -103 136 -253 289 -99 101 -163 150 -265 204 -169 90 -368 123 -520 86z"/><path d="M5655 4756 c-5 -2 -37 -9 -70 -16 -126 -27 -264 -105 -376 -212 -95 -91 -137 -145 -254 -318 -173 -258 -273 -473 -337 -725 -26 -101 -31 -140 -31 -245 0 -108 3 -136 26 -210 37 -118 88 -200 182 -295 45 -44 88 -86 98 -93 54 -40 92 -62 111 -62 12 0 26 -4 31 -8 26 -22 202 -56 241 -46 12 3 30 2 39 -3 16 -9 129 8 170 26 11 5 36 15 55 22 139 50 254 122 320 201 90 107 177 288 244 503 20 66 43 140 51 165 20 64 51 216 70 350 23 159 24 459 1 555 -47 196 -158 329 -328 390 -39 15 -219 30 -243 21z"/><path d="M2579 3793 c-58 -49 -104 -178 -133 -373 -18 -119 -22 -138 -52 -228 -77 -229 -252 -415 -459 -487 -27 -10 -97 -28 -155 -40 -212 -46 -283 -78 -369 -164 -74 -74 -97 -138 -88 -250 16 -198 158 -415 468 -716 173 -167 315 -282 487 -391 432 -276 816 -394 1277 -394 301 0 534 43 805 150 412 162 887 541 1050 839 48 85 65 158 64 266 0 118 -18 166 -86 233 -61 61 -145 98 -264 117 -224 36 -291 53 -374 93 -132 63 -243 194 -295 347 -32 96 -64 272 -75 411 -28 367 -44 437 -108 482 -55 40 -117 27 -284 -55 -58 -29 -119 -58 -135 -64 -178 -70 -470 -77 -667 -14 -99 31 -144 55 -256 135 -136 98 -203 130 -266 130 -43 0 -59 -5 -85 -27z"/></g></svg>
+  <style>
+    @keyframes neon-blink {
+      0%,100%{ opacity:1; box-shadow:0 0 6px rgba(0,229,255,0.8),0 0 12px rgba(0,229,255,0.4); }
+      50%{ opacity:0.3; box-shadow:0 0 2px rgba(0,229,255,0.2); }
+    }
+    @keyframes neon-line {
+      0%,100%{ opacity:1; filter:drop-shadow(0 0 4px #00e5ff); }
+      50%{ opacity:0.25; filter:drop-shadow(0 0 1px #00e5ff); }
+    }
+  </style>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px 28px;gap:0;">
+
+    <!-- Logo + Título -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:10px;">
+      <div style="width:88px;height:88px;border-radius:50%;background:#1a1d21;border:1.5px solid rgba(0,229,255,0.3);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(0,229,255,0.15);">
+        <svg width="50" height="50" viewBox="0 0 662 690" fill="#00e5ff" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 8px rgba(0,229,255,0.7));"><g transform="translate(0,690) scale(0.1,-0.1)"><path d="M3375 6326 c-245 -61 -462 -296 -607 -660 -53 -132 -110 -359 -160 -636 -29 -157 -31 -482 -5 -580 53 -194 129 -326 271 -465 159 -157 322 -222 580 -232 291 -12 503 63 677 239 113 114 195 249 242 398 64 206 64 382 -3 730 -19 98 -27 132 -64 285 -54 220 -126 398 -221 540 -139 208 -231 290 -410 366 -70 30 -212 37 -300 15z"/><path d="M847 5174 c-182 -44 -325 -185 -372 -367 -50 -196 -33 -479 46 -777 17 -63 34 -128 39 -145 6 -25 34 -101 92 -260 29 -76 117 -240 183 -340 82 -124 206 -252 295 -302 256 -146 576 -155 797 -21 118 71 232 196 302 331 58 112 66 151 65 332 0 134 -4 173 -22 240 -69 246 -174 445 -387 730 -87 117 -103 136 -253 289 -99 101 -163 150 -265 204 -169 90 -368 123 -520 86z"/><path d="M5655 4756 c-5 -2 -37 -9 -70 -16 -126 -27 -264 -105 -376 -212 -95 -91 -137 -145 -254 -318 -173 -258 -273 -473 -337 -725 -26 -101 -31 -140 -31 -245 0 -108 3 -136 26 -210 37 -118 88 -200 182 -295 45 -44 88 -86 98 -93 54 -40 92 -62 111 -62 12 0 26 -4 31 -8 26 -22 202 -56 241 -46 12 3 30 2 39 -3 16 -9 129 8 170 26 11 5 36 15 55 22 139 50 254 122 320 201 90 107 177 288 244 503 20 66 43 140 51 165 20 64 51 216 70 350 23 159 24 459 1 555 -47 196 -158 329 -328 390 -39 15 -219 30 -243 21z"/><path d="M2579 3793 c-58 -49 -104 -178 -133 -373 -18 -119 -22 -138 -52 -228 -77 -229 -252 -415 -459 -487 -27 -10 -97 -28 -155 -40 -212 -46 -283 -78 -369 -164 -74 -74 -97 -138 -88 -250 16 -198 158 -415 468 -716 173 -167 315 -282 487 -391 432 -276 816 -394 1277 -394 301 0 534 43 805 150 412 162 887 541 1050 839 48 85 65 158 64 266 0 118 -18 166 -86 233 -61 61 -145 98 -264 117 -224 36 -291 53 -374 93 -132 63 -243 194 -295 347 -32 96 -64 272 -75 411 -28 367 -44 437 -108 482 -55 40 -117 27 -284 -55 -58 -29 -119 -58 -135 -64 -178 -70 -470 -77 -667 -14 -99 31 -144 55 -256 135 -136 98 -203 130 -266 130 -43 0 -59 -5 -85 -27z"/></g></svg>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:#ffffff;letter-spacing:3px;line-height:1;">HUELLA DE TAPIR</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#7a8a99;letter-spacing:1.5px;margin-top:6px;">by tapirmedia</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#00e5ff;letter-spacing:1px;margin-top:2px;opacity:0.8;">@tapirmediacontent</div>
       </div>
     </div>
-    <!-- Headline -->
-    <h1 style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:#ffffff;text-align:center;line-height:1.2;margin-bottom:8px;">Registro de tramos<br><span style="color:#00e5ff;">para producción.</span></h1>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#8a9aaa;text-align:center;margin-bottom:40px;line-height:1.5;max-width:280px;">Documentá cada punto del recorrido con coordenadas precisas, fotos de referencia y condiciones del terreno. Exportá en PDF o KMZ para coordinación en carrera.</p>
-    <!-- Buttons -->
-    <button class="load-btn-main" onclick="document.getElementById('kf').click()" style="width:100%;max-width:320px;background:#00e5ff;color:#131313;border:none;border-radius:8px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:1.5px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <span>CARGAR KMZ</span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-    </button>
-    <button id="btn-resume" onclick="startMap()" style="display:none;width:100%;max-width:320px;background:transparent;color:#ffffff;border:1.5px solid #3a3939;border-radius:8px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;letter-spacing:1px;cursor:pointer;display:none;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <span id="btn-resume-text">CONTINUAR SESIÓN</span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-    </button>
+
+    <!-- Línea neón blinkeante -->
+    <div style="width:100%;max-width:320px;margin:20px 0;animation:neon-line 2.4s ease-in-out infinite;">
+      <div style="height:1px;background:linear-gradient(90deg,transparent,#00e5ff,transparent);"></div>
+    </div>
+
+    <!-- Descripción -->
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#7a8a99;text-align:center;line-height:1.6;max-width:300px;margin-bottom:36px;">Documentá cada punto del recorrido con coordenadas precisas, fotos de referencia y condiciones del terreno. Exportá en PDF o KMZ para coordinación en carrera.</p>
+
+    <!-- Botones -->
+    <div style="width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;margin-bottom:auto;">
+      <button onclick="document.getElementById('kf').click()" style="width:100%;background:#00e5ff;color:#131313;border:none;border-radius:8px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+        <span>CARGAR KMZ</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </button>
+      <button id="btn-resume" onclick="startMap()" style="width:100%;background:transparent;color:#ffffff;border:1.5px solid #2a2d32;border-radius:8px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;letter-spacing:1.5px;cursor:pointer;display:none;align-items:center;justify-content:space-between;">
+        <span id="btn-resume-text">CONTINUAR SESIÓN</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
+    </div>
+
     <!-- GPS Status -->
-    <div style="margin-top:auto;padding-top:24px;width:100%;max-width:320px;">
-      <div style="background:#1c1b1b;border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="width:100%;max-width:320px;margin-top:28px;">
+      <div style="background:#1a1d21;border-radius:8px;border:1px solid #2a2d32;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <div id="gps-dot-load" style="width:8px;height:8px;border-radius:50%;background:#3a3939;"></div>
-          <span style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#8a9aaa;letter-spacing:1px;">SISTEMA GPS: <span id="gps-status-load" style="color:#ffffff;">BUSCANDO</span></span>
+          <div id="gps-dot-load" style="width:7px;height:7px;border-radius:50%;background:#2a2d32;"></div>
+          <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#7a8a99;letter-spacing:1px;">SISTEMA GPS: <span id="gps-status-load" style="color:#ffffff;font-weight:600;">BUSCANDO</span></span>
         </div>
-        <span style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#00e5ff;letter-spacing:1px;">PRECISIÓN <span id="gps-acc-load">--</span></span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#00e5ff;letter-spacing:1px;">PRECISIÓN <span id="gps-acc-load">--</span></span>
       </div>
-      <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a3939;text-align:center;margin-top:16px;letter-spacing:1px;"></p>
+      <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a3939;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.6</p>
+
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:14px;">HUELLA DE TAPIR v4.7</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -689,7 +715,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.6</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.7</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -699,6 +725,14 @@ if('serviceWorker' in navigator){
   </div>
   <!-- Tapir Migrante button -->
   
+
+  <!-- 3h Forecast strip — compact, top-left, below topbar -->
+  <div id="forecast-strip" style="position:fixed;top:58px;left:0;right:0;z-index:45;display:none;background:rgba(26,29,33,0.92);border-bottom:1px solid #2a2d32;padding:6px 14px;">
+    <div style="display:flex;align-items:center;gap:12px;overflow-x:auto;">
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:8px;color:#7a8a99;letter-spacing:1.5px;flex-shrink:0;">PRÓX 3H</span>
+      <div id="forecast-items" style="display:flex;gap:10px;align-items:center;"></div>
+    </div>
+  </div>
 
   <div id="side-btns">
 
@@ -2631,7 +2665,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.6
+   NOCTURNAL NAVIGATOR — Design System v4.7
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
@@ -3450,6 +3484,27 @@ async function refreshWeather() {
     })) : [];
   } catch(e) { console.warn('Weather error:', e); }
   renderHours();
+  renderForecastStrip();
+}
+
+function renderForecastStrip() {
+  const strip = document.getElementById('forecast-strip');
+  const items = document.getElementById('forecast-items');
+  if(!strip || !items) return;
+  if(!WX.hourly || !WX.hourly.length){ strip.style.display='none'; return; }
+  const now = new Date().getHours();
+  const next3 = WX.hourly.filter(h => h.hour >= now).slice(0,3);
+  if(!next3.length){ strip.style.display='none'; return; }
+  strip.style.display = 'block';
+  items.innerHTML = next3.map(h => {
+    const icon = h.rain > 2 ? '🌧' : h.rain > 0.5 ? '🌦' : h.wind > 40 ? '💨' : '☀';
+    return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;">' +
+      '<span style="font-family:monospace;font-size:8px;color:#7a8a99;">' + String(h.hour).padStart(2,'0') + ':00</span>' +
+      '<span style="font-size:14px;line-height:1.2;">' + icon + '</span>' +
+      '<span style="font-size:11px;font-weight:700;color:#f0f4f8;">' + h.temp + '°</span>' +
+      '<span style="font-family:monospace;font-size:8px;color:#00e5ff;">' + h.wind + 'km/h</span>' +
+      '</div>';
+  }).join('<div style="width:1px;height:36px;background:#2a2d32;margin:0 2px;"></div>');
 }
 
 function renderHours() {
