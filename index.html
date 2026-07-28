@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.11</title>
+<title>Huella de Tapir v4.12</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -530,7 +530,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.11 ══ */
+/* ══ VISUAL REDESIGN v4.12 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -702,7 +702,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.11</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.12</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -723,7 +723,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.11</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.12</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -2673,7 +2673,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.11
+   NOCTURNAL NAVIGATOR — Design System v4.12
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
@@ -4265,8 +4265,7 @@ function triggerInstall() {
     window.matchMedia('(display-mode: standalone)').matches;
   if(isStandalone){ toast('Ya está instalada ✓'); return; }
   if(isIOS) {
-    const modal = document.getElementById('ios-install-modal');
-    if(modal) modal.style.display = 'flex';
+    alert('INSTALAR EN iPHONE:\n\n1. Tocá el botón ↑ (Compartir) en Safari\n2. Deslizá y elegí "Agregar a pantalla de inicio"\n3. Tocá "Agregar"\n\nListo — la app queda en tu pantalla de inicio.');
     return;
   }
   if(_deferredInstall) {
@@ -4276,8 +4275,7 @@ function triggerInstall() {
       _deferredInstall = null;
     });
   } else {
-    // Fallback for browsers that already handled the prompt
-    toast('Usá el menú del browser → Agregar a inicio');
+    alert('Para instalar:\nMenú del navegador → "Agregar a pantalla de inicio" o "Instalar app"');
   }
 }
 
