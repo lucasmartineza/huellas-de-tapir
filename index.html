@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v3.9</title>
+<title>Huella de Tapir v4.0</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -525,7 +525,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v3.9 ══ */
+/* ══ VISUAL REDESIGN v4.0 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -673,7 +673,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a3939;text-align:center;margin-top:16px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a3939;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v3.9</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a3939;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.0</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -694,7 +694,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v3.9</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.0</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -827,9 +827,16 @@ if('serviceWorker' in navigator){
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
       <span>Tramos</span>
     </button>
+    <button id="mark-btn" onclick="markPoint()" style="width:54px;height:54px;background:#00e5ff;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 0 20px rgba(0,229,255,0.4);">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#131313" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    </button>
     <button class="nav-btn" id="tab-recorrido" onclick="openScreen('list')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent;border:none;cursor:pointer;padding:8px 4px;border-radius:8px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
       <span>Recorrido</span>
+    </button>
+    <button class="nav-btn" onclick="openScreen('pdf')" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent;border:none;cursor:pointer;padding:8px 4px;border-radius:8px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      <span>Export</span>
     </button>
   </div>
 </div>
@@ -2589,7 +2596,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v3.9
+   NOCTURNAL NAVIGATOR — Design System v4.0
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
@@ -2645,9 +2652,7 @@ body { background:#131313 !important; font-family:'Space Grotesk',system-ui,sans
 #tab-tramos span { color:#00e5ff !important; }
 
 /* Mark btn */
-#mark-btn {
-  /* mark-btn visible */
-}
+
 
 /* Sheet */
 #sheet {
