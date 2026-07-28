@@ -6,8 +6,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.7</title>
+<title>Huella de Tapir v4.8</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
+<link rel="manifest" href="/huellas-de-tapir/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Huella de Tapir">
+<meta name="theme-color" content="#111316">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 
@@ -525,7 +530,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.7 ══ */
+/* ══ VISUAL REDESIGN v4.8 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -694,7 +699,10 @@ if('serviceWorker' in navigator){
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
 
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:14px;">HUELLA DE TAPIR v4.7</p>
+    <button id="btn-install" onclick="triggerInstall()" style="display:none;background:transparent;border:1px solid rgba(0,229,255,0.3);border-radius:8px;padding:10px 20px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;cursor:pointer;margin-top:12px;">
+      ⊕ INSTALAR APP
+    </button>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:8px;">HUELLA DE TAPIR v4.8</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -715,7 +723,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.7</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.8</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -2665,7 +2673,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.7
+   NOCTURNAL NAVIGATOR — Design System v4.8
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
@@ -4233,6 +4241,52 @@ function MIG_drawRoute(ctx) {
 
 // ══ FIN TAPIR MIGRANTE ══
 
+
+// ── PWA Install ──
+let _deferredInstall = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredInstall = e;
+  const btn = document.getElementById('btn-install');
+  if(btn) { btn.style.display = 'block'; }
+});
+
+window.addEventListener('appinstalled', () => {
+  _deferredInstall = null;
+  const btn = document.getElementById('btn-install');
+  if(btn) btn.style.display = 'none';
+  toast('¡App instalada!');
+});
+
+function triggerInstall() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  if(isStandalone){ toast('Ya está instalada'); return; }
+  if(isIOS) {
+    const modal = document.getElementById('ios-install-modal');
+    if(modal) modal.style.display = 'flex';
+    return;
+  }
+  if(_deferredInstall) {
+    _deferredInstall.prompt();
+    _deferredInstall.userChoice.then(r => {
+      if(r.outcome === 'accepted') toast('¡Instalando!');
+      _deferredInstall = null;
+    });
+  }
+}
+
+// Show install btn on iOS always (since no beforeinstallprompt)
+document.addEventListener('DOMContentLoaded', () => {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  if(isIOS && !isStandalone) {
+    const btn = document.getElementById('btn-install');
+    if(btn) btn.style.display = 'block';
+  }
+});
+// ── END PWA Install ──
 </script>
 <!-- ══ TAPIR MIGRANTE ══ -->
 <div id="mig-overlay" style="display:none;position:fixed;inset:0;z-index:300;background:transparent;flex-direction:column;font-family:monospace;pointer-events:none;">
@@ -4324,6 +4378,39 @@ function MIG_drawRoute(ctx) {
   </div>
 </div>
 
+
+<!-- iOS Install Modal -->
+<div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);align-items:flex-end;justify-content:center;">
+  <div style="background:#1a1d21;border-radius:16px 16px 0 0;padding:24px 24px 40px;width:100%;max-width:480px;border-top:2px solid rgba(0,229,255,0.3);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#ffffff;letter-spacing:1px;">INSTALAR APP</span>
+      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="background:transparent;border:none;color:#7a8a99;font-size:22px;cursor:pointer;padding:0;">×</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:36px;height:36px;background:#00e5ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">1</div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#ffffff;font-weight:600;">Tocá el botón Compartir</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#7a8a99;margin-top:2px;">El ícono de cuadrado con flecha hacia arriba ↑ en Safari</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:36px;height:36px;background:#00e5ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">2</div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#ffffff;font-weight:600;">Elegí "Agregar a pantalla de inicio"</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#7a8a99;margin-top:2px;">Deslizá hacia abajo en el menú de opciones</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:36px;height:36px;background:#00e5ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">3</div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#ffffff;font-weight:600;">Tocá "Agregar"</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#7a8a99;margin-top:2px;">La app aparece en tu pantalla de inicio como nativa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

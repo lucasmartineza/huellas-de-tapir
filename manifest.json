@@ -1,0 +1,25 @@
+{
+  "name": "Huella de Tapir",
+  "short_name": "Huella Tapir",
+  "description": "Registro de tramos para producción audiovisual en rally",
+  "start_url": "/huellas-de-tapir/",
+  "scope": "/huellas-de-tapir/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111316",
+  "theme_color": "#111316",
+  "icons": [
+    {
+      "src": "/huellas-de-tapir/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/huellas-de-tapir/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
