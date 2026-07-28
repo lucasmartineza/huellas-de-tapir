@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.3</title>
+<title>Huella de Tapir v4.4</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -525,7 +525,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.3 ══ */
+/* ══ VISUAL REDESIGN v4.4 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -673,7 +673,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a3939;text-align:center;margin-top:16px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a3939;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.3</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a3939;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.4</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -694,7 +694,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.3</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.4</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -802,7 +802,7 @@ if('serviceWorker' in navigator){
   </div>
 
   <!-- ROSETA -->
-  <svg class="roseta" id="roseta" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" onclick="resetRot()" title="Reset Norte">
+  <svg class="roseta" style="display:none!important;" id="roseta" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" onclick="resetRot()" title="Reset Norte">
     <!-- Outer ring -->
     <circle cx="26" cy="26" r="24" fill="rgba(0,0,0,0.7)" stroke="#1a3a48" stroke-width="1"/>
     <!-- Cardinal tick marks -->
@@ -1844,7 +1844,7 @@ function startGPS() {
     if(spdEl) spdEl.textContent = spdKmh;
     NOM_onGPS(newLat, newLng, spdKmh);
     MIG_onGPS(newLat, newLng, spdKmh);
-    updateDistFromLast();
+
 
     // Calculate bearing if moving fast enough (>1.4 m/s = ~5 km/h)
     if (ST.gpsPos && speed > 1.4) {
@@ -2117,16 +2117,30 @@ function updateDistFromLast() {
   const numEl = document.getElementById('dist-last-num');
   if(!el || !numEl) return;
   if(!ST.points.length){ el.textContent='—'; numEl.textContent='—'; return; }
-  const last = ST.points[ST.points.length-1];
-  if(!ST.gpsPos){ el.textContent='—'; numEl.textContent=last.number; return; }
-  const R=6371;
-  const dLat=(ST.gpsPos.lat-last.lat)*Math.PI/180;
-  const dLng=(ST.gpsPos.lng-last.lng)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2+Math.cos(last.lat*Math.PI/180)*Math.cos(ST.gpsPos.lat*Math.PI/180)*Math.sin(dLng/2)**2;
-  const dist=R*2*Math.asin(Math.sqrt(a));
-  el.textContent = dist < 1 ? (dist*1000).toFixed(0) : dist.toFixed(2);
-  el.nextElementSibling && (el.nextElementSibling.textContent = dist<1 ? 'm' : 'km');
+
+  // Sort points by number to get consecutive pairs
+  const sorted = [...ST.points].sort((a,b) => a.number - b.number);
+  const last = sorted[sorted.length-1];
   numEl.textContent = last.number;
+
+  if(sorted.length === 1){
+    // First point: show distance from LPE (distFromStart on the route)
+    if(last.distFromStart != null){
+      const d = last.distFromStart;
+      el.textContent = d < 1 ? (d*1000).toFixed(0) : d.toFixed(2);
+    } else { el.textContent = '—'; }
+  } else {
+    // Subsequent points: distance between last two consecutive points of same tramo
+    const prev = sorted[sorted.length-2];
+    if(last.tramo === prev.tramo && last.distFromStart != null && prev.distFromStart != null){
+      const d = Math.abs(last.distFromStart - prev.distFromStart);
+      el.textContent = d < 1 ? (d*1000).toFixed(0) : d.toFixed(2);
+    } else if(last.distFromStart != null){
+      // Different tramo — show dist from LPE
+      const d = last.distFromStart;
+      el.textContent = d < 1 ? (d*1000).toFixed(0) : d.toFixed(2);
+    } else { el.textContent = '—'; }
+  }
 }
 
 async function delPoint() {
@@ -2624,7 +2638,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.3
+   NOCTURNAL NAVIGATOR — Design System v4.4
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
