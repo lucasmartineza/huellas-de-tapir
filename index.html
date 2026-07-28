@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.9</title>
+<title>Huella de Tapir v4.10</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -530,7 +530,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.9 ══ */
+/* ══ VISUAL REDESIGN v4.10 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -653,7 +653,7 @@ if('serviceWorker' in navigator){
       50%{ opacity:0.25; filter:drop-shadow(0 0 1px #00e5ff); }
     }
   </style>
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px 28px;gap:0;">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:40px 28px 100px;gap:0;">
 
     <!-- Logo + Título -->
     <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:10px;">
@@ -687,8 +687,12 @@ if('serviceWorker' in navigator){
       </button>
     </div>
 
+    <button id="btn-install" onclick="triggerInstall()" style="display:block;width:100%;max-width:320px;background:transparent;border:1.5px solid rgba(0,229,255,0.4);border-radius:8px;padding:14px 20px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;cursor:pointer;margin-top:0;">
+      ⊕ INSTALAR APP
+    </button>
+
     <!-- GPS Status -->
-    <div style="width:100%;max-width:320px;margin-top:28px;">
+    <div style="width:100%;max-width:320px;margin-top:16px;">
       <div style="background:#1a1d21;border-radius:8px;border:1px solid #2a2d32;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:8px;">
           <div id="gps-dot-load" style="width:7px;height:7px;border-radius:50%;background:#2a2d32;"></div>
@@ -698,11 +702,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-
-    <button id="btn-install" onclick="triggerInstall()" style="display:block;background:transparent;border:1px solid rgba(0,229,255,0.3);border-radius:8px;padding:10px 20px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;cursor:pointer;margin-top:12px;">
-      ⊕ INSTALAR APP
-    </button>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:8px;">HUELLA DE TAPIR v4.9</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.10</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -723,7 +723,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.9</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.10</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -2673,7 +2673,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.9
+   NOCTURNAL NAVIGATOR — Design System v4.10
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
