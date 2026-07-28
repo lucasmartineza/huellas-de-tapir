@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.10</title>
+<title>Huella de Tapir v4.11</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -530,7 +530,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.10 ══ */
+/* ══ VISUAL REDESIGN v4.11 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -642,7 +642,7 @@ if('serviceWorker' in navigator){
 <body>
 
 <!-- LOAD -->
-<div id="screen-load">
+<div id="screen-load" style="pointer-events:all;">
   <style>
     @keyframes neon-blink {
       0%,100%{ opacity:1; box-shadow:0 0 6px rgba(0,229,255,0.8),0 0 12px rgba(0,229,255,0.4); }
@@ -687,7 +687,7 @@ if('serviceWorker' in navigator){
       </button>
     </div>
 
-    <button id="btn-install" onclick="triggerInstall()" style="display:block;width:100%;max-width:320px;background:transparent;border:1.5px solid rgba(0,229,255,0.4);border-radius:8px;padding:14px 20px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;cursor:pointer;margin-top:0;">
+    <button id="btn-install" onclick="triggerInstall()" style="display:block;width:100%;max-width:320px;background:transparent;border:1.5px solid rgba(0,229,255,0.4);border-radius:8px;padding:14px 20px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;cursor:pointer;margin-top:0;position:relative;z-index:9999;pointer-events:all;-webkit-tap-highlight-color:rgba(0,229,255,0.2);">
       ⊕ INSTALAR APP
     </button>
 
@@ -702,7 +702,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.10</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.11</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -723,7 +723,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.10</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.11</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -2673,7 +2673,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.10
+   NOCTURNAL NAVIGATOR — Design System v4.11
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
