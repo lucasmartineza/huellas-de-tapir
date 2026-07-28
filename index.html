@@ -527,7 +527,6 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 /* ══ VISUAL REDESIGN v3.8 ══ */
 /* Background */
-body { background:#070b0f !important; }
 #screen-map { background:#070b0f !important; }
 
 /* Topbar */
@@ -692,7 +691,7 @@ if('serviceWorker' in navigator){
   <div id="topbar">
     <div style="display:flex;align-items:center;gap:10px;">
       <svg width="28" height="28" viewBox="0 0 100 100" fill="#00e5ff" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 6px rgba(0,229,255,0.6));flex-shrink:0;"><ellipse cx="50" cy="65" rx="24" ry="20"/><ellipse cx="22" cy="38" rx="13" ry="11"/><ellipse cx="78" cy="38" rx="13" ry="11"/><ellipse cx="50" cy="22" rx="11" ry="10"/></svg>
-      <span class="topbar-title">HUELLAS DE TAPIR</span>
+      <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
       <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v3.8</span>
@@ -2647,7 +2646,7 @@ body { background:#131313 !important; font-family:'Space Grotesk',system-ui,sans
 
 /* Mark btn */
 #mark-btn {
-  display:none !important;
+  /* mark-btn visible */
 }
 
 /* Sheet */
@@ -2871,6 +2870,10 @@ body { background:#131313 !important; font-family:'Space Grotesk',system-ui,sans
   letter-spacing:1px !important;
 }
 /* ════ END NOCTURNAL NAVIGATOR ════ */
+
+/* Topbar title fix */
+.topbar-title { white-space:nowrap !important; font-size:14px !important; }
+#topbar { height:52px !important; }
 </style>
   </head><body>
   <div class="cover">
