@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.4</title>
+<title>Huella de Tapir v4.5</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@400;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -525,7 +525,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.4 ══ */
+/* ══ VISUAL REDESIGN v4.5 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -651,8 +651,8 @@ if('serviceWorker' in navigator){
       </div>
     </div>
     <!-- Headline -->
-    <h1 style="font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:#ffffff;text-align:center;line-height:1.2;margin-bottom:8px;">Explora Rutas<br><span style="color:#00e5ff;">Sin Límites</span></h1>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#8a9aaa;text-align:center;margin-bottom:40px;line-height:1.5;max-width:280px;">Navegación técnica diseñada para expediciones todoterreno y rastreo de huellas.</p>
+    <h1 style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:#ffffff;text-align:center;line-height:1.2;margin-bottom:8px;">Registro de tramos<br><span style="color:#00e5ff;">para producción.</span></h1>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#8a9aaa;text-align:center;margin-bottom:40px;line-height:1.5;max-width:280px;">Documentá cada punto del recorrido con coordenadas precisas, fotos de referencia y condiciones del terreno. Exportá en PDF o KMZ para coordinación en carrera.</p>
     <!-- Buttons -->
     <button class="load-btn-main" onclick="document.getElementById('kf').click()" style="width:100%;max-width:320px;background:#00e5ff;color:#131313;border:none;border-radius:8px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:1.5px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
       <span>CARGAR KMZ</span>
@@ -673,7 +673,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a3939;text-align:center;margin-top:16px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a3939;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.4</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a3939;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.5</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -694,7 +694,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.4</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.5</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -2638,7 +2638,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.4
+   NOCTURNAL NAVIGATOR — Design System v4.5
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
