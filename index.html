@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.8</title>
+<title>Huella de Tapir v4.9</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -530,7 +530,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.8 ══ */
+/* ══ VISUAL REDESIGN v4.9 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -699,10 +699,10 @@ if('serviceWorker' in navigator){
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
 
-    <button id="btn-install" onclick="triggerInstall()" style="display:none;background:transparent;border:1px solid rgba(0,229,255,0.3);border-radius:8px;padding:10px 20px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;cursor:pointer;margin-top:12px;">
+    <button id="btn-install" onclick="triggerInstall()" style="display:block;background:transparent;border:1px solid rgba(0,229,255,0.3);border-radius:8px;padding:10px 20px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;cursor:pointer;margin-top:12px;">
       ⊕ INSTALAR APP
     </button>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:8px;">HUELLA DE TAPIR v4.8</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:8px;">HUELLA DE TAPIR v4.9</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -723,7 +723,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.8</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.9</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -2673,7 +2673,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.8
+   NOCTURNAL NAVIGATOR — Design System v4.9
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
@@ -4261,8 +4261,9 @@ window.addEventListener('appinstalled', () => {
 
 function triggerInstall() {
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isStandalone = window.navigator.standalone === true;
-  if(isStandalone){ toast('Ya está instalada'); return; }
+  const isStandalone = window.navigator.standalone === true ||
+    window.matchMedia('(display-mode: standalone)').matches;
+  if(isStandalone){ toast('Ya está instalada ✓'); return; }
   if(isIOS) {
     const modal = document.getElementById('ios-install-modal');
     if(modal) modal.style.display = 'flex';
@@ -4274,6 +4275,9 @@ function triggerInstall() {
       if(r.outcome === 'accepted') toast('¡Instalando!');
       _deferredInstall = null;
     });
+  } else {
+    // Fallback for browsers that already handled the prompt
+    toast('Usá el menú del browser → Agregar a inicio');
   }
 }
 
