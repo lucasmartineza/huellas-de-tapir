@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v4.12</title>
+<title>Huella de Tapir v4.13</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -530,7 +530,7 @@ body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v4.12 ══ */
+/* ══ VISUAL REDESIGN v4.13 ══ */
 /* Background */
 #screen-map { background:#070b0f !important; }
 
@@ -702,7 +702,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.12</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v4.13</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -723,7 +723,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.12</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v4.13</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -893,6 +893,7 @@ if('serviceWorker' in navigator){
   </div>
   <div id="sh-tramo-tag" class="sh-tramo-tag"></div>
   <div class="sh-coord" id="sh-coord">0.000000, 0.000000</div>
+  <div id="sh-signal" style="display:flex;align-items:center;gap:6px;margin-top:5px;min-height:18px;"></div>
   <div class="sh-dist" id="sh-dist" style="display:none">
     <div class="dist-pill">⬆ largada <span id="dist-from">—</span> km</div>
     <div class="dist-pill">⬇ llegada <span id="dist-to">—</span> km</div>
@@ -2021,6 +2022,7 @@ function markPoint() {
     type:null, photo:null, audio:null, audioDur:0, tags:[], stars:0,
     notes:'', ts:new Date().toISOString(),
   };
+  pt.signal = captureSignal();
   ST.points.push(pt); ST.curPt=pt; ST.isEdit=false;
   persist(); checkAutoBackup(); openSheet(pt);
   toast('#'+pt.number+' marcado');
@@ -2033,6 +2035,15 @@ function openSheet(pt) {
   shType=pt.type;
   document.getElementById('sh-num').textContent   = 'PUNTO #'+pt.number;
   document.getElementById('sh-coord').textContent = pt.lat.toFixed(6)+', '+pt.lng.toFixed(6);
+  const sigEl = document.getElementById('sh-signal');
+  if(sigEl){
+    if(!pt.signal) pt.signal = captureSignal();
+    const s = pt.signal;
+    const col = s.level===0?'#ff3355':s.level<=2?'#ffcc44':'#00ff88';
+    sigEl.innerHTML = signalIconSVG(s.level) +
+      '<span style="font-size:10px;font-weight:600;color:'+col+';letter-spacing:0.5px;font-family:system-ui;">'+s.label+'</span>'+
+      (s.mbps>0?'<span style="font-size:9px;color:#7a8a99;font-family:monospace;"> '+s.mbps+' Mbps</span>':'');
+  }
   document.getElementById('notes-ta').value       = pt.notes||'';
 
   const tag=document.getElementById('sh-tramo-tag');
@@ -2673,7 +2684,7 @@ body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
-   NOCTURNAL NAVIGATOR — Design System v4.12
+   NOCTURNAL NAVIGATOR — Design System v4.13
    Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
@@ -4238,6 +4249,37 @@ function MIG_drawRoute(ctx) {
   }
   ctx.restore();
 }
+
+
+// ── SIGNAL CAPTURE ──
+function captureSignal() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  let level = 2; let label = 'ONLINE'; let mbps = 0;
+  if(!navigator.onLine){ return {level:0, label:'SIN SEÑAL', mbps:0}; }
+  if(conn){
+    const t = conn.effectiveType || '';
+    mbps = Math.round((conn.downlink||0)*10)/10;
+    if(t==='4g'&&mbps>=5)       { level=3; label='4G'; }
+    else if(t==='4g')            { level=2; label='4G REGULAR'; }
+    else if(t==='3g')            { level=2; label='3G'; }
+    else if(t==='2g'||t==='slow-2g'){ level=1; label='SEÑAL DÉBIL'; }
+    else if(conn.type==='wifi')  { level=3; label='WiFi'; }
+    else                         { level=2; label='ONLINE'; }
+  }
+  return {level, label, mbps};
+}
+function signalIconSVG(level){
+  const c0='#2a2d32';
+  const col = level===0?'#ff3355': level===1?'#ffcc44': level===2?'#ffcc44': '#00ff88';
+  const b = [level>=1?col:c0, level>=2?col:c0, level>=3?col:c0, level>=3?col:c0];
+  return '<svg width="18" height="14" viewBox="0 0 20 16">'+
+    '<rect x="0" y="11" width="4" height="5" rx="1" fill="'+b[0]+'"/>'+
+    '<rect x="5" y="7" width="4" height="9" rx="1" fill="'+b[1]+'"/>'+
+    '<rect x="10" y="4" width="4" height="12" rx="1" fill="'+b[2]+'"/>'+
+    '<rect x="15" y="0" width="4" height="16" rx="1" fill="'+b[3]+'"/>'+
+    '</svg>';
+}
+// ── END SIGNAL ──
 
 // ══ FIN TAPIR MIGRANTE ══
 
