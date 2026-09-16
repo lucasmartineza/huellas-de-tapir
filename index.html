@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v5.2</title>
+<title>Huella de Tapir v5.3</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -702,7 +702,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v5.2</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v5.3</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -723,7 +723,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v5.2</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v5.3</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -2414,21 +2414,32 @@ function renderTramoImage(tramo, pts, W, H) {
 
   // Draw route — enlaces muy tenues, tramos normales
   if(tramo.link){
-    // Enlace: línea blanca media, mitad de grosor que los SS
+    // Enlace: cyan tenue, mitad de grosor que los SS, con glow suave
+    // Shadow glow
     ctx.beginPath();
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(0,229,255,0.15)';
+    ctx.lineWidth = 6;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.setLineDash([]);
+    const p0ls=toXY(tramo.route[0][0],tramo.route[0][1]);
+    ctx.moveTo(p0ls.x,p0ls.y);
+    for(let i=1;i<tramo.route.length;i++){
+      const p=toXY(tramo.route[i][0],tramo.route[i][1]);
+      ctx.lineTo(p.x,p.y);
+    }
+    ctx.stroke();
+    // Main line
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(0,229,255,0.45)';
+    ctx.lineWidth = 2.5;
     const p0l=toXY(tramo.route[0][0],tramo.route[0][1]);
     ctx.moveTo(p0l.x,p0l.y);
     for(let i=1;i<tramo.route.length;i++){
       const p=toXY(tramo.route[i][0],tramo.route[i][1]);
       ctx.lineTo(p.x,p.y);
     }
-    ctx.shadowColor='rgba(255,255,255,0.3)';
-    ctx.shadowBlur=4;
+    ctx.shadowColor='rgba(0,229,255,0.4)';
+    ctx.shadowBlur=6;
     ctx.stroke();
     ctx.shadowBlur=0;
     return;
