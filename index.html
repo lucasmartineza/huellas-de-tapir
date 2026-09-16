@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v5.4</title>
+<title>Huella de Tapir v5.6</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -702,7 +702,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v5.4</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v5.6</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -723,7 +723,7 @@ if('serviceWorker' in navigator){
       <span class="topbar-title">HUELLA DE TAPIR</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v5.4</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v5.6</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -1632,6 +1632,7 @@ function draw() {
   }
 
   // OSM roads — grey, very faint
+  ctx.globalAlpha=1.0; ctx.shadowBlur=0;
   if(ST.roads && ST.roads.length){
     ctx.strokeStyle=document.body.classList.contains('light')?'rgba(0,0,0,0.14)':'rgba(255,255,255,0.22)'; ctx.lineWidth=1.2; ctx.globalAlpha=1;
     ST.roads.forEach(road => {
@@ -1648,14 +1649,41 @@ function draw() {
     if (t.route.length < 2) return;
     const isActive = activeTramoIdx === ST.tramos.indexOf(t);
     const isCron = t.cron !== false;
+    const isLink = !!t.link;
+
+    // Reset ctx state at start of each iteration
+    ctx.globalAlpha = 1.0;
+    ctx.shadowBlur = 0;
+    ctx.setLineDash([]);
+
+    // Ocultar enlaces si SHOW_LINKS está apagado
+    if(isLink && !SHOW_LINKS) return;
+
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    // Opacity: cronometrado bright, enlace very faint
-    if(!isCron){
-      ctx.globalAlpha = isActive ? 0.35 : 0.1;
-    } else {
-      ctx.globalAlpha = isActive ? 1.0 : (activeTramoIdx >= 0 ? 0.4 : 1.0);
+
+    // Para enlaces: dibujar en amarillo igual que SS y salir
+    if(isLink){
+      ctx.globalAlpha = 1.0;
+      // Outer glow
+      ctx.beginPath();
+      const p0lg=proj(t.route[0][0],t.route[0][1]);
+      ctx.moveTo(p0lg.x,p0lg.y);
+      for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
+      ctx.strokeStyle='rgba(255,204,68,0.2)'; ctx.lineWidth=14; ctx.stroke();
+      // Mid glow
+      ctx.beginPath(); ctx.moveTo(p0lg.x,p0lg.y);
+      for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
+      ctx.strokeStyle='rgba(255,204,68,0.4)'; ctx.lineWidth=7; ctx.stroke();
+      // Main line
+      ctx.beginPath(); ctx.moveTo(p0lg.x,p0lg.y);
+      for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
+      ctx.strokeStyle='#ffcc44'; ctx.lineWidth=2.5; ctx.stroke();
+      ctx.globalAlpha=1.0;
+      return;
     }
+
+    ctx.globalAlpha = isActive ? 1.0 : (activeTramoIdx >= 0 ? 0.4 : 1.0);
     // Glow layer when active
     if(isCron){
       const light = document.body.classList.contains('light');
