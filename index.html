@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v5.7</title>
+<title>Huella de Tapir v5.9</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -703,7 +703,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v5.7</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v5.9</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -725,7 +725,7 @@ if('serviceWorker' in navigator){
     </div>
   <div id="offline-badge">SIN SEÑAL</div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v5.7</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v5.9</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -1325,7 +1325,9 @@ function parseTramos(text) {
   // Classification rules based on name patterns
   const isTramo = name => {
     const n = name.toUpperCase();
-    return /^PE\b/.test(n) || /^SS\b/.test(n) || /^PSSE\b/.test(n) ||
+    return /^PE[\d\s/]/.test(n) || /^PSE[\d\s/]/.test(n) || /^SS[\d\s/]/.test(n) ||
+           /^PSSE[\d\s/]/.test(n) || /^SE[\d\s/]/.test(n) ||
+           n.startsWith('PE ') || n.startsWith('PSE ') ||
            n.includes('SHAKEDOWN') || n.includes('ESPECIAL');
   };
   const isEnlace = name => {
@@ -1350,40 +1352,69 @@ function parseTramos(text) {
     if (!isCron && !isLink) return;
 
     // Match points by name prefix
-    // PE 1/5/8 → look for LPE 1/5/8, FPE 1/5/8
-    // PSSE → look for LSSE, FSSE
+    // SHAKEDOWN → LSH / FSH
+    // PSE 1 / PSE 8 → LPSE 1 / FPSE 1, LPE8 / FPE8 (org-dependent)
+    // PSSE → LSSE / FSSE
+    // PE 2/5 → LPE2/5 / FPE2/5  (suffix match after prefix strip)
     let start = null, end = null;
 
+    const isSH   = /SHAKEDOWN/i.test(name);
     const isPSSE = /^PSSE/i.test(name);
+    const isPSE  = /^PSE\b/i.test(name);
 
-    if (isPSSE) {
-      // Super especial
+    if (isSH) {
+      // Shakedown: look for LSH / FSH
       Object.keys(ptByName).forEach(pname => {
         const n = pname.trim();
-        if (/^LSSE/i.test(n)) {
-          const c = ptByName[pname];
-          if (c && c.length) start = {lat:c[0][0], lng:c[0][1], name:n};
-        }
-        if (/^FSSE/i.test(n)) {
-          const c = ptByName[pname];
-          if (c && c.length) end = {lat:c[0][0], lng:c[0][1], name:n};
-        }
+        const c = ptByName[pname];
+        if (!c || !c.length) return;
+        if (/^LSH/i.test(n)) start = {lat:c[0][0], lng:c[0][1], name:n};
+        if (/^FSH/i.test(n)) end   = {lat:c[0][0], lng:c[0][1], name:n};
+      });
+    } else if (isPSSE) {
+      // Super especial PSSE → LSSE / FSSE
+      Object.keys(ptByName).forEach(pname => {
+        const n = pname.trim();
+        const c = ptByName[pname];
+        if (!c || !c.length) return;
+        if (/^LSSE/i.test(n)) start = {lat:c[0][0], lng:c[0][1], name:n};
+        if (/^FSSE/i.test(n)) end   = {lat:c[0][0], lng:c[0][1], name:n};
+      });
+    } else if (isPSE) {
+      // PSE N → look for LPSE N / FPSE N  OR  LPE<N> / FPE<N>
+      const suffix = name.replace(/^PSE\s*/i, '').trim(); // e.g. "1", "8"
+      Object.keys(ptByName).forEach(pname => {
+        const n = pname.trim();
+        const c = ptByName[pname];
+        if (!c || !c.length) return;
+        // Match LPSE N / FPSE N
+        const pseSuffix = n.replace(/^[LF]PSE\s*/i, '').trim();
+        if (/^LPSE/i.test(n) && pseSuffix === suffix) start = {lat:c[0][0], lng:c[0][1], name:n};
+        if (/^FPSE/i.test(n) && pseSuffix === suffix) end   = {lat:c[0][0], lng:c[0][1], name:n};
+        // Also match LPE<N> / FPE<N> (alternate naming: PSE 8 → LPE8)
+        const peSuffix = n.replace(/^[LF]PE\s*/i, '').trim();
+        if (/^LPE/i.test(n) && peSuffix === suffix) start = {lat:c[0][0], lng:c[0][1], name:n};
+        if (/^FPE/i.test(n) && peSuffix === suffix) end   = {lat:c[0][0], lng:c[0][1], name:n};
       });
     } else {
-      // Regular PE — extract suffix after "PE " and match LPE/FPE
-      const suffix = name.replace(/^PE\s*/i, '').trim(); // e.g. "1/5/8", "2", "3/6"
+      // Regular PE — extract suffix after "PE " (before any " - description")
+      const suffix = name.replace(/^PE\s*/i, '').split(/\s*[-–]\s*/)[0].trim(); // e.g. "2/5", "3/6"
+      // Build set of each number in suffix for multi-num point names like FPE2/5/9/11
+      const suffixNums = new Set(suffix.split('/').map(s=>s.trim()));
+      const suffixMatches = ptSuffix => {
+        if (ptSuffix === suffix) return true; // exact match
+        // Point might cover multiple stages: FPE2/5/9/11 matches PE2/5 if all suffix nums are contained
+        const ptNums = ptSuffix.split('/').map(s=>s.trim());
+        return [...suffixNums].every(n => ptNums.includes(n));
+      };
       Object.keys(ptByName).forEach(pname => {
         const n = pname.trim();
+        const c = ptByName[pname];
+        if (!c || !c.length) return;
         const ptSuffix = n.replace(/^[LF]PE\s*/i, '').trim();
-        if (ptSuffix !== suffix) return;
-        if (/^LPE/i.test(n)) {
-          const c = ptByName[pname];
-          if (c && c.length) start = {lat:c[0][0], lng:c[0][1], name:n};
-        }
-        if (/^FPE/i.test(n)) {
-          const c = ptByName[pname];
-          if (c && c.length) end = {lat:c[0][0], lng:c[0][1], name:n};
-        }
+        if (!suffixMatches(ptSuffix)) return;
+        if (/^LPE/i.test(n)) start = {lat:c[0][0], lng:c[0][1], name:n};
+        if (/^FPE/i.test(n)) end   = {lat:c[0][0], lng:c[0][1], name:n};
       });
     }
 
@@ -1734,12 +1765,17 @@ function draw() {
       ctx.globalAlpha = 1.0;
     }
 
-    // Derive LPE/FPE labels from tramo name
-    // PE 1/5/8 → LPE1, FPE1 | PE 4 / 7 → LPE4 | PSSE → LSSE, FSSE
+    // Derive start/end labels from tramo name
     let startLabel, endLabel;
     const tname = t.name.trim();
-    if (/^PSSE/i.test(tname)) {
+    if (/SHAKEDOWN/i.test(tname)) {
+      startLabel = 'LSH'; endLabel = 'FSH';
+    } else if (/^PSSE/i.test(tname)) {
       startLabel = 'LSSE'; endLabel = 'FSSE';
+    } else if (/^PSE\b/i.test(tname)) {
+      const numPart = tname.replace(/^PSE\s*/i,'').trim();
+      const firstNum = (numPart.match(/\d+/) || [''])[0];
+      startLabel = 'LPSE' + firstNum; endLabel = 'FPSE' + firstNum;
     } else {
       const numPart = tname.replace(/^PE\s*/i,'').trim(); // "1/5/8", "2", "4 / 7"
       const firstNum = (numPart.match(/\d+/) || [''])[0];
