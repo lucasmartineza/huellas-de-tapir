@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v5.9</title>
+<title>Huella de Tapir v5.8</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -679,11 +679,11 @@ if('serviceWorker' in navigator){
     <!-- Botones -->
     <div style="width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;margin-bottom:auto;">
       <button onclick="document.getElementById('kf').click()" style="width:100%;background:#00e5ff;color:#131313;border:none;border-radius:8px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
-        <span>CARGAR KMZ</span>
+        <span id="lang-btn-kmz">CARGAR KMZ</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       </button>
       <button id="btn-resume" onclick="startMap()" style="width:100%;background:transparent;color:#ffffff;border:1.5px solid #2a2d32;border-radius:8px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;letter-spacing:1.5px;cursor:pointer;display:none;align-items:center;justify-content:space-between;">
-        <span id="btn-resume-text">CONTINUAR SESIÓN</span>
+        <span id="lang-btn-resume">CONTINUAR SESIÓN</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       </button>
     </div>
@@ -697,13 +697,13 @@ if('serviceWorker' in navigator){
       <div style="background:#1a1d21;border-radius:8px;border:1px solid #2a2d32;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:8px;">
           <div id="gps-dot-load" style="width:7px;height:7px;border-radius:50%;background:#2a2d32;"></div>
-          <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#7a8a99;letter-spacing:1px;">SISTEMA GPS: <span id="gps-status-load" style="color:#ffffff;font-weight:600;">BUSCANDO</span></span>
+          <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#7a8a99;letter-spacing:1px;"><span id="lang-gps-label">SISTEMA GPS:</span> <span id="gps-status-load" style="color:#ffffff;font-weight:600;">BUSCANDO</span></span>
         </div>
-        <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#00e5ff;letter-spacing:1px;">PRECISIÓN <span id="gps-acc-load">--</span></span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#00e5ff;letter-spacing:1px;"><span id="lang-precision">PRECISIÓN</span> <span id="gps-acc-load">--</span></span>
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v5.9</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v5.8</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -725,9 +725,9 @@ if('serviceWorker' in navigator){
     </div>
   <div id="offline-badge">SIN SEÑAL</div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v5.9</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v5.8</span>
     <div style="display:flex;gap:6px;align-items:center;">
-      <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()">CAMINOS</button>
+      <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()"><span id="lang-caminos">CAMINOS</span></button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
       <button class="gps-pill" id="theme-btn" onclick="toggleTheme()" title="Modo claro/oscuro">◑</button>
       <button class="gps-pill" id="gps-pill" onclick="centerGPS()">GPS</button>
@@ -777,7 +777,7 @@ if('serviceWorker' in navigator){
       </svg>
     </div>
     <div class="tramo-list-panel" id="tramo-list-panel">
-      <div class="tramo-panel-hdr">TRAMOS</div>
+      <div class="tramo-panel-hdr"><span id="lang-tramos">TRAMOS</span></div>
       <div id="tramo-panel-items"></div>
     </div>
   </div>
@@ -824,7 +824,7 @@ if('serviceWorker' in navigator){
         <div class="odo-unit">KM</div>
         <button onclick="resetOdo()" style="background:rgba(0,229,255,0.1);border:1px solid #00e5ff44;border-radius:20px;padding:4px 10px;color:#00e5ff;font-size:11px;cursor:pointer;font-family:monospace;letter-spacing:1px;">↺ RESET</button>
       </div>
-      <div class="odo-unit" style="letter-spacing:1.5px;">RECORRIDO</div>
+      <div class="odo-unit" style="letter-spacing:1.5px;" id="lang-recorrido">RECORRIDO</div>
     </div>
     <div style="width:1px;background:#1a3040;align-self:stretch;margin:0 2px;"></div>
     <div style="display:flex;flex-direction:column;align-items:flex-start;">
@@ -832,7 +832,7 @@ if('serviceWorker' in navigator){
         <div class="odo-val" id="spd-val">0</div>
         <div class="odo-unit">KM/H</div>
       </div>
-      <div class="odo-unit" style="letter-spacing:1.5px;">VELOCIDAD</div>
+      <div class="odo-unit" style="letter-spacing:1.5px;" id="lang-velocidad">VELOCIDAD</div>
     </div>
     <div style="width:1px;background:#1a3040;align-self:stretch;margin:0 2px;"></div>
     <div style="display:flex;flex-direction:column;align-items:flex-start;">
@@ -840,7 +840,7 @@ if('serviceWorker' in navigator){
         <div class="odo-val" id="dist-last-val" style="font-size:20px;">—</div>
         <div class="odo-unit">KM</div>
       </div>
-      <div class="odo-unit" style="letter-spacing:1.5px;">DESDE #<span id="dist-last-num">—</span></div>
+      <div class="odo-unit" style="letter-spacing:1.5px;"><span id="lang-desde">DESDE #</span><span id="dist-last-num">—</span></div>
     </div>
   </div>
 
@@ -869,7 +869,7 @@ if('serviceWorker' in navigator){
   <div id="bottombar" style="display:grid;grid-template-columns:1fr 1fr 72px 1fr 1fr;align-items:center;padding:0 8px;gap:0;">
     <button class="nav-btn" onclick="goHome()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a9aaa" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;">HOME</span>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;"><span id="lang-home">HOME</span></span>
     </button>
     <button class="nav-btn" id="tab-tramos" onclick="goHome()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(0,229,255,0.1);border:none;cursor:pointer;padding:8px 4px;width:100%;border-radius:8px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -880,11 +880,11 @@ if('serviceWorker' in navigator){
     </button>
     <button class="nav-btn" onclick="openScreen('list')" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a9aaa" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;">SPOTS</span>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;"><span id="lang-spots">SPOTS</span></span>
     </button>
     <button class="nav-btn" onclick="openScreen('pdf')" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a9aaa" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;">EXPORT</span>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;"><span id="lang-export">EXPORT</span></span>
     </button>
   </div>
 </div>
@@ -895,7 +895,7 @@ if('serviceWorker' in navigator){
   <div class="handle"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;padding:0 0 4px;">
     <div class="sh-num" id="sh-num">PUNTO #1</div>
-    <button onclick="closeSheet()" style="background:transparent;border:1px solid #1a3040;border-radius:8px;padding:6px 12px;color:#4a8898;font-size:10px;cursor:pointer;font-family:monospace;letter-spacing:1px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>VOLVER</button>
+    <button onclick="closeSheet()" style="background:transparent;border:1px solid #1a3040;border-radius:8px;padding:6px 12px;color:#4a8898;font-size:10px;cursor:pointer;font-family:monospace;letter-spacing:1px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg><span data-i18n="volver">VOLVER</span></button>
   </div>
   <div id="sh-tramo-tag" class="sh-tramo-tag"></div>
   <div class="sh-coord" id="sh-coord">0.000000, 0.000000</div>
@@ -904,7 +904,7 @@ if('serviceWorker' in navigator){
     <div class="dist-pill">⬆ largada <span id="dist-from">—</span> km</div>
     <div class="dist-pill">⬇ llegada <span id="dist-to">—</span> km</div>
   </div>
-  <label class="fl">Tipo de punto</label>
+  <label class="fl" data-i18n="tipoPunto">Tipo de punto</label>
   <div class="type-row">
     <div class="type-chip" id="tc-p" onclick="selType('photo')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -923,7 +923,7 @@ if('serviceWorker' in navigator){
       </svg>AMBOS
     </div>
   </div>
-  <label class="fl">Foto de referencia</label>
+  <label class="fl" data-i18n="fotoRef">Foto de referencia</label>
   <div id="photo-save-row" style="display:none;gap:6px;margin:0 0 8px;">
     <button onclick="saveAndUsePhoto()" style="flex:1;background:#00e5ff;color:#000;border:none;border-radius:8px;padding:10px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">GUARDAR Y USAR</button>
     <button onclick="justUsePhoto()" style="flex:1;background:transparent;color:#00e5ff;border:1px solid #00e5ff;border-radius:8px;padding:10px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">SOLO USAR</button>
@@ -948,7 +948,7 @@ if('serviceWorker' in navigator){
       <div id="photo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;"></div>
     <div class="photo-clear" onclick="clearPhoto()">✕</div>
   </div>
-  <label class="fl">TIPO DE OBSTÁCULO</label>
+  <label class="fl" data-i18n="tipoObs">TIPO DE OBSTÁCULO</label>
   <div class="obs-grid" id="obs-grid">
     <div class="obs-btn" data-obs="curva-der" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 18 Q6 4 22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 1.5 L22 4 L19 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CURVA<br>DER</span></div>
     <div class="obs-btn" data-obs="curva-izq" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 18 Q24 4 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 1.5 L8 4 L11 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CURVA<br>IZQ</span></div>
@@ -966,7 +966,7 @@ if('serviceWorker' in navigator){
     <div class="obs-btn" data-obs="publico" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M5 20 Q5 13 10 13 Q15 13 15 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M15 20 Q15 13 20 13 Q25 13 25 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="15" cy="5" r="2.5" fill="currentColor" opacity="0.4"/></svg><span>PÚBLICO</span></div>
     <div class="obs-btn" data-obs="parking" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="2" width="22" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 6 L11 16 M11 6 L16 6 Q20 6 20 10 Q20 14 16 14 L11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>PARKING</span></div>
   </div>
-  <label class="fl">RELEVANCIA</label>
+  <label class="fl" data-i18n="relevancia">RELEVANCIA</label>
   <div class="stars-row" id="stars-row">
     <div class="star-btn" data-star="1" onclick="setStar(1)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
     <div class="star-btn" data-star="2" onclick="setStar(2)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
@@ -974,7 +974,7 @@ if('serviceWorker' in navigator){
     <div class="star-btn" data-star="4" onclick="setStar(4)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
     <div class="star-btn" data-star="5" onclick="setStar(5)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
   </div>
-  <label class="fl">Nota de voz</label>
+  <label class="fl" data-i18n="notaVoz">Nota de voz</label>
   <div class="rec-row">
     <div class="rec-info">
       <div class="rec-dot" id="rec-dot"></div>
@@ -1003,7 +1003,7 @@ if('serviceWorker' in navigator){
     <button class="play-del" onclick="delAudio()">BORRAR</button>
   </div>
   <audio id="audio-el" style="display:none"></audio>
-  <label class="fl">Notas</label>
+  <label class="fl" data-i18n="notas">Notas</label>
   <textarea class="notes-ta" id="notes-ta" placeholder="Ángulo, acceso, luz, distancia..."></textarea>
   <div class="sh-actions">
     <button class="btn-save" onclick="savePoint()">GUARDAR</button>
@@ -1325,9 +1325,7 @@ function parseTramos(text) {
   // Classification rules based on name patterns
   const isTramo = name => {
     const n = name.toUpperCase();
-    return /^PE[\d\s/]/.test(n) || /^PSE[\d\s/]/.test(n) || /^SS[\d\s/]/.test(n) ||
-           /^PSSE[\d\s/]/.test(n) || /^SE[\d\s/]/.test(n) ||
-           n.startsWith('PE ') || n.startsWith('PSE ') ||
+    return /^PE\b/.test(n) || /^SS\b/.test(n) || /^PSSE\b/.test(n) ||
            n.includes('SHAKEDOWN') || n.includes('ESPECIAL');
   };
   const isEnlace = name => {
@@ -1352,69 +1350,40 @@ function parseTramos(text) {
     if (!isCron && !isLink) return;
 
     // Match points by name prefix
-    // SHAKEDOWN → LSH / FSH
-    // PSE 1 / PSE 8 → LPSE 1 / FPSE 1, LPE8 / FPE8 (org-dependent)
-    // PSSE → LSSE / FSSE
-    // PE 2/5 → LPE2/5 / FPE2/5  (suffix match after prefix strip)
+    // PE 1/5/8 → look for LPE 1/5/8, FPE 1/5/8
+    // PSSE → look for LSSE, FSSE
     let start = null, end = null;
 
-    const isSH   = /SHAKEDOWN/i.test(name);
     const isPSSE = /^PSSE/i.test(name);
-    const isPSE  = /^PSE\b/i.test(name);
 
-    if (isSH) {
-      // Shakedown: look for LSH / FSH
+    if (isPSSE) {
+      // Super especial
       Object.keys(ptByName).forEach(pname => {
         const n = pname.trim();
-        const c = ptByName[pname];
-        if (!c || !c.length) return;
-        if (/^LSH/i.test(n)) start = {lat:c[0][0], lng:c[0][1], name:n};
-        if (/^FSH/i.test(n)) end   = {lat:c[0][0], lng:c[0][1], name:n};
-      });
-    } else if (isPSSE) {
-      // Super especial PSSE → LSSE / FSSE
-      Object.keys(ptByName).forEach(pname => {
-        const n = pname.trim();
-        const c = ptByName[pname];
-        if (!c || !c.length) return;
-        if (/^LSSE/i.test(n)) start = {lat:c[0][0], lng:c[0][1], name:n};
-        if (/^FSSE/i.test(n)) end   = {lat:c[0][0], lng:c[0][1], name:n};
-      });
-    } else if (isPSE) {
-      // PSE N → look for LPSE N / FPSE N  OR  LPE<N> / FPE<N>
-      const suffix = name.replace(/^PSE\s*/i, '').trim(); // e.g. "1", "8"
-      Object.keys(ptByName).forEach(pname => {
-        const n = pname.trim();
-        const c = ptByName[pname];
-        if (!c || !c.length) return;
-        // Match LPSE N / FPSE N
-        const pseSuffix = n.replace(/^[LF]PSE\s*/i, '').trim();
-        if (/^LPSE/i.test(n) && pseSuffix === suffix) start = {lat:c[0][0], lng:c[0][1], name:n};
-        if (/^FPSE/i.test(n) && pseSuffix === suffix) end   = {lat:c[0][0], lng:c[0][1], name:n};
-        // Also match LPE<N> / FPE<N> (alternate naming: PSE 8 → LPE8)
-        const peSuffix = n.replace(/^[LF]PE\s*/i, '').trim();
-        if (/^LPE/i.test(n) && peSuffix === suffix) start = {lat:c[0][0], lng:c[0][1], name:n};
-        if (/^FPE/i.test(n) && peSuffix === suffix) end   = {lat:c[0][0], lng:c[0][1], name:n};
+        if (/^LSSE/i.test(n)) {
+          const c = ptByName[pname];
+          if (c && c.length) start = {lat:c[0][0], lng:c[0][1], name:n};
+        }
+        if (/^FSSE/i.test(n)) {
+          const c = ptByName[pname];
+          if (c && c.length) end = {lat:c[0][0], lng:c[0][1], name:n};
+        }
       });
     } else {
-      // Regular PE — extract suffix after "PE " (before any " - description")
-      const suffix = name.replace(/^PE\s*/i, '').split(/\s*[-–]\s*/)[0].trim(); // e.g. "2/5", "3/6"
-      // Build set of each number in suffix for multi-num point names like FPE2/5/9/11
-      const suffixNums = new Set(suffix.split('/').map(s=>s.trim()));
-      const suffixMatches = ptSuffix => {
-        if (ptSuffix === suffix) return true; // exact match
-        // Point might cover multiple stages: FPE2/5/9/11 matches PE2/5 if all suffix nums are contained
-        const ptNums = ptSuffix.split('/').map(s=>s.trim());
-        return [...suffixNums].every(n => ptNums.includes(n));
-      };
+      // Regular PE — extract suffix after "PE " and match LPE/FPE
+      const suffix = name.replace(/^PE\s*/i, '').trim(); // e.g. "1/5/8", "2", "3/6"
       Object.keys(ptByName).forEach(pname => {
         const n = pname.trim();
-        const c = ptByName[pname];
-        if (!c || !c.length) return;
         const ptSuffix = n.replace(/^[LF]PE\s*/i, '').trim();
-        if (!suffixMatches(ptSuffix)) return;
-        if (/^LPE/i.test(n)) start = {lat:c[0][0], lng:c[0][1], name:n};
-        if (/^FPE/i.test(n)) end   = {lat:c[0][0], lng:c[0][1], name:n};
+        if (ptSuffix !== suffix) return;
+        if (/^LPE/i.test(n)) {
+          const c = ptByName[pname];
+          if (c && c.length) start = {lat:c[0][0], lng:c[0][1], name:n};
+        }
+        if (/^FPE/i.test(n)) {
+          const c = ptByName[pname];
+          if (c && c.length) end = {lat:c[0][0], lng:c[0][1], name:n};
+        }
       });
     }
 
@@ -1459,6 +1428,7 @@ function startMap() {
   M.ctx = M.canvas.getContext('2d');
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
+  applyLang();
   fitAll();
   buildTramoPanel();
   // Calculate sun times immediately using map center (no need to open weather panel)
@@ -1765,17 +1735,12 @@ function draw() {
       ctx.globalAlpha = 1.0;
     }
 
-    // Derive start/end labels from tramo name
+    // Derive LPE/FPE labels from tramo name
+    // PE 1/5/8 → LPE1, FPE1 | PE 4 / 7 → LPE4 | PSSE → LSSE, FSSE
     let startLabel, endLabel;
     const tname = t.name.trim();
-    if (/SHAKEDOWN/i.test(tname)) {
-      startLabel = 'LSH'; endLabel = 'FSH';
-    } else if (/^PSSE/i.test(tname)) {
+    if (/^PSSE/i.test(tname)) {
       startLabel = 'LSSE'; endLabel = 'FSSE';
-    } else if (/^PSE\b/i.test(tname)) {
-      const numPart = tname.replace(/^PSE\s*/i,'').trim();
-      const firstNum = (numPart.match(/\d+/) || [''])[0];
-      startLabel = 'LPSE' + firstNum; endLabel = 'FPSE' + firstNum;
     } else {
       const numPart = tname.replace(/^PE\s*/i,'').trim(); // "1/5/8", "2", "4 / 7"
       const firstNum = (numPart.match(/\d+/) || [''])[0];
@@ -1947,7 +1912,7 @@ function handleTap(sx, sy) {
 }
 
 function centerRace() {
-  if (!ST.tramos.length) { toast('Sin tramos cargados'); return; }
+  if (!ST.tramos.length) { toast(t('t_sinTramos')); return; }
   M.following = false;
   M.navMode = false;
   M.rot = 0;
@@ -2028,20 +1993,20 @@ function resetOdo() {
 }
 
 function centerGPS() {
-  if(!ST.gpsPos){ toast('Sin señal GPS'); return; }
+  if(!ST.gpsPos){ toast(t('t_sinGPS')); return; }
   M.lat=ST.gpsPos.lat; M.lng=ST.gpsPos.lng; M.following=true;
   if(!M.navMode && !M.compass && !M.trackUp){
     M.trackUp=true; M.navMode=false; M.compass=false; stopCompass();
     if(ST.lastBearing) M.rot=-ST.lastBearing*Math.PI/180;
-    toast('Frente hacia arriba');
+    toast(t('t_frente'));
   } else if(M.trackUp && !M.compass){
-    M.trackUp=false; M.compass=true; startCompass(); toast('Modo brújula');
+    M.trackUp=false; M.compass=true; startCompass(); toast(t('t_brujula'));
   } else if(M.compass){
-    M.trackUp=false; M.navMode=false; M.compass=false; stopCompass(); M.rot=0; toast('Norte fijo');
+    M.trackUp=false; M.navMode=false; M.compass=false; stopCompass(); M.rot=0; toast(t('t_norte'));
   } else {
     M.trackUp=true;
     if(ST.lastBearing) M.rot=-ST.lastBearing*Math.PI/180;
-    toast('Frente hacia arriba');
+    toast(t('t_frente'));
   }
 }
 
@@ -2193,7 +2158,7 @@ function onPhoto(e){
     img.onload=()=>{
       if(!ST.curPt) return;
       if(!ST.curPt._photos) ST.curPt._photos=[...(ST.curPt.photos||[])];
-      if(ST.curPt._photos.length>=4){ toast('Máximo 4 fotos'); return; }
+      if(ST.curPt._photos.length>=4){ toast(t('t_max4fotos')); return; }
       const cv=document.createElement('canvas');
       cv.width=Math.round(img.naturalWidth*0.15);
       cv.height=Math.round(img.naturalHeight*0.15);
@@ -2253,7 +2218,7 @@ async function savePoint() {
   persist();
   updateDistFromLast();
   closeSheet();
-  toast('Punto guardado');
+  toast(t('t_puntoGuardado'));
 }
 
 function toggleLinks() {
@@ -2305,7 +2270,7 @@ async function delPoint() {
   await deletePhoto('photo_'+ST.curPt.id);
   await deletePhoto('audio_'+ST.curPt.id);
   ST.points=ST.points.filter(p=>p.id!==ST.curPt.id);
-  persist(); closeSheet(); toast('Punto eliminado');
+  persist(); closeSheet(); toast(t('t_puntoEliminado'));
 }
 
 // ══ AUDIO ══
@@ -2628,7 +2593,7 @@ function renderTramoImage(tramo, pts, W, H) {
 }
 
 async function genPDF(){
-  if(!ST.points.length){toast('Sin puntos para exportar');return;}
+  if(!ST.points.length){toast(t('t_sinPuntos'));return;}
   const btn=document.getElementById('btn-pdf-gen');
   if(btn){btn.textContent='GENERANDO...';btn.disabled=true;}
   await new Promise(r=>setTimeout(r,50));
@@ -3184,7 +3149,7 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
 
 
 function genKMZ(){
-  if(!ST.points.length){toast('Sin puntos para exportar');return;}
+  if(!ST.points.length){toast(t('t_sinPuntos'));return;}
 
   const typeIcon = {
     photo:  'http://maps.google.com/mapfiles/kml/paddle/blu-circle.png',
@@ -3273,7 +3238,7 @@ function genKMZ(){
   a.href=url; a.download=`HuellaDeTapir_${ST.kmzName.replace(/\.kmz?$/i,'')}_V2.20260602_1536.kmz`;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
-  toast('KMZ exportado ✓');
+  toast(t('t_kmzExport'));
 }
 
 function escXML(s){
@@ -3765,8 +3730,8 @@ async function loadRoads() {
 
 async function loadOSMRoads() {
   const btn = document.getElementById('roads-btn');
-  if (!navigator.onLine) { toast('Sin conexión'); return; }
-  if (!ST.tramos.length) { toast('Cargá un KMZ primero'); return; }
+  if (!navigator.onLine) { toast(t('t_sinConex')); return; }
+  if (!ST.tramos.length) { toast(t('t_sinKmz')); return; }
 
   btn.classList.add('loading');
   btn.textContent = 'DESCARGANDO...';
@@ -3779,7 +3744,7 @@ async function loadOSMRoads() {
   const N = (Math.max(...allLats) + 0.18).toFixed(5);
   const W = (Math.min(...allLngs) - 0.18).toFixed(5);
   const E = (Math.max(...allLngs) + 0.18).toFixed(5);
-  toast('Descargando caminos...');
+  toast(t('t_descCaminos'));
 
   const query = `[out:json][timeout:25];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road)$"](${S},${W},${N},${E}););out geom;`;
   const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
@@ -3807,7 +3772,7 @@ async function loadOSMRoads() {
   } catch(e) {
     btn.classList.remove('loading');
     btn.textContent = 'CARGAR CAMINOS';
-    toast('Error al cargar caminos');
+    toast(t('t_errCaminos'));
     console.error(e);
   }
 }
@@ -4431,6 +4396,176 @@ function signalIconSVG(level){
 }
 // ── END SIGNAL ──
 
+
+// ══ i18n ══
+const I18N = {
+  es: {
+    // Screen load
+    tagline: 'Registro de tramos<br><span style="color:#00e5ff;">para producción.</span>',
+    desc: 'Documentá cada punto del recorrido con coordenadas precisas, fotos de referencia y condiciones del terreno. Exportá en PDF o KMZ para coordinación en carrera.',
+    btnKmz: 'CARGAR KMZ',
+    btnResume: 'CONTINUAR SESIÓN',
+    btnInstall: '⊕ INSTALAR APP',
+    gpsLabel: 'SISTEMA GPS:',
+    gpsBuscando: 'BUSCANDO',
+    precision: 'PRECISIÓN',
+    switchLang: 'Switch to English',
+    // Bottombar
+    home: 'HOME', tramos: 'TRAMOS', spots: 'SPOTS', export: 'EXPORT',
+    // Topbar
+    caminos: 'CAMINOS',
+    // Odometer
+    recorrido: 'RECORRIDO', velocidad: 'VELOCIDAD', desde: 'DESDE #',
+    // Sheet
+    punto: 'PUNTO #', volver: 'VOLVER',
+    largada: 'largada', llegada: 'llegada',
+    tipoPunto: 'Tipo de punto',
+    fotoRef: 'Foto de referencia',
+    tipoObs: 'TIPO DE OBSTÁCULO',
+    relevancia: 'RELEVANCIA',
+    notaVoz: 'Nota de voz',
+    notas: 'Notas',
+    guardar: 'GUARDAR PUNTO',
+    foto: 'FOTO', video: 'VIDEO', ambos: 'AMBOS',
+    // Obstacles
+    curvaDer: 'CURVA<br>DER', curvaIzq: 'CURVA<br>IZQ', lomo: 'LOMO',
+    vado: 'VADO', uDer: 'U DER', uIzq: 'U IZQ', ese: 'ESE',
+    paisaje: 'PAISAJE', panoramica: 'PANORÁM.', guadal: 'GUADAL',
+    multiPto: 'MULTI<br>PTO', cruce: 'CRUCE', contraluz: 'CONTRA<br>LUZ',
+    publico: 'PÚBLICO', parking: 'PARKING',
+    // Toasts
+    t_sinKmz: 'Cargá un KMZ primero',
+    t_descCaminos: 'Descargando caminos...',
+    t_errCaminos: 'Error al cargar caminos',
+    t_sinConex: 'Sin conexión',
+    t_sinGPS: 'Sin señal GPS',
+    t_sinPuntos: 'Sin puntos para exportar',
+    t_puntoGuardado: 'Punto guardado',
+    t_puntoEliminado: 'Punto eliminado',
+    t_max4fotos: 'Máximo 4 fotos',
+    t_kmzExport: 'KMZ exportado ✓',
+    t_sinTramos: 'Sin tramos cargados',
+    t_instalada: 'Ya está instalada ✓',
+    t_norte: 'Norte fijo',
+    t_brujula: 'Modo brújula',
+    t_frente: 'Frente hacia arriba',
+    t_enlacesOn: 'Enlaces visibles',
+    t_enlacesOff: 'Enlaces ocultos',
+    // Signal
+    sinSenal: 'SIN SEÑAL', online: 'ONLINE', senalDebil: 'SEÑAL DÉBIL',
+    // Offline badge
+    sinSenal2: 'SIN SEÑAL',
+    // GPS status
+    listo: 'LISTO',
+  },
+  en: {
+    tagline: 'Stage tracking<br><span style="color:#00e5ff;">for production.</span>',
+    desc: 'Document each point on the route with precise coordinates, reference photos and terrain conditions. Export to PDF or KMZ for race coordination.',
+    btnKmz: 'LOAD KMZ',
+    btnResume: 'CONTINUE SESSION',
+    btnInstall: '⊕ INSTALL APP',
+    gpsLabel: 'GPS SYSTEM:',
+    gpsBuscando: 'SEARCHING',
+    precision: 'ACCURACY',
+    switchLang: 'Cambiar a Español',
+    home: 'HOME', tramos: 'STAGES', spots: 'SPOTS', export: 'EXPORT',
+    caminos: 'ROADS',
+    recorrido: 'DISTANCE', velocidad: 'SPEED', desde: 'FROM #',
+    punto: 'POINT #', volver: 'BACK',
+    largada: 'start', llegada: 'finish',
+    tipoPunto: 'Point type',
+    fotoRef: 'Reference photo',
+    tipoObs: 'OBSTACLE TYPE',
+    relevancia: 'RELEVANCE',
+    notaVoz: 'Voice note',
+    notas: 'Notes',
+    guardar: 'SAVE POINT',
+    foto: 'PHOTO', video: 'VIDEO', ambos: 'BOTH',
+    curvaDer: 'CURVE<br>R', curvaIzq: 'CURVE<br>L', lomo: 'CREST',
+    vado: 'DITCH', uDer: 'U RIGHT', uIzq: 'U LEFT', ese: 'S-BEND',
+    paisaje: 'SCENERY', panoramica: 'PANORAM.', guadal: 'GRAVEL',
+    multiPto: 'MULTI<br>PT', cruce: 'JUNCTION', contraluz: 'BACK<br>LIT',
+    publico: 'CROWD', parking: 'PARKING',
+    t_sinKmz: 'Load a KMZ first',
+    t_descCaminos: 'Downloading roads...',
+    t_errCaminos: 'Error loading roads',
+    t_sinConex: 'No connection',
+    t_sinGPS: 'No GPS signal',
+    t_sinPuntos: 'No points to export',
+    t_puntoGuardado: 'Point saved',
+    t_puntoEliminado: 'Point deleted',
+    t_max4fotos: 'Maximum 4 photos',
+    t_kmzExport: 'KMZ exported ✓',
+    t_sinTramos: 'No stages loaded',
+    t_instalada: 'Already installed ✓',
+    t_norte: 'North up',
+    t_brujula: 'Compass mode',
+    t_frente: 'Track up',
+    t_enlacesOn: 'Liaisons visible',
+    t_enlacesOff: 'Liaisons hidden',
+    sinSenal: 'NO SIGNAL', online: 'ONLINE', senalDebil: 'WEAK SIGNAL',
+    sinSenal2: 'NO SIGNAL',
+    listo: 'READY',
+  }
+};
+
+let LANG = localStorage.getItem('tapir_lang') || 'es';
+
+function t(key){ return (I18N[LANG] && I18N[LANG][key]) || I18N.es[key] || key; }
+
+function setLang(lang){
+  LANG = lang;
+  localStorage.setItem('tapir_lang', lang);
+  applyLang();
+}
+
+function toggleLang(){
+  setLang(LANG === 'es' ? 'en' : 'es');
+}
+
+function applyLang(){
+  const ids = {
+    'lang-tagline':   t('tagline'),
+    'lang-desc':      t('desc'),
+    'lang-btn-kmz':   t('btnKmz'),
+    'lang-btn-resume':t('btnResume'),
+    'lang-btn-install':t('btnInstall'),
+    'lang-gps-label': t('gpsLabel'),
+    'gps-status-load':t('gpsBuscando'),
+    'lang-precision': t('precision'),
+    'lang-switch':    t('switchLang'),
+    'lang-home':      t('home'),
+    'lang-tramos':    t('tramos'),
+    'lang-spots':     t('spots'),
+    'lang-export':    t('export'),
+    'lang-recorrido': t('recorrido'),
+    'lang-velocidad': t('velocidad'),
+    'lang-desde':     t('desde'),
+    'lang-caminos':   t('caminos'),
+    'offline-badge':  t('sinSenal2'),
+  };
+  for(const [id, val] of Object.entries(ids)){
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = val;
+  }
+  // Update sheet labels
+  const shLabels = document.querySelectorAll('[data-i18n]');
+  shLabels.forEach(el => { const k = el.dataset.i18n; if(k) el.innerHTML = t(k); });
+  // Update obs btn spans
+  document.querySelectorAll('.obs-btn[data-obs]').forEach(btn => {
+    const key = btn.dataset.obs;
+    const map = {
+      'curva-der':'curvaDer','curva-izq':'curvaIzq','lomo':'lomo','vado':'vado',
+      'u-der':'uDer','u-izq':'uIzq','ese':'ese','paisaje':'paisaje',
+      'panoramica':'panoramica','guadal':'guadal','multipunto':'multiPto',
+      'cruce':'cruce','contraluz':'contraluz','publico':'publico','parking':'parking'
+    };
+    const span = btn.querySelector('span');
+    if(span && map[key]) span.innerHTML = t(map[key]);
+  });
+}
+// ══ END i18n ══
+
 // ══ FIN TAPIR MIGRANTE ══
 
 
@@ -4455,7 +4590,7 @@ function triggerInstall() {
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone = window.navigator.standalone === true ||
     window.matchMedia('(display-mode: standalone)').matches;
-  if(isStandalone){ toast('Ya está instalada ✓'); return; }
+  if(isStandalone){ toast(t('t_instalada')); return; }
   if(isIOS) {
     alert('INSTALAR EN iPHONE:\n\n1. Tocá el botón ↑ (Compartir) en Safari\n2. Deslizá y elegí "Agregar a pantalla de inicio"\n3. Tocá "Agregar"\n\nListo — la app queda en tu pantalla de inicio.');
     return;
@@ -4490,7 +4625,7 @@ function updateOnlineStatus(){
 }
 window.addEventListener('online',  updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
-document.addEventListener('DOMContentLoaded', updateOnlineStatus);
+document.addEventListener('DOMContentLoaded', () => { updateOnlineStatus(); applyLang(); });
 // ── END OFFLINE ──
 </script>
 <!-- ══ TAPIR MIGRANTE ══ -->
