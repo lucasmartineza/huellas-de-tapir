@@ -1057,7 +1057,7 @@ if('serviceWorker' in navigator){
 <script>
 // ══ STATE ══
 let SHOW_LINKS = false;
-const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false, roads:[], lastBearing:0, odoKm:0, odoPrev:null };
+const ST = { points:[], nextN:1, tramos:[], kmzName:'', gpsPos:null, curPt:null, isEdit:false, roads:[], waters:[], lastBearing:0, odoKm:0, odoPrev:null };
 const STORE = 'tapir5';
 
 // ══ MAP ══
@@ -1225,7 +1225,7 @@ async function onKMZ(e) {
     const tramos = parseTramos(kmlText);
     if (!tramos.length) { setStatus('No se encontraron tramos con ruta'); return; }
     ST.tramos = tramos; ST.kmzName = file.name; ST.points = []; ST.nextN = 1;
-    ST.roads = []; // clear roads from previous event — will download for new location
+    ST.roads = []; ST.waters = []; // clear roads/water from previous event — will download for new location
     await saveRoads([]);
     persist();
     setStatus(tramos.length + ' tramos cargados');
@@ -1481,8 +1481,9 @@ function startMap() {
   const odoDiv = document.getElementById('odometer');
   if(odoDiv) odoDiv.style.display = 'flex';
   // Load saved OSM roads
-  loadRoads().then(roads => {
+  loadRoads().then(({roads, waters}) => {
     if(roads && roads.length){ ST.roads=roads; }
+    if(waters && waters.length){ ST.waters=waters; }
   });
   // Show roads button if online
   const rb = document.getElementById('roads-btn');
@@ -1663,9 +1664,10 @@ function draw() {
   }
 
   // OSM roads — grey, very faint
-  ctx.globalAlpha=1.0; ctx.shadowBlur=0;
+  ctx.globalAlpha=1.0; ctx.shadowBlur=0; ctx.setLineDash([]);
+  const isLight = document.body.classList.contains('light');
   if(ST.roads && ST.roads.length){
-    ctx.strokeStyle=document.body.classList.contains('light')?'rgba(0,0,0,0.14)':'rgba(255,255,255,0.22)'; ctx.lineWidth=1.2; ctx.globalAlpha=1;
+    ctx.strokeStyle=isLight?'rgba(0,0,0,0.10)':'rgba(255,255,255,0.14)'; ctx.lineWidth=0.9; ctx.globalAlpha=1;
     ST.roads.forEach(road => {
       if(road.length < 2) return;
       ctx.beginPath();
@@ -1673,6 +1675,20 @@ function draw() {
       for(let i=1;i<road.length;i++){const rp=proj(road[i][0],road[i][1]);ctx.lineTo(rp.x,rp.y);}
       ctx.stroke();
     });
+  }
+  // OSM waterways — neon blue, more prominent than roads
+  if(ST.waters && ST.waters.length){
+    ctx.globalAlpha=1;
+    ctx.shadowBlur=4; ctx.shadowColor='rgba(0,160,255,0.6)';
+    ctx.strokeStyle=isLight?'rgba(0,100,220,0.75)':'rgba(0,180,255,0.80)'; ctx.lineWidth=1.8;
+    ST.waters.forEach(w => {
+      if(w.length < 2) return;
+      ctx.beginPath();
+      const w0=proj(w[0][0],w[0][1]); ctx.moveTo(w0.x,w0.y);
+      for(let i=1;i<w.length;i++){const wp=proj(w[i][0],w[i][1]);ctx.lineTo(wp.x,wp.y);}
+      ctx.stroke();
+    });
+    ctx.shadowBlur=0;
   }
 
   // Draw each tramo
@@ -3750,10 +3766,16 @@ async function loadRoads() {
     return new Promise((res) => {
       const tx = d.transaction(ROADS_STORE, 'readonly');
       const req = tx.objectStore(ROADS_STORE).get('roads');
-      req.onsuccess = () => res(req.result || []);
-      req.onerror   = () => res([]);
+      req.onsuccess = () => {
+        const val = req.result;
+        // Handle both old format (array) and new format ({roads, waters})
+        if (!val) { res({roads:[], waters:[]}); return; }
+        if (Array.isArray(val)) { res({roads:val, waters:[]}); return; }
+        res({roads: val.roads||[], waters: val.waters||[]});
+      };
+      req.onerror = () => res({roads:[], waters:[]});
     });
-  } catch(e) { return []; }
+  } catch(e) { return {roads:[], waters:[]}; }
 }
 
 async function loadOSMRoads() {
@@ -3774,29 +3796,33 @@ async function loadOSMRoads() {
   const E = (Math.max(...allLngs) + 0.18).toFixed(5);
   toast(t('t_descCaminos'));
 
-  const query = `[out:json][timeout:25];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road)$"](${S},${W},${N},${E}););out geom;`;
+  const query = `[out:json][timeout:30];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road)$"](${S},${W},${N},${E});way["waterway"~"^(river|stream|canal|drain|ditch)$"](${S},${W},${N},${E}););out geom tags;`;
   const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
 
   try {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 28000);
+    const timer = setTimeout(() => ctrl.abort(), 35000);
     const resp = await fetch(url, {signal: ctrl.signal});
     clearTimeout(timer);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
 
-    // Convert OSM ways to array of coordinate arrays
+    // Separate roads from waterways
     const roads = (data.elements || [])
-      .filter(el => el.type === 'way' && el.geometry && el.geometry.length > 1)
+      .filter(el => el.type === 'way' && el.geometry && el.geometry.length > 1 && el.tags && el.tags.highway)
+      .map(el => el.geometry.map(pt => [pt.lat, pt.lon]));
+    const waters = (data.elements || [])
+      .filter(el => el.type === 'way' && el.geometry && el.geometry.length > 1 && el.tags && el.tags.waterway)
       .map(el => el.geometry.map(pt => [pt.lat, pt.lon]));
 
     ST.roads = roads;
-    await saveRoads(roads);
+    ST.waters = waters;
+    await saveRoads({roads, waters});
 
     btn.classList.remove('loading');
     btn.classList.add('done');
     btn.textContent = roads.length + ' CAMINOS OK';
-    toast(roads.length + ' caminos cargados');
+    toast(roads.length + ' caminos · ' + waters.length + ' cursos de agua');
   } catch(e) {
     btn.classList.remove('loading');
     btn.textContent = 'CARGAR CAMINOS';
