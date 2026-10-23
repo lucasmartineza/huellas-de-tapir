@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v6.0</title>
+<title>Huella de Tapir v6.2</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -703,7 +703,7 @@ if('serviceWorker' in navigator){
       </div>
       <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v6.0</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#3a4050;letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v6.2</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -725,7 +725,7 @@ if('serviceWorker' in navigator){
     </div>
   <div id="offline-badge">SIN SEÑAL</div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v6.0</span>
+      <span style="font-size:9px;color:#00e5ff;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;opacity:0.7;">v6.2</span>
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()"><span id="lang-caminos">CAMINOS</span></button>
       <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
@@ -3789,11 +3789,16 @@ async function loadOSMRoads() {
   // Bounding box justo sobre los tramos + buffer mínimo ~2km
   const allLats = ST.tramos.flatMap(tr => tr.route.map(p=>p[0]));
   const allLngs = ST.tramos.flatMap(tr => tr.route.map(p=>p[1]));
-  const BUF = 0.05; // ~5km — suficiente para ver caminos alrededor del tramo
+  const BUF = 0.05;  // ~5km para caminos
+  const WBUF = 0.12; // ~12km para agua — ríos grandes pueden estar al borde del tramo
   const S = (Math.min(...allLats) - BUF).toFixed(5);
   const N = (Math.max(...allLats) + BUF).toFixed(5);
   const W = (Math.min(...allLngs) - BUF).toFixed(5);
   const E = (Math.max(...allLngs) + BUF).toFixed(5);
+  const WS = (Math.min(...allLats) - WBUF).toFixed(5);
+  const WN = (Math.max(...allLats) + WBUF).toFixed(5);
+  const WW = (Math.min(...allLngs) - WBUF).toFixed(5);
+  const WE = (Math.max(...allLngs) + WBUF).toFixed(5);
 
   const overpass = async (query, timeoutMs) => {
     const ctrl = new AbortController();
@@ -3817,13 +3822,13 @@ async function loadOSMRoads() {
     ST.roads = roads;
     toast(roads.length + ' caminos OK · descargando agua...');
 
-    // Query 2: agua (separada para no colapsar el timeout)
-    const waterQuery = `[out:json][timeout:20];(way["waterway"~"^(river|stream|canal|drain|ditch)$"](${S},${W},${N},${E}););out geom;`;
+    // Query 2: agua — bbox más amplio, incluye relations (ríos grandes en OSM)
+    const waterQuery = `[out:json][timeout:25];(way["waterway"~"^(river|stream|canal|drain|ditch|tidal_channel)$"](${WS},${WW},${WN},${WE});relation["waterway"~"^(river|stream|canal)$"](${WS},${WW},${WN},${WE}););out geom;`;
     let waters = [];
     try {
-      const waterData = await overpass(waterQuery, 25000);
+      const waterData = await overpass(waterQuery, 30000);
       waters = (waterData.elements || [])
-        .filter(el => el.type==='way' && el.geometry && el.geometry.length>1)
+        .filter(el => el.geometry && el.geometry.length>1)
         .map(el => el.geometry.map(pt => [pt.lat, pt.lon]));
     } catch(e) { console.warn('water query failed, continuing without:', e); }
 
