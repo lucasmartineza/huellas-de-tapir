@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v7.5</title>
+<title>Huella de Tapir v7.6</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +18,7 @@
 <style>
 
 :root {
-  /* Paleta v7.5: #353535 base · #3C6E71 teal · #00C0D8 cyan · #F5F1E8 crema · #D9A441 dorado */
+  /* Paleta v7.6: #353535 base · #3C6E71 teal · #00C0D8 cyan · #F5F1E8 crema · #D9A441 dorado */
   --bg-primary: #353535;
   --bg-screen: #353535;
   --bg-topbar: #2B2B2B;
@@ -538,7 +538,7 @@ body.light .save-bar { background: rgba(0,150,60,0.08) !important; color: #8A621
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ LOOK v7.5 — tarjetas grandes sin bordes · píldoras · barras flotantes ══ */
+/* ══ LOOK v7.6 — tarjetas grandes sin bordes · píldoras · barras flotantes ══ */
 #screen-map { background:var(--bg-map); }
 .glass { -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
 
@@ -786,7 +786,7 @@ if('serviceWorker' in navigator){
         <span class="ld-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></span>
       </button>
       <button id="btn-install" class="ld-install" onclick="triggerInstall()" style="display:block;">⊕ Instalar app</button>
-      <div class="ld-ver">Huella de Tapir v7.5</div>
+      <div class="ld-ver">Huella de Tapir v7.6</div>
     </div>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
@@ -951,22 +951,17 @@ if('serviceWorker' in navigator){
     <circle cx="26" cy="26" r="2.5" fill="#00C0D8" opacity="0.8"/>
   </svg>
 
-  <div id="bottombar" style="display:grid;grid-template-columns:1fr 1fr 72px 1fr 1fr;align-items:center;padding:0 8px;gap:0;">
+  <div id="bottombar" style="display:grid;grid-template-columns:1fr 1fr 1.9fr 1fr;align-items:center;padding:0 10px;gap:0;">
     <button class="nav-btn" onclick="goHome()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA8A5" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#9AA8A5;letter-spacing:0.5px;"><span id="lang-home">HOME</span></span>
     </button>
-    <button class="nav-btn" id="tab-tramos" onclick="goHome()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(0,192,216,0.1);border:none;cursor:pointer;padding:8px 4px;width:100%;border-radius:8px;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C0D8" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#00C0D8;letter-spacing:0.5px;">TRAMOS</span>
-    </button>
-    <button id="mark-btn" onclick="markPoint()" style="width:56px;height:56px;background:#00C0D8;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 24px rgba(0,192,216,0.5),0 0 48px rgba(0,192,216,0.2);margin:0 auto;">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#131313" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    </button>
+    
     <button class="nav-btn" onclick="openScreen('list')" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA8A5" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
       <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#9AA8A5;letter-spacing:0.5px;"><span id="lang-spots">SPOTS</span></span>
     </button>
+    <button id="mark-btn" onclick="markPoint()" aria-label="Marcar punto"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
     <button class="nav-btn" onclick="openScreen('pdf')" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA8A5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
       <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#9AA8A5;letter-spacing:0.5px;"><span id="lang-export">EXPORT</span></span>
@@ -1784,13 +1779,13 @@ function draw() {
     ctx.stroke();
   }); };
   if(ST.roads && ST.roads.length){
-    ctx.strokeStyle=isLight?'rgba(0,0,0,0.30)':'rgba(255,255,255,0.32)'; ctx.lineWidth=1.2;
+    ctx.strokeStyle=isLight?'rgba(0,0,0,0.34)':'rgba(255,255,255,0.36)'; ctx.lineWidth=1.1;
     strokeLines(ST.roads);
   }
   // OSM water: lagos rellenos + cursos + vados
   if(ST.lakes && ST.lakes.length){
-    ctx.fillStyle=isLight?'rgba(30,120,230,0.28)':'rgba(40,150,255,0.30)';
-    ctx.strokeStyle=isLight?'rgba(20,90,200,0.85)':'rgba(70,170,255,0.90)'; ctx.lineWidth=1.2;
+    ctx.fillStyle=isLight?'rgba(90,110,130,0.10)':'rgba(150,170,190,0.10)';
+    ctx.strokeStyle=isLight?'rgba(60,80,100,0.18)':'rgba(160,178,196,0.18)'; ctx.lineWidth=0.7;
     ST.lakes.forEach(line=>{
       ctx.beginPath();
       const r0=proj(line[0][0],line[0][1]); ctx.moveTo(r0.x,r0.y);
@@ -1799,17 +1794,15 @@ function draw() {
     });
   }
   if(ST.waters && ST.waters.length){
-    ctx.shadowBlur=4; ctx.shadowColor='rgba(40,150,255,0.6)';
-    ctx.strokeStyle=isLight?'rgba(20,90,200,0.90)':'rgba(70,170,255,0.95)'; ctx.lineWidth=2.2;
-    strokeLines(ST.waters);
     ctx.shadowBlur=0;
+    ctx.strokeStyle=isLight?'rgba(60,80,100,0.20)':'rgba(160,178,196,0.20)'; ctx.lineWidth=0.7;
+    strokeLines(ST.waters);
   }
   if(ST.fords && ST.fords.length){
     ST.fords.forEach(f=>{
       const fp=proj(f[0],f[1]);
-      ctx.beginPath(); ctx.arc(fp.x,fp.y,5,0,Math.PI*2);
-      ctx.fillStyle='rgba(40,150,255,0.35)'; ctx.fill();
-      ctx.lineWidth=2; ctx.strokeStyle=isLight?'#1456b8':'#7cc4ff'; ctx.stroke();
+      ctx.beginPath(); ctx.arc(fp.x,fp.y,3.5,0,Math.PI*2);
+      ctx.lineWidth=1; ctx.strokeStyle=isLight?'rgba(60,80,100,0.45)':'rgba(160,178,196,0.45)'; ctx.stroke();
     });
   }
 
@@ -3930,12 +3923,12 @@ const OVERPASS_EPS = [
   'https://overpass.private.coffee/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter'
 ];
-async function overpassQuery(query, onTry) {
+async function overpassQuery(query, onTry, rounds) {
   let lastErr = null;
-  for (let round = 0; round < 2; round++) {
+  for (let round = 0; round < (rounds||2); round++) {
     for (let i = 0; i < OVERPASS_EPS.length; i++) {
       const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 55000);
+      const timer = setTimeout(() => ctrl.abort(), 30000);
       try {
         if (onTry) onTry(i, round);
         const resp = await fetch(OVERPASS_EPS[i], {
@@ -3963,7 +3956,7 @@ async function overpassQuery(query, onTry) {
 }
 
 // Corredor alrededor de los tramos: puntos cada ~stepM metros, agrupados en cláusulas around
-function corridorClauses(filter, radiusM, stepM) {
+function corridorPoints(stepM) {
   const pts = [];
   ST.tramos.forEach(tr => {
     let last = null;
@@ -3974,6 +3967,10 @@ function corridorClauses(filter, radiusM, stepM) {
       if (Math.hypot(dLat, dLng) >= stepM) { pts.push(p); last = p; }
     });
   });
+  return pts;
+}
+function corridorClauses(filter, radiusM, stepM) {
+  const pts = corridorPoints(stepM);
   const clauses = [];
   const CH = 40;
   for (let i = 0; i < pts.length; i += CH - 1) {
@@ -3996,24 +3993,42 @@ async function loadOSMRoads() {
   btn.classList.add('loading');
   btn.textContent = 'DESCARGANDO...';
   try {
-    toast('Descargando caminos…');
-    const body = corridorClauses('way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road|service|path)$"]$A;', 2500, 1200);
-    const query = '[out:json][timeout:50];(' + body + ');out geom qt;';
-    const data = await overpassQuery(query, (i, r) => { if (i > 0 || r > 0) toast('Reintentando con otro servidor…'); });
-    const roads = (data.elements || [])
-      .filter(el => el.type === 'way' && el.geometry && el.geometry.length > 1)
-      .map(el => geomLine(el.geometry));
+    // Pedidos chicos (un tramo del recorrido cada uno): el servidor responde rápido y no se satura
+    const filter = 'way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road)$"]$A;';
+    const jobs = [];
+    ST.tramos.forEach(tr => {
+      const saved = ST.tramos; ST.tramos = [tr];
+      const pts = corridorPoints(1500);
+      ST.tramos = saved;
+      for (let i = 0; i < pts.length; i += 14) {
+        const chunk = pts.slice(i, i + 15);
+        if (chunk.length < 2) continue;
+        jobs.push(filter.replace('$A', '(around:1200,' + chunk.map(p => p[0].toFixed(5)+','+p[1].toFixed(5)).join(',') + ')'));
+      }
+    });
+    const BATCH = 4; // cláusulas por pedido
+    const reqs = [];
+    for (let i = 0; i < jobs.length; i += BATCH) reqs.push(jobs.slice(i, i + BATCH).join(''));
+
+    const seen = new Set(); const roads = []; let fails = 0, done = 0;
+    for (const body of reqs) {
+      try {
+        const data = await overpassQuery('[out:json][timeout:25];(' + body + ');out geom qt;', null, 1);
+        (data.elements || []).forEach(el => {
+          if (el.type === 'way' && el.geometry && el.geometry.length > 1 && !seen.has(el.id)) { seen.add(el.id); roads.push(geomLine(el.geometry)); }
+        });
+      } catch(e) { fails++; console.warn('lote de caminos falló', e); }
+      done++;
+      btn.textContent = 'CAMINOS ' + Math.round(done / reqs.length * 100) + '%';
+      if (roads.length) { ST.roads = roads; draw(); }
+    }
+    if (!roads.length) throw new Error('sin datos (' + fails + ' lotes fallidos)');
     ST.roads = roads;
     await persistMapData();
     btn.classList.remove('loading');
-    if (roads.length) {
-      btn.classList.add('done');
-      btn.textContent = roads.length + ' CAMINOS';
-      toast(roads.length + ' caminos cargados');
-    } else {
-      btn.textContent = 'CARGAR CAMINOS';
-      toast('OSM no tiene caminos en esta zona');
-    }
+    btn.classList.add('done');
+    btn.textContent = roads.length + ' CAMINOS';
+    toast(roads.length + ' caminos cargados' + (fails ? ' (' + fails + ' de ' + reqs.length + ' tandas fallaron, tocá de nuevo para completar)' : ''));
     draw();
   } catch(e) {
     btn.classList.remove('loading');
@@ -5074,5 +5089,26 @@ document.addEventListener('DOMContentLoaded', () => { updateOnlineStatus(); appl
   </div>
 </div>
 
+<style id="fix75">
+/* v7.6 — barra inferior y odómetro alineados */
+#bottombar{height:70px !important;padding:0 10px !important;align-items:center !important;}
+#bottombar .nav-btn{justify-content:center !important;height:100%;padding:0 !important;margin:0;min-width:0;}
+#bottombar .nav-btn svg{width:24px !important;height:24px !important;}
+#bottombar .nav-btn > span{line-height:1;}
+#mark-btn{width:100% !important;max-width:150px;height:62px !important;border-radius:999px !important;margin:0 auto !important;top:-14px !important;
+  display:flex !important;align-items:center;justify-content:center;background:var(--color-accent) !important;color:var(--on-accent) !important;
+  box-shadow:0 12px 26px rgba(0,192,216,.40),0 0 0 6px var(--bg-map) !important;}
+#mark-btn svg{width:34px !important;height:34px !important;stroke:var(--on-accent) !important;}
+.odometer{left:12px !important;right:12px !important;bottom:92px !important;max-width:none !important;border-radius:34px !important;border:none !important;
+  padding:12px 8px !important;gap:0 !important;justify-content:space-around;align-items:stretch !important;}
+.odometer > div:not([style*="width:1px"]){flex:1 1 0;min-width:0;align-items:center !important;text-align:center;}
+.odometer > div > div{justify-content:center;}
+.odometer > div[style*="width:1px"]{flex:0 0 1px;margin:4px 0 !important;}
+.odometer .odo-val{font-size:26px !important;line-height:1;}
+.odometer .odo-unit{font-size:9px !important;}
+.odometer button[onclick*="resetOdo"]{position:absolute !important;top:8px;right:12px;width:28px;height:28px;padding:0 !important;font-size:0 !important;display:flex;align-items:center;justify-content:center;}
+.odometer button[onclick*="resetOdo"]::before{content:'\21BA';font-size:16px;line-height:1;}
+.odometer{padding:16px 8px 12px !important;}
+</style>
 </body>
 </html>
