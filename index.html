@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v7.8</title>
+<title>Huella de Tapir v7.9</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +18,7 @@
 <style>
 
 :root {
-  /* Paleta v7.8: #353535 base · #3C6E71 teal · #00C0D8 cyan · #F5F1E8 crema · #D9A441 dorado */
+  /* Paleta v7.9: #353535 base · #3C6E71 teal · #00C0D8 cyan · #F5F1E8 crema · #D9A441 dorado */
   --bg-primary: #353535;
   --bg-screen: #353535;
   --bg-topbar: #2B2B2B;
@@ -538,7 +538,7 @@ body.light .save-bar { background: rgba(0,150,60,0.08) !important; color: #8A621
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ LOOK v7.8 — tarjetas grandes sin bordes · píldoras · barras flotantes ══ */
+/* ══ LOOK v7.9 — tarjetas grandes sin bordes · píldoras · barras flotantes ══ */
 #screen-map { background:var(--bg-map); }
 .glass { -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
 
@@ -786,7 +786,7 @@ if('serviceWorker' in navigator){
         <span class="ld-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></span>
       </button>
       <button id="btn-install" class="ld-install" onclick="triggerInstall()" style="display:block;">⊕ Instalar app</button>
-      <div class="ld-ver">Huella de Tapir v7.8</div>
+      <div class="ld-ver">Huella de Tapir v7.9</div>
     </div>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
@@ -1617,6 +1617,7 @@ function fitAll() {
 }
 
 // ══ PROJECTION ══
+const LINE_BB=new WeakMap();
 function proj(lat,lng) {
   const cos=Math.cos(M.lat*Math.PI/180);
   const dx=(lng-M.lng)*M.scale*cos, dy=(lat-M.lat)*M.scale;
@@ -1771,13 +1772,19 @@ function draw() {
   // OSM roads
   ctx.globalAlpha=1.0; ctx.shadowBlur=0; ctx.setLineDash([]);
   const isLight = document.body.classList.contains('light');
-  const strokeLines=(arr)=>{ arr.forEach(line=>{
-    if(line.length < 2) return;
+  const strokeLines=(arr)=>{
     ctx.beginPath();
-    const r0=proj(line[0][0],line[0][1]); ctx.moveTo(r0.x,r0.y);
-    for(let i=1;i<line.length;i++){const rp=proj(line[i][0],line[i][1]);ctx.lineTo(rp.x,rp.y);}
+    for(let k=0;k<arr.length;k++){
+      const line=arr[k]; if(line.length<2) continue;
+      let bb=LINE_BB.get(line);
+      if(!bb){ let a0=90,a1=-90,o0=180,o1=-180; for(const q of line){ if(q[0]<a0)a0=q[0]; if(q[0]>a1)a1=q[0]; if(q[1]<o0)o0=q[1]; if(q[1]>o1)o1=q[1]; } bb=[a0,a1,o0,o1]; LINE_BB.set(line,bb); }
+      const c1=proj(bb[0],bb[2]),c2=proj(bb[0],bb[3]),c3=proj(bb[1],bb[2]),c4=proj(bb[1],bb[3]);
+      if(Math.max(c1.x,c2.x,c3.x,c4.x)<-20||Math.min(c1.x,c2.x,c3.x,c4.x)>M.W+20||Math.max(c1.y,c2.y,c3.y,c4.y)<-20||Math.min(c1.y,c2.y,c3.y,c4.y)>M.H+20) continue;
+      const r0=proj(line[0][0],line[0][1]); ctx.moveTo(r0.x,r0.y);
+      for(let i=1;i<line.length;i++){const rp=proj(line[i][0],line[i][1]);ctx.lineTo(rp.x,rp.y);}
+    }
     ctx.stroke();
-  }); };
+  };
   if(ST.roads && ST.roads.length){
     ctx.strokeStyle=isLight?'rgba(0,0,0,0.34)':'rgba(255,255,255,0.36)'; ctx.lineWidth=1.1;
     strokeLines(ST.roads);
@@ -1787,6 +1794,7 @@ function draw() {
     ctx.fillStyle=isLight?'rgba(30,110,220,0.14)':'rgba(60,150,255,0.16)';
     ctx.strokeStyle=isLight?'rgba(25,100,210,0.60)':'rgba(70,150,255,0.60)'; ctx.lineWidth=0.7;
     ST.lakes.forEach(line=>{
+      if(line.length<3) return;
       ctx.beginPath();
       const r0=proj(line[0][0],line[0][1]); ctx.moveTo(r0.x,r0.y);
       for(let i=1;i<line.length;i++){const rp=proj(line[i][0],line[i][1]);ctx.lineTo(rp.x,rp.y);}
@@ -2897,8 +2905,8 @@ h2{font-size:14px;font-weight:500;color:#9AA8A5;letter-spacing:0;margin-bottom:2
 .pt-n{min-width:26px;height:26px;border-radius:50%;background:#00C0D8;color:#2b2b2b;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
 .pt-b{font-size:9px;line-height:1.5;min-width:0;}
 .pt-k{display:inline-block;border-radius:999px;padding:1px 8px;font-size:8px;font-weight:700;color:#2b2b2b;}
-.ph{position:relative;overflow:hidden;border-radius:14px;background:#2f2f2f;}
-.ph img{width:100%;height:100%;object-fit:cover;display:block;}
+.ph{position:relative;overflow:hidden;border-radius:14px;background:#2b2b2b;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;}
+.ph img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;}
 .ph span{position:absolute;bottom:4px;right:4px;background:#00C0D8;color:#2b2b2b;font-size:9px;font-weight:700;padding:1px 8px;border-radius:999px;}
 .empty{display:flex;align-items:center;justify-content:center;height:100%;color:#9AA8A5;font-size:12px;}
 </style>
@@ -3605,7 +3613,19 @@ function corridorClauses(filter, radiusM, stepM) {
   return clauses.join('');
 }
 
-function geomLine(g) { return g.map(pt => [pt.lat, pt.lon]); }
+function geomLine(g, minM) {
+  // simplifica: descarta puntos a menos de minM metros del anterior (menos memoria y dibujo más rápido)
+  const out = []; let last = null; const m = minM || 15;
+  for (let i = 0; i < g.length; i++) {
+    const pt = g[i];
+    if (last) {
+      const d = Math.hypot((pt.lat-last[0])*111320, (pt.lon-last[1])*111320*Math.cos(pt.lat*Math.PI/180));
+      if (d < m && i !== g.length - 1) continue;
+    }
+    last = [pt.lat, pt.lon]; out.push(last);
+  }
+  return out;
+}
 
 // Descarga por tandas chicas: cada tanda es un pedido liviano; reintenta las que fallan y muestra avance
 async function overpassCorridor(filter, radiusM, stepM, onElements, onProgress) {
@@ -3614,13 +3634,13 @@ async function overpassCorridor(filter, radiusM, stepM, onElements, onProgress) 
     const saved = ST.tramos; ST.tramos = [tr];
     const pts = corridorPoints(stepM);
     ST.tramos = saved;
-    for (let i = 0; i < pts.length; i += 11) {
-      const chunk = pts.slice(i, i + 12);
+    for (let i = 0; i < pts.length; i += 24) {
+      const chunk = pts.slice(i, i + 25);
       if (chunk.length < 2) continue;
       jobs.push(filter.replace(/\$A/g, '(around:' + radiusM + ',' + chunk.map(p => p[0].toFixed(5)+','+p[1].toFixed(5)).join(',') + ')'));
     }
   });
-  const BATCH = 3, reqs = [];
+  const BATCH = 5, reqs = [];
   for (let i = 0; i < jobs.length; i += BATCH) reqs.push(jobs.slice(i, i + BATCH).join(''));
   let pending = reqs.map((q, i) => i), ok = 0;
   for (let pass = 0; pass < 3 && pending.length; pass++) {
@@ -3650,7 +3670,7 @@ async function loadOSMRoads() {
   try {
     toast('Descargando caminos…');
     const r = await overpassCorridor(
-      'way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road)$"]$A;', 1200, 1500,
+      'way["highway"~"^(primary|secondary|tertiary|unclassified|track)$"]$A;', 700, 2500,
       els => { els.forEach(el => { if (el.type === 'way' && el.geometry && el.geometry.length > 1 && !seen.has(el.id)) { seen.add(el.id); roads.push(geomLine(el.geometry)); } }); },
       (ok, total) => { btn.textContent = 'CAMINOS ' + Math.round(ok / total * 100) + '%'; if (roads.length) { ST.roads = roads; draw(); } }
     );
@@ -3691,8 +3711,8 @@ async function loadOSMWater() {
   });
   try {
     toast('Buscando ríos y agua…');
-    const f = 'way["waterway"~"^(river|stream|canal|drain|ditch|riverbank|brook|wadi)$"]$A;way["natural"="water"]$A;relation["natural"="water"]$A;relation["waterway"="riverbank"]$A;node["ford"="yes"]$A;way["ford"="yes"]$A;';
-    const r = await overpassCorridor(f, 4000, 2500, take, (ok, total) => {
+    const f = 'way["waterway"~"^(river|stream|canal|riverbank)$"]$A;way["natural"="water"]$A;relation["natural"="water"]$A;node["ford"="yes"]$A;';
+    const r = await overpassCorridor(f, 2500, 3000, take, (ok, total) => {
       btn.textContent = 'AGUA ' + Math.round(ok / total * 100) + '%';
       if (waters.length || lakes.length) { ST.waters = waters; ST.lakes = lakes; ST.fords = fords; draw(); }
     });
@@ -4693,7 +4713,7 @@ document.addEventListener('DOMContentLoaded', () => { updateOnlineStatus(); appl
 </div>
 
 <style id="fix75">
-/* v7.8 — barra inferior y odómetro alineados */
+/* v7.9 — barra inferior y odómetro alineados */
 #bottombar{height:70px !important;padding:0 10px !important;align-items:center !important;}
 #bottombar .nav-btn{justify-content:center !important;height:100%;padding:0 !important;margin:0;min-width:0;}
 #bottombar .nav-btn svg{width:24px !important;height:24px !important;}
