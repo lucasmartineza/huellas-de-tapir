@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v7.0</title>
+<title>Huella de Tapir v7.3</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,76 +18,76 @@
 <style>
 
 :root {
-  /* ── Paleta base oscura (Hiking Explorer inspired) ── */
-  --bg-primary:   #0d1210;
-  --bg-screen:    #0d1210;
-  --bg-topbar:    #111a14;
-  --bg-bottombar: #111a14;
-  --bg-panel:     #111a14;
-  --bg-sheet:     #131e16;
-  --bg-card:      #182019;
-  --bg-card2:     #1e2a20;
-  --bg-input:     #1e2a20;
-  --bg-btn:       #1e2a20;
-  --bg-overlay:   rgba(10,16,12,0.88);
-  --bg-roads:     rgba(13,18,16,0.92);
-  --bg-obs:       #1e2a20;
-  --bg-map:       #0d1210;
-  /* ── Bordes ── */
-  --border-main:  #2a3d2e;
-  --border-card:  #2a3d2e;
-  /* ── Acento: cyan turquesa #4ECDC4 ── */
-  --color-accent: #4ECDC4;
-  --color-accent-dim: rgba(78,205,196,0.18);
-  --color-accent-glow: rgba(78,205,196,0.45);
-  /* ── Texto ── */
-  --color-text:   #f0f7f4;
-  --color-muted:  #7a9c88;
-  --color-dim:    #2e4a35;
-  --color-sub:    #c8e8d8;
-  --color-handle: #2a3d2e;
-  /* ── Mapa ── */
-  --color-grid:   rgba(78,205,196,0.04);
-  --color-route:  #4ECDC4;
-  --roseta-bg:    rgba(17,26,20,0.80);
-  --font-main:    'Space Grotesk', system-ui, sans-serif;
-  /* ── Radios unificados (inspiración referencia) ── */
-  --r-card:  20px;
-  --r-btn:   50px;
-  --r-chip:  14px;
-  --r-sheet: 24px 24px 0 0;
+  /* Paleta v7.3: #353535 base · #3C6E71 teal · #00C0D8 cyan · #F5F1E8 crema · #D9A441 dorado */
+  --bg-primary: #353535;
+  --bg-screen: #353535;
+  --bg-topbar: #2B2B2B;
+  --bg-bottombar: #2B2B2B;
+  --bg-panel: #2B2B2B;
+  --bg-sheet: #2B2B2B;
+  --bg-card: #2B2B2B;
+  --bg-input: #404040;
+  --bg-btn: #404040;
+  --bg-overlay: rgba(43,43,43,0.88);
+  --bg-roads: rgba(43,43,43,0.92);
+  --bg-obs: #404040;
+  --bg-map: #353535;
+  --border-main: #3C6E71;
+  --border-card: #3C6E71;
+  --color-accent: #00C0D8;
+  --color-gold: #D9A441;
+  --color-teal: #3C6E71;
+  --on-accent: #131313;
+  --glass: rgba(43,43,43,0.80);
+  --glass-2: rgba(245,241,232,0.10);
+  --shadow-card: 0 10px 28px rgba(0,0,0,0.35);
+  --r-card: 28px;
+  --r-chip: 22px;
+  --r-pill: 999px;
+  --color-text: #F5F1E8;
+  --color-muted: #9AA8A5;
+  --color-dim: #6F8A8C;
+  --color-sub: #D8D0C0;
+  --color-handle: #3C6E71;
+  --color-grid: rgba(245,241,232,0.05);
+  --color-route: #00C0D8;
+  --roseta-bg: rgba(43,43,43,0.7);
+  --font-main: 'Space Grotesk', system-ui, sans-serif;
 }
 body.light {
-  --bg-primary:   #e8f0eb;
-  --bg-screen:    #eef4f0;
-  --bg-topbar:    rgba(238,244,240,0.97);
-  --bg-bottombar: rgba(238,244,240,0.97);
-  --bg-panel:     rgba(238,244,240,0.97);
-  --bg-sheet:     #f2f7f4;
-  --bg-card:      #ffffff;
-  --bg-card2:     #f0f7f2;
-  --bg-input:     #ddeee4;
-  --bg-btn:       rgba(221,238,228,0.97);
-  --bg-overlay:   rgba(0,0,0,0.42);
-  --bg-roads:     rgba(238,244,240,0.97);
-  --bg-obs:       #ddeee4;
-  --bg-map:       #eef4f0;
-  --border-main:  #90b89a;
-  --border-card:  #90b89a;
-  --color-accent: #1a9e96;
-  --color-accent-dim: rgba(26,158,150,0.14);
-  --color-accent-glow: rgba(26,158,150,0.35);
-  --color-text:   #0d1f14;
-  --color-muted:  #2d6040;
-  --color-dim:    #80a888;
-  --color-sub:    #0d1f14;
-  --color-handle: #90b89a;
-  --color-grid:   rgba(0,0,0,0.05);
-  --color-route:  #1a9e96;
-  --roseta-bg:    rgba(238,244,240,0.95);
+  --bg-primary: #F5F1E8;
+  --bg-screen: #F5F1E8;
+  --bg-topbar: rgba(245,241,232,0.97);
+  --bg-bottombar: rgba(245,241,232,0.97);
+  --bg-panel: rgba(245,241,232,0.97);
+  --bg-sheet: #F5F1E8;
+  --bg-card: #FBF9F4;
+  --bg-input: #EAE6DC;
+  --bg-btn: rgba(234,230,220,0.97);
+  --bg-overlay: rgba(0,0,0,0.45);
+  --bg-roads: rgba(245,241,232,0.97);
+  --bg-obs: #EAE6DC;
+  --bg-map: #F5F1E8;
+  --border-main: #3C6E71;
+  --border-card: #3C6E71;
+  --color-accent: #007A8C;
+  --color-gold: #8A6212;
+  --color-teal: #3C6E71;
+  --on-accent: #131313;
+  --glass: rgba(245,241,232,0.88);
+  --glass-2: rgba(31,36,35,0.07);
+  --shadow-card: 0 10px 28px rgba(31,36,35,0.16);
+  --color-text: #1F2423;
+  --color-muted: #3C6E71;
+  --color-dim: #5E7A7C;
+  --color-sub: #1F2423;
+  --color-handle: #3C6E71;
+  --color-grid: rgba(0,0,0,0.06);
+  --color-route: #007A8C;
+  --roseta-bg: rgba(245,241,232,0.95);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html,body { height:100%; background:var(--bg-screen); color:var(--color-text); font-family:var(--font-main); overflow:hidden; }
+html,body { height:100%; background:var(--bg-screen); color:var(--color-accent); font-family:sans-serif; overflow:hidden; }
 
 #screen-load {
   position:fixed; inset:0; z-index:100; background:var(--bg-screen);
@@ -109,39 +109,36 @@ html,body { height:100%; background:var(--bg-screen); color:var(--color-text); f
 }
 .load-btns { width:100%; display:flex; flex-direction:column; gap:8px; }
 .btn-main {
-  width:100%; background:var(--color-accent); color:#0a1a14; border:none;
-  border-radius:var(--r-btn);
-  padding:15px; font-size:13px; font-weight:700; letter-spacing:2px;
+  width:100%; background:#00C0D8; color:#000; border:none; border-radius:8px;
+  padding:12px; font-size:13px; font-weight:700; letter-spacing:2px;
   text-transform:uppercase; cursor:pointer; font-family:'Rajdhani','Arial Narrow',Arial,sans-serif;
   animation:btn-breathe 3s ease-in-out infinite;
-  box-shadow: 0 4px 20px var(--color-accent-glow);
 }
 @keyframes btn-breathe {
-  0%,100%{ box-shadow:0 4px 16px var(--color-accent-glow); }
-  50%{ box-shadow:0 4px 32px var(--color-accent-glow), 0 0 48px rgba(78,205,196,0.3); }
+  0%,100%{ box-shadow:0 0 8px rgba(0,192,216,0.35); }
+  50%{ box-shadow:0 0 18px rgba(0,192,216,0.75); }
 }
-.btn-main:active { opacity:0.85; transform:scale(0.98); }
+.btn-main:active { opacity:0.8; }
 .btn-sec {
-  width:100%; background:var(--bg-card2); color:var(--color-muted);
-  border:1px solid var(--border-main); border-radius:var(--r-btn);
-  padding:13px; font-size:10px; font-weight:600; letter-spacing:1.5px;
+  width:100%; background:none; color:var(--color-muted);
+  border:1px solid var(--border-main); border-radius:8px;
+  padding:9px; font-size:10px; font-weight:600; letter-spacing:1.5px;
   text-transform:uppercase; cursor:pointer; font-family:'Rajdhani','Arial Narrow',Arial,sans-serif;
 }
-.btn-sec:active { background:var(--color-accent-dim); color:var(--color-accent); }
+.btn-sec:active { background:#001a2222; }
 #load-status { font-size:9px; color:var(--color-dim); letter-spacing:1px; text-align:center; min-height:16px; font-family:'Share Tech Mono',monospace; }
 .load-hint { font-size:7px; color:var(--color-dim); letter-spacing:1px; text-transform:uppercase; text-align:center; font-family:'Share Tech Mono',monospace; line-height:1.9; }
 .roads-btn, .water-btn {
-  background:var(--bg-card2); border:1px solid var(--border-main);
-  border-radius:var(--r-btn); padding:5px 13px;
+  background:var(--bg-roads); border:1px solid var(--border-main);
+  border-radius:20px; padding:4px 10px;
   font-size:8px; font-weight:700; letter-spacing:1.5px;
   text-transform:uppercase; font-family:'Rajdhani','Arial Narrow',Arial,sans-serif;
   color:var(--color-muted); cursor:pointer; display:none; white-space:nowrap;
-  transition: all 0.2s;
 }
-.roads-btn:active, .water-btn:active { background:var(--color-accent-dim); color:var(--color-accent); }
+.roads-btn:active, .water-btn:active { background:#2F3A3B; color:var(--color-accent); }
 .roads-btn.loading, .water-btn.loading { color:var(--color-accent); animation:btn-breathe 1s ease-in-out infinite; }
-.roads-btn.done { color:var(--color-accent); border-color:rgba(78,205,196,0.3); background:var(--color-accent-dim); }
-.water-btn.done { color:#62d9f0; border-color:rgba(98,217,240,0.3); background:rgba(98,217,240,0.1); }
+.roads-btn.done { color:#D9A441; border-color:#D9A44133; }
+.water-btn.done { color:#00aaff; border-color:#00aaff33; }
 .roseta {
   position:fixed; bottom:150px; left:12px; z-index:49;
   width:52px; height:52px; pointer-events:all; cursor:pointer;
@@ -149,20 +146,20 @@ html,body { height:100%; background:var(--bg-screen); color:var(--color-text); f
 }
 .roseta:active { opacity:0.7; }
 .odometer {
-  position:fixed; bottom:88px; left:50%; transform:translateX(-50%); z-index:49;
+  position:fixed; bottom:72px; left:0; right:0; transform:none; z-index:49;
   display:none; flex-direction:row; align-items:center; gap:16px;
   pointer-events:all;
-  background:var(--bg-card2); padding:10px 22px; border-radius:var(--r-btn);
-  border:1px solid var(--border-main);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  background:rgba(53,53,53,0.85); padding:8px 18px; border-radius:30px;
+  border:1px solid #3C6E71;
 }
-body.light .odometer { background:rgba(255,255,255,0.95); }
+body.light .odometer { background:rgba(255,255,255,0.92); border-color:#B9B5A8; }
 .odo-val {
   font-family:monospace; font-size:26px; font-weight:700;
   color:var(--color-accent); letter-spacing:1px;
+  text-shadow: 0 0 8px rgba(0,192,216,0.8), 0 0 20px rgba(0,192,216,0.4);
   line-height:1;
 }
-body.light .odo-val { }
+body.light .odo-val { text-shadow:none; }
 .odo-unit { font-family:monospace; font-size:8px; color:var(--color-muted); letter-spacing:2px; margin-top:2px; }
 .odo-reset {
   font-family:monospace; font-size:7px; color:var(--color-dim); letter-spacing:1px;
@@ -185,17 +182,14 @@ body.light .odo-val { }
 #topbar {
   position:fixed; top:0; left:0; right:0; z-index:50;
   background:var(--bg-topbar); border-bottom:1px solid var(--border-main);
-  height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 14px;
-  backdrop-filter: blur(12px);
+  height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 14px;
 }
-.topbar-title { font-size:10px; font-weight:700; letter-spacing:2.5px; color:var(--color-accent); text-transform:uppercase; }
+.topbar-title { font-size:10px; font-weight:700; letter-spacing:2px; color:var(--color-accent); text-transform:uppercase; }
 .gps-pill {
-  font-size:8px; letter-spacing:1px; padding:5px 13px; border-radius:var(--r-btn);
-  border:1px solid var(--border-main); color:var(--color-muted); background:var(--bg-card2);
-  cursor:pointer; white-space:nowrap; transition:all 0.2s;
+  font-size:8px; letter-spacing:1px; padding:4px 10px; border-radius:20px;
+  border:1px solid var(--border-main); color:var(--color-dim); background:none; cursor:pointer; white-space:nowrap;
 }
-.gps-pill:active { background:var(--color-accent-dim); color:var(--color-accent); }
-.gps-pill.on { border-color:rgba(78,205,196,0.4); color:var(--color-accent); background:var(--color-accent-dim); }
+.gps-pill.on { border-color:#D9A44155; color:#D9A441; }
 
 #side-btns {
   position:fixed; right:12px; bottom:160px; z-index:49;
@@ -204,101 +198,94 @@ body.light .odo-val { }
 .nomade-btn {
   position:fixed; left:50%; transform:translateX(-50%);
   bottom:168px; z-index:49;
-  background:rgba(0,255,136,0.1); border:1.5px solid #00ff88;
+  background:rgba(245,241,232,0.1); border:1.5px solid #F5F1E8;
   border-radius:16px; padding:8px 20px; cursor:pointer;
   display:flex; flex-direction:row; align-items:center; gap:8px;
-  pointer-events:all; color:#00ff88; white-space:nowrap;
+  pointer-events:all; color:#F5F1E8; white-space:nowrap;
 }
-body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; color:#006633; }
+body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#8A6212; color:#8A6212; }
 .nomade-btn img { width:28px; height:28px; object-fit:contain; }
 .nomade-btn span { font-size:9px; letter-spacing:2px; font-family:monospace; font-weight:700; }
 .side-btn {
-  width:44px; height:44px; border-radius:var(--r-chip);
-  background:var(--bg-card2); border:1px solid var(--border-main);
+  width:42px; height:42px; border-radius:10px;
+  background:var(--bg-topbar); border:1px solid var(--border-main);
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; color:var(--color-muted); transition:all 0.15s;
+  cursor:pointer; color:var(--color-dim);
 }
-.side-btn:active { color:var(--color-accent); border-color:rgba(78,205,196,0.3); background:var(--color-accent-dim); }
+.side-btn:active { color:var(--color-accent); border-color:#00C0D833; }
 
 #bottombar {
   position:fixed; bottom:0; left:0; right:0; z-index:50;
   background:var(--bg-bottombar); border-top:1px solid var(--border-main);
-  height:80px; display:flex; align-items:center; justify-content:space-around; padding:0 16px;
-  backdrop-filter: blur(12px);
+  height:78px; display:flex; align-items:center; justify-content:space-around; padding:0 12px;
 }
 .nav-btn {
-  display:flex; flex-direction:column; align-items:center; gap:4px;
-  background:none; border:none; color:var(--color-muted); cursor:pointer;
-  font-size:8px; letter-spacing:1px; text-transform:uppercase; min-width:54px;
-  transition: color 0.2s;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:none; border:none; color:var(--color-dim); cursor:pointer;
+  font-size:9px; letter-spacing:1px; text-transform:uppercase; min-width:54px;
 }
-.nav-btn svg { width:22px; height:22px; }
-.nav-btn.active { color:var(--color-accent); }
+.nav-btn svg { width:20px; height:20px; }
 .nav-btn:active { color:var(--color-accent); }
 #mark-btn {
-  width:64px; height:64px; border-radius:50%;
-  background:var(--color-accent); border:none;
+  width:60px; height:60px; border-radius:50%;
+  background:var(--bg-screen); border:2px solid #00C0D8;
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; color:#0a1a14; flex-shrink:0;
-  box-shadow: 0 4px 20px var(--color-accent-glow);
-  transition: transform 0.15s, box-shadow 0.15s;
+  cursor:pointer; color:var(--color-accent); flex-shrink:0;
 }
-#mark-btn:active { transform:scale(0.92); box-shadow:0 2px 10px var(--color-accent-glow); }
-#mark-btn svg { width:28px; height:28px; }
+#mark-btn:active { background:#2F3A3B; transform:scale(0.92); }
+#mark-btn svg { width:26px; height:26px; }
 
 /* SHEET */
-.obs-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px;}
-.obs-btn{background:var(--bg-obs);border:1px solid var(--border-main);border-radius:var(--r-chip);padding:7px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all 0.15s;}
-.obs-btn.sel{background:var(--color-accent-dim);border-color:var(--color-accent);}
-.obs-btn svg{width:30px;height:22px;color:var(--color-muted);}
+.obs-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:10px;}
+.obs-btn{background:var(--bg-obs);border:1px solid var(--border-main);border-radius:7px;padding:5px 3px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
+.obs-btn.sel{background:rgba(0,192,216,0.1);border-color:var(--color-accent);}
+.obs-btn svg{width:30px;height:22px;color:#D8D0C0;}
 .obs-btn.sel svg{color:var(--color-accent);}
 .obs-btn span{font-size:6px;color:var(--color-muted);text-align:center;line-height:1.2;}
 .obs-btn.sel span{color:var(--color-accent);}
 .stars-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;}
 .star-btn{cursor:pointer;width:28px;height:28px;}
 .star-btn svg{width:28px;height:28px;transition:all 0.1s;}
-.star-btn.lit svg{fill:#ffcc44;stroke:#ffcc44;}
+.star-btn.lit svg{fill:#D9A441;stroke:#D9A441;}
 #sheet {
   position:fixed; bottom:0; left:0; right:0; z-index:201;
-  background:var(--bg-sheet); border-top:1px solid var(--border-main);
-  border-radius:var(--r-sheet);
+  background:var(--bg-card); border-top:1px solid var(--border-main); border-radius:16px 16px 0 0;
   padding:0 20px 36px; transform:translateY(100%);
-  transition:transform 0.28s cubic-bezier(0.32,0.72,0,1); max-height:91vh; overflow-y:auto;
+  transition:transform 0.26s ease; max-height:91vh; overflow-y:auto;
 }
 #sheet.open { transform:translateY(0); }
-.handle { width:40px; height:4px; background:var(--border-main); border-radius:3px; margin:14px auto 18px; }
+.handle { width:36px; height:3px; background:#3C6E71; border-radius:2px; margin:12px auto 16px; }
 .sh-num   { font-size:9px; color:var(--color-accent); letter-spacing:2px; text-transform:uppercase; font-family:monospace; }
-.sh-tramo-tag { display:inline-block; margin-top:3px; margin-bottom:2px; font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:var(--r-btn); border:1px solid rgba(78,205,196,0.25); color:var(--color-accent); }
-.sh-coord { font-size:10px; color:var(--color-muted); font-family:monospace; margin-bottom:16px; }
+.sh-tramo-tag { display:inline-block; margin-top:3px; margin-bottom:2px; font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:2px 8px; border-radius:20px; border:1px solid #00C0D833; color:#00a0c0; }
+.sh-coord { font-size:10px; color:var(--color-dim); font-family:monospace; margin-bottom:16px; }
 .fl { font-size:9px; color:var(--color-accent); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px; display:block; }
 
 .type-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
 .type-chip {
-  background:var(--bg-obs); border:1px solid var(--border-main); border-radius:var(--r-chip);
-  padding:13px 4px; display:flex; flex-direction:column; align-items:center; gap:5px;
-  cursor:pointer; color:var(--color-muted); font-size:9px; letter-spacing:1px; text-transform:uppercase;
-  transition: all 0.15s;
+  background:var(--bg-obs); border:1px solid var(--border-main); border-radius:9px;
+  padding:11px 4px; display:flex; flex-direction:column; align-items:center; gap:4px;
+  cursor:pointer; color:var(--color-dim); font-size:9px; letter-spacing:1px; text-transform:uppercase;
 }
 .type-chip svg { width:18px; height:18px; }
 .type-chip:active { transform:scale(0.95); }
-.type-chip.sp { border-color:var(--color-accent); color:var(--color-accent); background:var(--color-accent-dim); }
-.type-chip.sv { border-color:#62b8f0; color:#62b8f0; background:rgba(98,184,240,0.1); }
-.type-chip.sb { border-color:#62f0b8; color:#62f0b8; background:rgba(98,240,184,0.1); }
+.type-chip.sp { border-color:var(--color-accent); color:var(--color-accent); background:#2F3A3B; }
+.type-chip.sv { border-color:#4FA8AB; color:#4FA8AB; background:#000d1a; }
+.type-chip.sb { border-color:#D9A441; color:#D9A441; background:#001510; }
 
 .photo-box {
-  background:var(--bg-obs); border:1px dashed var(--border-main); border-radius:var(--r-chip);
+  background:var(--bg-obs); border:1px dashed var(--border-main); border-radius:9px;
   min-height:110px; display:flex; align-items:center; justify-content:center;
   cursor:pointer; margin-bottom:13px; overflow:hidden;
 }
-.photo-box:active { border-color:rgba(78,205,196,0.3); }
+.photo-box:active { border-color:#00C0D833; }
 .photo-box img { width:100%; height:100%; object-fit:cover; border-radius:8px; }
 .photo-ph { display:flex; flex-direction:column; align-items:center; gap:5px; color:var(--color-dim); }
 .photo-ph svg { width:24px; height:24px; }
 .photo-ph span { font-size:9px; letter-spacing:1px; text-transform:uppercase; }
 
 .rec-row {
-  background:var(--bg-obs); border:1px solid var(--border-main); border-radius:var(--r-chip);
-  padding:12px 15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:13px;
+  background:var(--bg-obs); border:1px solid var(--border-main); border-radius:9px;
+  padding:11px 13px; display:flex; align-items:center; justify-content:space-between; margin-bottom:13px;
 }
 .rec-info { display:flex; align-items:center; gap:9px; }
 .rec-dot { width:7px; height:7px; border-radius:50%; background:#1a5a6a; flex-shrink:0; }
@@ -311,7 +298,7 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
   background:none; display:flex; align-items:center; justify-content:center;
   cursor:pointer; color:#ff3355; flex-shrink:0;
 }
-.rec-btn.stop { border-color:#00ffaa; color:#00ffaa; }
+.rec-btn.stop { border-color:#D9A441; color:#D9A441; }
 .rec-btn:active { opacity:.7; }
 .rec-btn svg { width:14px; height:14px; }
 .player-row {
@@ -320,40 +307,38 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 }
 .player-row.show { display:flex; }
 .play-btn {
-  width:36px; height:36px; border-radius:50%; border:1px solid var(--color-accent);
+  width:34px; height:34px; border-radius:50%; border:1px solid #00C0D8;
   background:none; color:var(--color-accent); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
 }
-.play-btn:active { background:var(--color-accent-dim); }
+.play-btn:active { background:#2F3A3B; }
 .play-btn svg { width:12px; height:12px; }
 .play-info { flex:1; }
 .play-d { font-family:monospace; font-size:11px; color:var(--color-accent); }
-.play-bar { height:3px; background:var(--border-main); border-radius:2px; margin-top:5px; }
-.play-p { height:100%; background:var(--color-accent); border-radius:2px; width:0%; transition:width .2s; }
+.play-bar { height:3px; background:#3C6E71; border-radius:2px; margin-top:5px; }
+.play-p { height:100%; background:#00C0D8; border-radius:2px; width:0%; transition:width .2s; }
 .play-del { font-size:9px; color:var(--color-dim); background:none; border:none; cursor:pointer; padding:4px; letter-spacing:1px; }
 .play-del:active { color:#ff3355; }
 
 .notes-ta {
-  width:100%; background:var(--bg-obs); border:1px solid var(--border-main); border-radius:var(--r-chip);
-  padding:12px 14px; color:var(--color-text); font-size:14px; resize:none; min-height:58px;
-  outline:none; margin-bottom:14px; font-family:var(--font-main);
+  width:100%; background:var(--bg-obs); border:1px solid var(--border-main); border-radius:9px;
+  padding:10px 12px; color:var(--color-sub); font-size:14px; resize:none; min-height:58px;
+  outline:none; margin-bottom:14px;
 }
-.notes-ta::placeholder { color:var(--color-muted); }
-.notes-ta:focus { border-color:rgba(78,205,196,0.3); }
+.notes-ta::placeholder { color:var(--color-dim); }
+.notes-ta:focus { border-color:#00C0D822; }
 
 .sh-actions { display:flex; gap:10px; }
 .btn-save {
-  flex:1; background:var(--color-accent); color:#0a1a14; border:none;
-  border-radius:var(--r-btn);
-  padding:16px; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
-  box-shadow: 0 4px 16px var(--color-accent-glow);
+  flex:1; background:#00C0D8; color:#000; border:none; border-radius:9px;
+  padding:14px; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
 }
-.btn-save:active { opacity:.85; transform:scale(0.98); }
+.btn-save:active { opacity:.8; }
 .btn-del {
-  display:none; background:none; border:1px solid rgba(255,51,85,0.3); color:#ff5577;
-  border-radius:var(--r-btn); padding:14px 16px; font-size:9px; letter-spacing:1px; text-transform:uppercase; cursor:pointer;
+  display:none; background:none; border:1px solid #ff335533; color:#ff3355;
+  border-radius:9px; padding:12px 14px; font-size:9px; letter-spacing:1px; text-transform:uppercase; cursor:pointer;
 }
 .btn-del.show { display:block; }
-.btn-del:active { background:rgba(255,51,85,0.1); }
+.btn-del:active { background:#ff335511; }
 
 /* SCREENS */
 #screen-list, #screen-pdf {
@@ -380,13 +365,12 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 .pt-empty { text-align:center; padding:50px 20px; color:var(--color-dim); font-size:11px; letter-spacing:2px; text-transform:uppercase; line-height:2.5; }
 
 .pt-card {
-  background:var(--bg-card); border:1px solid var(--border-main); border-radius:var(--r-card);
-  padding:12px; display:flex; gap:10px; cursor:pointer; align-items:flex-start; margin-bottom:8px;
-  transition: border-color 0.15s;
+  background:var(--bg-card); border:1px solid var(--border-main); border-radius:10px;
+  padding:10px; display:flex; gap:9px; cursor:pointer; align-items:flex-start; margin-bottom:5px;
 }
-.pt-card:active { border-color:rgba(78,205,196,0.3); }
+.pt-card:active { border-color:#00C0D822; }
 .pt-thumb {
-  width:48px; height:48px; border-radius:var(--r-chip); background:var(--bg-obs);
+  width:46px; height:46px; border-radius:7px; background:var(--bg-obs);
   border:1px solid var(--border-main); flex-shrink:0; overflow:hidden;
   display:flex; align-items:center; justify-content:center;
 }
@@ -397,28 +381,27 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 .pt-note { font-size:13px; color:var(--color-sub); margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .pt-tags { display:flex; gap:4px; flex-wrap:wrap; }
 .tag { font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:2px 6px; border-radius:20px; border:1px solid; }
-.tag-p { border-color:rgba(78,205,196,0.2); color:var(--color-accent); }
-.tag-v { border-color:#0080ff33; color:#0080ff; }
-.tag-b { border-color:#00ffaa33; color:#00ffaa; }
+.tag-p { border-color:#00C0D833; color:var(--color-accent); }
+.tag-v { border-color:#4FA8AB33; color:#4FA8AB; }
+.tag-b { border-color:#D9A44133; color:#D9A441; }
 .tag-n { border-color:var(--border-main); color:var(--color-dim); }
 .tag-a { border-color:var(--border-main); color:#334455; }
 
 .pdf-body { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; }
-.stat-card { background:var(--bg-card); border:1px solid var(--border-main); border-radius:var(--r-card); overflow:hidden; }
+.stat-card { background:var(--bg-card); border:1px solid var(--border-main); border-radius:10px; overflow:hidden; }
 .stat-hdr  { padding:8px 13px; border-bottom:1px solid var(--border-main); font-size:9px; color:var(--color-accent); letter-spacing:2px; text-transform:uppercase; }
 .stat-row  { display:flex; justify-content:space-between; align-items:center; padding:9px 13px; border-bottom:1px solid var(--border-main); }
 .stat-row:last-child { border-bottom:none; }
 .stat-key  { font-size:13px; color:var(--color-dim); }
 .stat-val  { font-size:18px; font-weight:700; font-family:monospace; color:var(--color-accent); }
 .btn-gen {
-  background:var(--color-accent); color:#0a1a14; border:none; border-radius:var(--r-btn);
-  padding:16px; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
-  box-shadow: 0 4px 16px var(--color-accent-glow);
+  background:#00C0D8; color:#000; border:none; border-radius:9px;
+  padding:15px; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
 }
-.btn-gen:active { opacity:.85; transform:scale(0.98); }
+.btn-gen:active { opacity:.8; }
 .btn-new {
-  background:none; border:1px solid rgba(255,51,85,0.25); color:#ff5577; border-radius:var(--r-btn);
-  padding:14px; font-size:10px; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
+  background:none; border:1px solid #ff335522; color:#ff3355; border-radius:9px;
+  padding:13px; font-size:10px; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
 }
 
 .tramo-panel {
@@ -435,12 +418,11 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 }
 .tramo-toggle:active { color:var(--color-accent); }
 .tramo-list-panel {
-  width:140px; max-height:calc(100% - 240px); height:auto;
-  background:var(--bg-card);
+  width:130px; max-height:calc(100% - 240px); height:auto;
+  background:var(--bg-bottombar);
   border-left:1px solid var(--border-main);
   overflow-y:auto; pointer-events:all;
   transition:width 0.22s ease;
-  border-radius:0 0 0 var(--r-chip);
 }
 .tramo-list-panel.collapsed { width:0; overflow:hidden; border:none; }
 .tramo-panel-hdr {
@@ -454,8 +436,8 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
   padding:8px 10px; border-bottom:1px solid var(--border-main);
   cursor:pointer;
 }
-.tramo-panel-item:active { background:var(--bg-card2); }
-.tramo-panel-item.tpi-active { background:var(--color-accent-dim); border-left:2px solid var(--color-accent); box-shadow: inset 0 0 12px rgba(78,205,196,0.06); }
+.tramo-panel-item:active { background:#2F3A3B; }
+.tramo-panel-item.tpi-active { background:#2F3A3B; border-left:2px solid #00C0D8; box-shadow: inset 0 0 12px rgba(0,192,216,0.06); }
 .tramo-panel-name {
   font-size:9px; font-weight:700; letter-spacing:1px;
   text-transform:uppercase; line-height:1.3; color:var(--color-text);
@@ -465,17 +447,16 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 }
 .tramo-panel-item.tpi-active .tramo-panel-name {
   color:var(--color-accent);
-  text-shadow: 0 0 8px rgba(78,205,196,0.7), 0 0 16px rgba(78,205,196,0.3);
+  text-shadow: 0 0 8px rgba(0,192,216,0.7), 0 0 16px rgba(0,192,216,0.3);
 }
 .tramo-panel-item.tpi-active .tramo-panel-pts { color:var(--color-accent); opacity:0.6; }
 .tramo-panel-pts { font-family:monospace; font-size:7px; color:var(--color-dim); margin-top:2px; }
 
 .toast {
-  position:fixed; top:62px; left:50%; transform:translateX(-50%) translateY(-10px);
-  background:var(--bg-card2); border:1px solid var(--border-main); border-radius:var(--r-btn);
-  padding:9px 20px; font-size:11px; color:var(--color-text); letter-spacing:1px;
-  z-index:999; opacity:0; transition:all .22s; pointer-events:none; white-space:nowrap;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  position:fixed; top:58px; left:50%; transform:translateX(-50%) translateY(-8px);
+  background:var(--bg-card); border:1px solid var(--border-main); border-radius:30px;
+  padding:7px 16px; font-size:11px; color:var(--color-accent); letter-spacing:1px;
+  z-index:999; opacity:0; transition:all .2s; pointer-events:none; white-space:nowrap;
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 .sh-dist {
@@ -488,23 +469,23 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 }
 .dist-pill span { color:var(--color-accent); font-weight:700; }
 .save-bar {
-  position:fixed; top:52px; left:0; right:0; z-index:49;
-  height:28px; background:rgba(78,205,196,0.12); border-bottom:1px solid rgba(78,205,196,0.2);
+  position:fixed; top:48px; left:0; right:0; z-index:49;
+  height:28px; background:#001a10; border-bottom:1px solid #D9A44122;
   display:flex; align-items:center; justify-content:center; gap:8px;
-  font-family:monospace; font-size:10px; color:var(--color-accent); letter-spacing:1px;
+  font-family:monospace; font-size:10px; color:#D9A441; letter-spacing:1px;
   transform:translateY(-100%); transition:transform 0.3s;
 }
 .save-bar.show { transform:translateY(0); }
-.save-bar.warn { background:rgba(255,136,0,0.1); border-color:rgba(255,136,0,0.2); color:#ff9933; }
+.save-bar.warn { background:#1a0a00; border-color:#ff880022; color:#ff8800; }
 
 .photo-opts { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
 .photo-opt-btn {
-  background:#3a3939; border:1px solid #4a4a4a; border-radius:9px;
+  background:#404040; border:1px solid #4a4a4a; border-radius:9px;
   padding:14px 8px; display:flex; flex-direction:column; align-items:center; gap:5px;
-  cursor:pointer; color:#ffffff; font-size:9px; letter-spacing:1px; text-transform:uppercase;
+  cursor:pointer; color:#F5F1E8; font-size:9px; letter-spacing:1px; text-transform:uppercase;
 }
 .photo-opt-btn svg { width:20px; height:20px; }
-.photo-opt-btn:active { border-color:rgba(78,205,196,0.2); color:var(--color-accent); background:var(--bg-card2); }
+.photo-opt-btn:active { border-color:#00C0D833; color:var(--color-accent); background:#2F3A3B; }
 .photo-preview-wrap { position:relative; margin-bottom:14px; }
 .photo-clear {
   position:absolute; top:6px; right:6px; width:26px; height:26px;
@@ -525,130 +506,229 @@ body.light .nomade-btn { background:rgba(0,150,80,0.08); border-color:#006633; c
 body.light .tramo-panel-name { color: #0a0a08 !important; }
 body.light .tramo-panel-pts { color: #555548 !important; }
 body.light .tramo-panel-hdr { color: #333328 !important; }
-body.light .topbar-title { color: #003399 !important; }
-body.light .sh-num { color: #003399 !important; }
-body.light .fl { color: #003399 !important; }
-body.light .sh-tramo-tag { border-color: #003399 !important; color: #003399 !important; }
-body.light .dist-pill span { color: #003399 !important; }
-body.light .dist-pill { color: #333328 !important; background: #e8e8e0 !important; border-color: #8a8a7a !important; }
+body.light .topbar-title { color: #007A8C !important; }
+body.light .sh-num { color: #007A8C !important; }
+body.light .fl { color: #007A8C !important; }
+body.light .dist-pill span { color: #007A8C !important; }
+body.light .dist-pill { color: #333328 !important; background: #EAE6DC !important; border-color: #8a8a7a !important; }
 body.light .notes-ta { color: #0a0a08 !important; background: #f0f0ea !important; }
 body.light .notes-ta::placeholder { color: #888878 !important; }
-body.light .btn-save { background: #0044cc !important; color: #ffffff !important; }
-body.light .btn-gen { background: #0044cc !important; color: #ffffff !important; }
-body.light .btn-kmz { background: #008844 !important; color: #ffffff !important; }
-body.light .stat-val { color: #0044cc !important; }
-body.light .stat-hdr { color: #0044cc !important; }
-body.light .pt-num { color: #0044cc !important; }
-body.light .odo-val { color: #0044cc !important; text-shadow: none !important; }
-body.light .rec-t { color: #0044cc !important; }
-body.light .toast { background: #ffffff !important; color: #0044cc !important; border-color: #8a8a7a !important; }
-body.light .type-chip.sp { border-color: #0044cc !important; color: #0044cc !important; background: #e8eeff !important; }
-body.light .type-chip.sv { border-color: #0055aa !important; color: #0055aa !important; background: #e8f0ff !important; }
-body.light .type-chip.sb { border-color: #006633 !important; color: #006633 !important; background: #e8fff0 !important; }
-body.light .obs-btn { background: #e8e8e0 !important; border-color: #8a8a7a !important; }
+body.light .btn-save { background: #007A8C !important; color: #F5F1E8 !important; }
+body.light .btn-gen { background: #007A8C !important; color: #F5F1E8 !important; }
+body.light .btn-kmz { background: #008844 !important; color: #F5F1E8 !important; }
+body.light .stat-val { color: #007A8C !important; }
+body.light .stat-hdr { color: #007A8C !important; }
+body.light .pt-num { color: #007A8C !important; }
+body.light .odo-val { color: #007A8C !important; text-shadow: none !important; }
+body.light .rec-t { color: #007A8C !important; }
+body.light .toast { background: #F5F1E8 !important; color: #007A8C !important; border-color: #8a8a7a !important; }
 body.light .obs-btn svg { color: #333328 !important; }
 body.light .obs-btn span { color: #555548 !important; }
-body.light .obs-btn.sel { background: rgba(0,68,204,0.1) !important; border-color: #0044cc !important; }
-body.light .obs-btn.sel svg { color: #0044cc !important; }
-body.light .obs-btn.sel span { color: #0044cc !important; }
-body.light #mark-btn { background: #ffffff !important; border-color: #0044cc !important; color: #0044cc !important; }
 body.light .nav-btn svg { color: #333328 !important; }
 body.light .nav-btn { color: #333328 !important; }
 body.light .back-btn { color: #0a0a08 !important; }
 body.light .scr-title { color: #0a0a08 !important; }
 body.light .scr-sub { color: #555548 !important; }
-body.light .tg-hdr { color: #0044cc !important; }
+body.light .tg-hdr { color: #007A8C !important; }
 body.light .tg-hdr-c { color: #333328 !important; }
 body.light .pt-note { color: #0a0a08 !important; }
 body.light .tag-n { color: #333328 !important; border-color: #8a8a7a !important; }
 body.light .scr-hdr { background: rgba(255,255,253,0.97) !important; }
-body.light .save-bar { background: rgba(0,150,60,0.08) !important; color: #006633 !important; }
-body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 !important; }
+body.light .save-bar { background: rgba(0,150,60,0.08) !important; color: #8A6212 !important; }
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ VISUAL REDESIGN v7.0 — Hiking Explorer system, cyan #4ECDC4 ══ */
-#screen-map { background:var(--bg-map) !important; }
+/* ══ LOOK v7.3 — tarjetas grandes sin bordes · píldoras · barras flotantes ══ */
+#screen-map { background:var(--bg-map); }
+.glass { -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
 
+/* Barra superior flotante */
 #topbar {
-  background:var(--bg-topbar) !important;
-  border-bottom:1px solid var(--border-main) !important;
-  box-shadow:0 2px 20px rgba(0,0,0,0.5) !important;
+  top:10px; left:10px; right:10px; height:54px; padding:0 8px 0 16px;
+  background:var(--glass); border:none; border-radius:var(--r-pill);
+  -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+  box-shadow:var(--shadow-card);
 }
-.topbar-title { letter-spacing:2.5px !important; }
-
-#bottombar {
-  background:var(--bg-bottombar) !important;
-  border-top:1px solid var(--border-main) !important;
-  box-shadow:0 -4px 20px rgba(0,0,0,0.5) !important;
+.topbar-title { font-size:12px; font-weight:700; letter-spacing:0; line-height:1.1; color:var(--color-text); text-shadow:none; text-transform:none; }
+.roads-btn, .water-btn, .gps-pill {
+  height:34px; line-height:34px; padding:0 13px; border:none; border-radius:var(--r-pill);
+  background:var(--glass-2); color:var(--color-text);
+  font-size:10px; font-weight:700; letter-spacing:.6px;
 }
-#mark-btn {
-  box-shadow:0 4px 20px var(--color-accent-glow) !important;
+.roads-btn.done, .water-btn.done, .gps-pill.on { background:var(--color-accent); color:var(--on-accent); border:none; }
+.roads-btn.loading, .water-btn.loading { color:var(--color-accent); }
+.roads-btn:active, .water-btn:active, .gps-pill:active { background:rgba(0,192,216,.28); color:var(--color-text); }
+#weather-btn { color:var(--color-gold); background:var(--glass-2); border:none; }
+#offline-badge { border-radius:var(--r-pill); }
+
+/* Botones laterales circulares */
+#side-btns { right:14px; bottom:196px; gap:10px; }
+.side-btn, #btn-enlaces {
+  width:48px !important; height:48px !important; border-radius:50% !important;
+  background:var(--glass) !important; border:none !important; color:var(--color-text) !important;
+  box-shadow:var(--shadow-card);
+  -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
 }
+.side-btn:active { background:var(--color-accent) !important; color:var(--on-accent) !important; }
 
-#sheet {
-  background:var(--bg-sheet) !important;
-  border-top:1px solid var(--border-main) !important;
-  border-radius:24px 24px 0 0 !important;
-  box-shadow:0 -8px 40px rgba(0,0,0,0.6) !important;
+/* Panel de tramos */
+.tramo-panel { top:78px; bottom:104px; }
+.tramo-toggle {
+  width:30px; height:58px; background:var(--glass); border:none; border-radius:20px 0 0 20px;
+  color:var(--color-text); box-shadow:var(--shadow-card);
 }
-.handle { background:var(--border-main) !important; }
-.sh-num { font-size:18px !important; }
-.sh-tramo-tag {
-  background:var(--color-accent-dim) !important;
-  border-color:rgba(78,205,196,0.3) !important;
-  border-radius:50px !important;
+.tramo-list-panel {
+  width:152px; margin-top:14px; padding:6px 0 10px; background:var(--glass); border:none;
+  border-radius:26px 0 0 26px; box-shadow:var(--shadow-card);
+  -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
 }
-.sh-coord { color:var(--color-muted) !important; }
-.dist-pill { border-radius:50px !important; }
+.tramo-panel-hdr { padding:12px 18px 6px; border:none; font-family:'Space Grotesk',sans-serif; font-size:11px; letter-spacing:.5px; color:var(--color-muted); }
+.tramo-panel-item { margin:2px 8px; padding:8px 12px; border:none; border-radius:18px; }
+.tramo-panel-item:active { background:var(--glass-2); }
+.tramo-panel-item.tpi-active { background:var(--color-accent); border-left:none; box-shadow:none; }
+.tramo-panel-name { font-size:13px; letter-spacing:0; text-transform:none; font-weight:700; }
+.tramo-panel-pts { font-size:10px; }
+.tramo-panel-item.tpi-active .tramo-panel-name { color:var(--on-accent); text-shadow:none; }
+.tramo-panel-item.tpi-active .tramo-panel-pts { color:var(--on-accent); opacity:.7; }
 
-.type-chip { background:var(--bg-obs) !important; border-color:var(--border-main) !important; border-radius:14px !important; }
-
-.obs-btn { background:var(--bg-obs) !important; border-color:var(--border-main) !important; border-radius:12px !important; }
-.obs-btn span { color:var(--color-muted) !important; }
-.obs-btn.sel { background:var(--color-accent-dim) !important; border-color:var(--color-accent) !important; }
-.obs-btn.sel span { color:var(--color-accent) !important; }
-
-.notes-ta { background:var(--bg-obs) !important; border-color:var(--border-main) !important; border-radius:14px !important; }
-
-.save-bar { background:rgba(78,205,196,0.08) !important; border-top:1px solid rgba(78,205,196,0.15) !important; }
-.btn-save {
-  background:var(--color-accent) !important;
-  color:#0a1a14 !important;
-  border:none !important;
-  border-radius:50px !important;
-  box-shadow:0 4px 16px var(--color-accent-glow) !important;
-}
-
+/* Odómetro: tarjeta con números grandes */
 .odometer {
-  background:var(--bg-card2) !important;
-  border:1px solid var(--border-main) !important;
-  border-radius:50px !important;
+  bottom:114px; padding:10px 18px; gap:12px; max-width:calc(100% - 24px); background:var(--glass); border:none; border-radius:34px;
+  box-shadow:var(--shadow-card); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
 }
+.odo-val { font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700; letter-spacing:-1px; color:var(--color-text); }
+.odo-unit { font-family:'Space Grotesk',sans-serif; font-size:10px; letter-spacing:.5px; color:var(--color-muted); }
+.odometer .odo-unit { letter-spacing:.3px !important; white-space:nowrap; }
+.odometer button { padding:3px 10px !important; font-size:10px !important; border:none !important; background:var(--glass-2) !important; color:var(--color-text) !important; border-radius:99px !important; font-family:'Space Grotesk',sans-serif !important; font-size:11px !important; font-weight:700 !important; }
+.odometer > div[style*="width:1px"] { background:var(--glass-2) !important; }
 
-.side-btn {
-  background:var(--bg-card2) !important;
-  border-color:var(--border-main) !important;
-  border-radius:14px !important;
+/* Barra inferior flotante + botón central elevado */
+#bottombar {
+  left:12px; right:12px; bottom:12px; height:70px;
+  background:var(--glass); border:none; border-radius:var(--r-pill);
+  box-shadow:var(--shadow-card); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
 }
-
-.toast {
-  background:var(--bg-card2) !important;
-  border-color:var(--border-main) !important;
-  color:var(--color-text) !important;
+.nav-btn { border-radius:26px; }
+.nav-btn > span { display:block; text-transform:lowercase; }
+.nav-btn > span::first-letter { text-transform:uppercase; }
+.nav-btn span { font-size:10px !important; letter-spacing:0 !important; font-weight:600 !important; }
+#tab-tramos { background:rgba(0,192,216,.16) !important; border-radius:26px !important; }
+#mark-btn {
+  width:66px !important; height:66px !important; position:relative; top:-20px;
+  background:var(--color-accent) !important; border:none !important;
+  box-shadow:0 12px 26px rgba(0,192,216,.40), 0 0 0 7px var(--bg-map) !important;
 }
+#mark-btn svg { width:30px; height:30px; }
 
-.nomade-btn {
-  background:rgba(78,205,196,0.08) !important;
-  border-color:rgba(78,205,196,0.4) !important;
-  border-radius:50px !important;
-  color:var(--color-accent) !important;
+/* Toast / barra de guardado */
+.toast { top:80px; border:none; background:var(--glass); border-radius:var(--r-pill); padding:12px 22px; font-size:13px; letter-spacing:0; box-shadow:var(--shadow-card); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
+.save-bar { top:76px; left:16px; right:16px; height:32px; border:none; border-radius:var(--r-pill); background:var(--glass); opacity:0; pointer-events:none; transition:transform .3s, opacity .3s; }
+.save-bar.show { opacity:1; }
+#forecast-strip { top:76px !important; left:12px !important; right:12px !important; border:none !important; border-radius:var(--r-pill) !important; background:var(--glass) !important; }
+#weather-panel { top:78px !important; border:none !important; border-radius:28px 0 0 28px; box-shadow:var(--shadow-card); background:var(--glass) !important; -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
+
+/* Hoja de punto */
+#sheet { background:var(--bg-sheet); border:none; border-radius:34px 34px 0 0; padding:0 22px 40px; box-shadow:0 -14px 50px rgba(0,0,0,.5); }
+.handle { width:44px; height:5px; background:var(--glass-2); border-radius:99px; margin:12px auto 18px; }
+.sh-num { display:block; font-family:'Space Grotesk',sans-serif; font-size:36px; font-weight:700; letter-spacing:-1.5px; line-height:1; text-transform:lowercase; color:var(--color-text); text-shadow:none; }
+.sh-num::first-letter { text-transform:uppercase; }
+.sh-tramo-tag { background:var(--color-accent); color:var(--on-accent); border:none; border-radius:99px; padding:5px 13px; margin-top:10px; font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; letter-spacing:.4px; }
+.sh-coord { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--color-muted); margin:8px 0 6px; }
+.dist-pill { background:var(--glass-2); border:none; border-radius:99px; padding:8px 15px; font-family:'Space Grotesk',sans-serif; font-size:12px; letter-spacing:0; color:var(--color-text); }
+.dist-pill span { color:var(--color-accent); }
+.fl { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; letter-spacing:0; text-transform:none; color:var(--color-muted); margin:20px 0 10px; }
+
+.type-row { gap:10px; }
+.type-chip { background:var(--bg-obs); border:none; border-radius:var(--r-chip); padding:20px 6px; gap:9px; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; letter-spacing:0; text-transform:none; color:var(--color-text); }
+.type-chip span { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; letter-spacing:0; }
+.type-chip svg { width:24px; height:24px; }
+.type-chip.sp { background:var(--color-accent); color:var(--on-accent); border:none; }
+.type-chip.sv { background:var(--color-teal); color:var(--color-text); border:none; }
+.type-chip.sb { background:var(--color-gold); color:var(--on-accent); border:none; }
+
+.obs-grid { gap:8px; }
+.obs-btn { background:var(--bg-obs); border:none; border-radius:20px; padding:11px 2px 9px; gap:5px; }
+.obs-btn svg { color:var(--color-text); }
+.obs-btn span { font-family:'Space Grotesk',sans-serif; font-size:8px; font-weight:600; letter-spacing:0; color:var(--color-muted); }
+.obs-btn.sel { background:var(--color-accent); border:none; box-shadow:0 6px 16px rgba(0,192,216,.35); }
+.obs-btn.sel svg, .obs-btn.sel span { color:var(--on-accent); }
+
+.photo-opts { gap:10px; }
+.photo-opt-btn { background:var(--bg-obs); border:none; border-radius:var(--r-chip); padding:20px 8px; gap:8px; color:var(--color-text); font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; letter-spacing:0; text-transform:none; }
+.photo-box, .rec-row, .player-row { border:none; border-radius:26px; background:var(--bg-obs); }
+.rec-row { padding:14px 20px; }
+.notes-ta { background:var(--bg-obs); border:none; border-radius:26px; padding:16px 20px; font-family:'Space Grotesk',sans-serif; font-size:15px; }
+.notes-ta:focus { box-shadow:0 0 0 2px var(--color-accent); }
+
+/* Botón con círculo de flecha (cápsula) */
+.btn-save, .btn-gen {
+  position:relative; height:62px; padding:0 82px 0 26px; border:none; border-radius:99px;
+  background:var(--color-accent); color:var(--on-accent); text-align:left;
+  font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; letter-spacing:0; text-transform:none;
+  box-shadow:0 12px 28px rgba(0,192,216,.32);
 }
+.btn-save::after, .btn-gen::after {
+  content:'→'; position:absolute; right:7px; top:7px; width:48px; height:48px; border-radius:50%;
+  background:var(--on-accent); color:var(--color-accent); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:400;
+}
+.btn-del { height:62px; padding:0 24px; border:none; border-radius:99px; background:rgba(255,51,85,.15); color:#ff6b86; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; letter-spacing:0; text-transform:none; }
+.btn-new { height:58px; border:none; border-radius:99px; background:rgba(255,51,85,.15); color:#ff6b86; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; letter-spacing:0; text-transform:none; }
 
-.tramo-panel-name { color:var(--color-text) !important; }
-.tramo-panel-item.tpi-active { background:var(--color-accent-dim) !important; border-left:2px solid var(--color-accent) !important; }
-.tramo-panel-item.tpi-active .tramo-panel-name { color:var(--color-accent) !important; text-shadow:none !important; }
-/* ══ END REDESIGN v7.0 ══ */
+/* Pantallas: Spots / Export */
+#screen-list, #screen-pdf { background:var(--bg-screen); }
+.scr-hdr { height:auto; min-height:76px; padding:22px 18px 10px; background:transparent; border:none; gap:14px; }
+.back-btn { width:46px; height:46px; padding:0; justify-content:center; border-radius:50%; background:var(--glass-2); color:var(--color-text); }
+.scr-title { font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700; letter-spacing:-1px; text-transform:none; color:var(--color-text); }
+.scr-sub { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--color-muted); }
+.tramo-list { padding:4px 16px 28px; }
+.tg-hdr { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; letter-spacing:0; text-transform:none; color:var(--color-text); border:none; padding:18px 4px 10px; }
+.tg-hdr-c { font-weight:500; color:var(--color-muted); }
+.pt-card { background:var(--bg-obs); border:none; border-radius:var(--r-card); padding:14px; gap:14px; margin-bottom:10px; }
+.pt-thumb { width:62px; height:62px; border-radius:20px; border:none; background:var(--glass-2); }
+.pt-num { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; letter-spacing:0; }
+.pt-note { font-size:15px; font-weight:600; color:var(--color-text); }
+.tag { border:none; border-radius:99px; padding:4px 11px; font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:600; letter-spacing:0; text-transform:none; background:var(--glass-2); color:var(--color-text); }
+.tag-p { background:rgba(0,192,216,.2); color:var(--color-accent); }
+.pdf-body { padding:6px 16px 28px; gap:12px; }
+.stat-card { background:var(--bg-obs); border:none; border-radius:var(--r-card); padding:8px 4px; }
+.stat-hdr { border:none; padding:16px 20px 8px; font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; letter-spacing:0; text-transform:none; color:var(--color-text); }
+.stat-row { border:none; padding:11px 20px; }
+.stat-key { font-size:14px; color:var(--color-muted); }
+.stat-val { font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:700; letter-spacing:-1px; color:var(--color-text); }
+
+/* Portada */
+#screen-load { background:radial-gradient(130% 55% at 85% 0%, rgba(60,110,113,.6), transparent 62%), var(--bg-screen); }
+.ld-wrap { display:flex; flex-direction:column; min-height:100%; width:100%; max-width:440px; margin:0 auto; padding:56px 26px 26px; }
+.ld-logo { width:84px; height:84px; border-radius:50%; background:var(--glass-2); display:flex; align-items:center; justify-content:center; }
+.ld-title { font-family:'Space Grotesk',sans-serif; font-size:56px; font-weight:700; letter-spacing:-2.5px; line-height:.96; color:var(--color-text); margin:26px 0 12px; }
+.ld-by { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--color-muted); }
+.ld-by b { color:var(--color-accent); font-weight:600; }
+.ld-desc { font-family:'Space Grotesk',sans-serif; font-size:15px; line-height:1.5; color:var(--color-sub); margin-top:22px; max-width:340px; }
+.ld-bottom { margin-top:auto; padding-top:28px; display:flex; flex-direction:column; gap:10px; }
+.ld-card { display:flex; align-items:center; justify-content:space-between; background:var(--glass-2); border-radius:28px; padding:16px 22px; }
+.ld-k { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--color-muted); }
+.ld-v { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; color:var(--color-text); }
+.ld-cta { display:flex; align-items:center; justify-content:space-between; width:100%; height:68px; padding:0 8px 0 28px; border:none; border-radius:99px; cursor:pointer;
+  background:var(--color-accent); color:var(--on-accent); font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:700; text-align:left;
+  box-shadow:0 14px 32px rgba(0,192,216,.34); }
+.ld-cta:active { transform:scale(.98); }
+.ld-ico { width:52px; height:52px; border-radius:50%; background:var(--on-accent); color:var(--color-accent); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ld-cta2 { height:60px; background:var(--glass-2); color:var(--color-text); box-shadow:none; }
+.ld-cta2 .ld-ico { background:var(--glass-2); color:var(--color-text); width:46px; height:46px; }
+.ld-install { width:100%; height:54px; border:none; border-radius:99px; background:transparent; color:var(--color-accent); font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; cursor:pointer; }
+.ld-ver { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--color-dim); text-align:center; margin-top:4px; }
+body.light .nav-btn span { color:#3C6E71 !important; }
+body.light .nav-btn svg { stroke:#3C6E71 !important; }
+body.light #tab-tramos span { color:#007A8C !important; }
+body.light #tab-tramos svg { stroke:#007A8C !important; }
+@media (max-width:389px) {
+  #topbar { padding:0 6px 0 12px; }
+  .topbar-title { font-size:11px; }
+  .roads-btn, .water-btn, .gps-pill { padding:0 9px; font-size:9px; letter-spacing:.3px; }
+  #topbar svg { width:20px; height:20px; }
+}
+/* ══ END LOOK ══ */
+
 </style>
 
 <script>
@@ -665,64 +745,49 @@ if('serviceWorker' in navigator){
 <div id="screen-load" style="pointer-events:all;">
   <style>
     @keyframes neon-blink {
-      0%,100%{ opacity:1; box-shadow:0 0 6px rgba(78,205,196,0.8),0 0 12px rgba(78,205,196,0.4); }
-      50%{ opacity:0.3; box-shadow:0 0 2px rgba(78,205,196,0.2); }
+      0%,100%{ opacity:1; box-shadow:0 0 6px rgba(0,192,216,0.8),0 0 12px rgba(0,192,216,0.4); }
+      50%{ opacity:0.3; box-shadow:0 0 2px rgba(0,192,216,0.2); }
     }
     @keyframes neon-line {
-      0%,100%{ opacity:1; filter:drop-shadow(0 0 4px #4ECDC4); }
-      50%{ opacity:0.25; filter:drop-shadow(0 0 1px #4ECDC4); }
+      0%,100%{ opacity:1; filter:drop-shadow(0 0 4px #00C0D8); }
+      50%{ opacity:0.25; filter:drop-shadow(0 0 1px #00C0D8); }
     }
   </style>
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:40px 28px 100px;gap:0;">
-
-    <!-- Logo + Título -->
-    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:10px;">
-      <div style="width:88px;height:88px;border-radius:50%;background:#182019;border:1.5px solid rgba(78,205,196,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(78,205,196,0.2);">
-        <svg width="50" height="50" viewBox="0 0 662 690" fill="#4ECDC4" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 8px rgba(78,205,196,0.6));"><g transform="translate(0,690) scale(0.1,-0.1)"><path d="M3375 6326 c-245 -61 -462 -296 -607 -660 -53 -132 -110 -359 -160 -636 -29 -157 -31 -482 -5 -580 53 -194 129 -326 271 -465 159 -157 322 -222 580 -232 291 -12 503 63 677 239 113 114 195 249 242 398 64 206 64 382 -3 730 -19 98 -27 132 -64 285 -54 220 -126 398 -221 540 -139 208 -231 290 -410 366 -70 30 -212 37 -300 15z"/><path d="M847 5174 c-182 -44 -325 -185 -372 -367 -50 -196 -33 -479 46 -777 17 -63 34 -128 39 -145 6 -25 34 -101 92 -260 29 -76 117 -240 183 -340 82 -124 206 -252 295 -302 256 -146 576 -155 797 -21 118 71 232 196 302 331 58 112 66 151 65 332 0 134 -4 173 -22 240 -69 246 -174 445 -387 730 -87 117 -103 136 -253 289 -99 101 -163 150 -265 204 -169 90 -368 123 -520 86z"/><path d="M5655 4756 c-5 -2 -37 -9 -70 -16 -126 -27 -264 -105 -376 -212 -95 -91 -137 -145 -254 -318 -173 -258 -273 -473 -337 -725 -26 -101 -31 -140 -31 -245 0 -108 3 -136 26 -210 37 -118 88 -200 182 -295 45 -44 88 -86 98 -93 54 -40 92 -62 111 -62 12 0 26 -4 31 -8 26 -22 202 -56 241 -46 12 3 30 2 39 -3 16 -9 129 8 170 26 11 5 36 15 55 22 139 50 254 122 320 201 90 107 177 288 244 503 20 66 43 140 51 165 20 64 51 216 70 350 23 159 24 459 1 555 -47 196 -158 329 -328 390 -39 15 -219 30 -243 21z"/><path d="M2579 3793 c-58 -49 -104 -178 -133 -373 -18 -119 -22 -138 -52 -228 -77 -229 -252 -415 -459 -487 -27 -10 -97 -28 -155 -40 -212 -46 -283 -78 -369 -164 -74 -74 -97 -138 -88 -250 16 -198 158 -415 468 -716 173 -167 315 -282 487 -391 432 -276 816 -394 1277 -394 301 0 534 43 805 150 412 162 887 541 1050 839 48 85 65 158 64 266 0 118 -18 166 -86 233 -61 61 -145 98 -264 117 -224 36 -291 53 -374 93 -132 63 -243 194 -295 347 -32 96 -64 272 -75 411 -28 367 -44 437 -108 482 -55 40 -117 27 -284 -55 -58 -29 -119 -58 -135 -64 -178 -70 -470 -77 -667 -14 -99 31 -144 55 -256 135 -136 98 -203 130 -266 130 -43 0 -59 -5 -85 -27z"/></g></svg>
-      </div>
-      <div style="text-align:center;">
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:#ffffff;letter-spacing:3px;line-height:1;">HUELLA DE TAPIR</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#7a8a99;letter-spacing:1.5px;margin-top:6px;">by tapirmedia</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#4ECDC4;letter-spacing:1px;margin-top:2px;opacity:0.8;">@tapirmediacontent</div>
-      </div>
+  <div class="ld-wrap">
+    <div>
+      <div class="ld-logo"><svg width="46" height="46" viewBox="0 0 662 690" fill="#00C0D8" xmlns="http://www.w3.org/2000/svg" ><g transform="translate(0,690) scale(0.1,-0.1)"><path d="M3375 6326 c-245 -61 -462 -296 -607 -660 -53 -132 -110 -359 -160 -636 -29 -157 -31 -482 -5 -580 53 -194 129 -326 271 -465 159 -157 322 -222 580 -232 291 -12 503 63 677 239 113 114 195 249 242 398 64 206 64 382 -3 730 -19 98 -27 132 -64 285 -54 220 -126 398 -221 540 -139 208 -231 290 -410 366 -70 30 -212 37 -300 15z"/><path d="M847 5174 c-182 -44 -325 -185 -372 -367 -50 -196 -33 -479 46 -777 17 -63 34 -128 39 -145 6 -25 34 -101 92 -260 29 -76 117 -240 183 -340 82 -124 206 -252 295 -302 256 -146 576 -155 797 -21 118 71 232 196 302 331 58 112 66 151 65 332 0 134 -4 173 -22 240 -69 246 -174 445 -387 730 -87 117 -103 136 -253 289 -99 101 -163 150 -265 204 -169 90 -368 123 -520 86z"/><path d="M5655 4756 c-5 -2 -37 -9 -70 -16 -126 -27 -264 -105 -376 -212 -95 -91 -137 -145 -254 -318 -173 -258 -273 -473 -337 -725 -26 -101 -31 -140 -31 -245 0 -108 3 -136 26 -210 37 -118 88 -200 182 -295 45 -44 88 -86 98 -93 54 -40 92 -62 111 -62 12 0 26 -4 31 -8 26 -22 202 -56 241 -46 12 3 30 2 39 -3 16 -9 129 8 170 26 11 5 36 15 55 22 139 50 254 122 320 201 90 107 177 288 244 503 20 66 43 140 51 165 20 64 51 216 70 350 23 159 24 459 1 555 -47 196 -158 329 -328 390 -39 15 -219 30 -243 21z"/><path d="M2579 3793 c-58 -49 -104 -178 -133 -373 -18 -119 -22 -138 -52 -228 -77 -229 -252 -415 -459 -487 -27 -10 -97 -28 -155 -40 -212 -46 -283 -78 -369 -164 -74 -74 -97 -138 -88 -250 16 -198 158 -415 468 -716 173 -167 315 -282 487 -391 432 -276 816 -394 1277 -394 301 0 534 43 805 150 412 162 887 541 1050 839 48 85 65 158 64 266 0 118 -18 166 -86 233 -61 61 -145 98 -264 117 -224 36 -291 53 -374 93 -132 63 -243 194 -295 347 -32 96 -64 272 -75 411 -28 367 -44 437 -108 482 -55 40 -117 27 -284 -55 -58 -29 -119 -58 -135 -64 -178 -70 -470 -77 -667 -14 -99 31 -144 55 -256 135 -136 98 -203 130 -266 130 -43 0 -59 -5 -85 -27z"/></g></svg></div>
+      <h1 class="ld-title">Huella<br>de Tapir</h1>
+      <div class="ld-by">by tapirmedia · <b>@tapirmediacontent</b></div>
+      <p class="ld-desc">Documentá cada punto del recorrido con coordenadas precisas, fotos de referencia y condiciones del terreno. Exportá en PDF o KMZ para coordinación en carrera.</p>
     </div>
 
-    <!-- Línea neón blinkeante -->
-    <div style="width:100%;max-width:320px;margin:20px 0;animation:neon-line 2.4s ease-in-out infinite;">
-      <div style="height:1px;background:linear-gradient(90deg,transparent,#4ECDC4,transparent);"></div>
-    </div>
-
-    <!-- Descripción -->
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#7a8a99;text-align:center;line-height:1.6;max-width:300px;margin-bottom:36px;">Documentá cada punto del recorrido con coordenadas precisas, fotos de referencia y condiciones del terreno. Exportá en PDF o KMZ para coordinación en carrera.</p>
-
-    <!-- Botones -->
-    <div style="width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;margin-bottom:auto;">
-      <button onclick="document.getElementById('kf').click()" style="width:100%;background:#4ECDC4;color:#0a1a14;border:none;border-radius:50px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(78,205,196,0.4);">
-        <span id="lang-btn-kmz">CARGAR KMZ</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      </button>
-      <button id="btn-resume" onclick="startMap()" style="width:100%;background:transparent;color:#c8e8d8;border:1.5px solid #2a3d2e;border-radius:50px;padding:16px 24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;letter-spacing:1.5px;cursor:pointer;display:none;align-items:center;justify-content:space-between;">
-        <span id="lang-btn-resume">CONTINUAR SESIÓN</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      </button>
-    </div>
-
-    <button id="btn-install" onclick="triggerInstall()" style="display:block;width:100%;max-width:320px;background:transparent;border:1.5px solid rgba(78,205,196,0.35);border-radius:50px;padding:14px 20px;color:#4ECDC4;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;cursor:pointer;margin-top:0;position:relative;z-index:9999;pointer-events:all;-webkit-tap-highlight-color:rgba(78,205,196,0.2);">
-      ⊕ INSTALAR APP
-    </button>
-
-    <!-- GPS Status -->
-    <div style="width:100%;max-width:320px;margin-top:16px;">
-      <div style="background:#1a1d21;border-radius:8px;border:1px solid #2a2d32;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div id="gps-dot-load" style="width:7px;height:7px;border-radius:50%;background:#2a2d32;"></div>
-          <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#7a8a99;letter-spacing:1px;"><span id="lang-gps-label">SISTEMA GPS:</span> <span id="gps-status-load" style="color:#ffffff;font-weight:600;">BUSCANDO</span></span>
+    <div class="ld-bottom">
+      <div class="ld-card">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div id="gps-dot-load" style="width:10px;height:10px;border-radius:50%;background:#3C6E71;flex-shrink:0;"></div>
+          <div>
+            <div class="ld-k"><span id="lang-gps-label">SISTEMA GPS:</span></div>
+            <div class="ld-v"><span id="gps-status-load">BUSCANDO</span></div>
+          </div>
         </div>
-        <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--color-accent);letter-spacing:1px;"><span id="lang-precision">PRECISIÓN</span> <span id="gps-acc-load">--</span></span>
+        <div style="text-align:right;">
+          <div class="ld-k"><span id="lang-precision">PRECISIÓN</span></div>
+          <div class="ld-v" style="color:var(--color-accent);"><span id="gps-acc-load">--</span></div>
+        </div>
       </div>
-      <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#3a4050;text-align:center;margin-top:10px;letter-spacing:1px;"></p>
+      <p id="load-status" style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--color-dim);text-align:center;min-height:16px;"></p>
+
+      <button class="ld-cta" onclick="document.getElementById('kf').click()">
+        <span id="lang-btn-kmz">Cargar KMZ</span>
+        <span class="ld-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
+      </button>
+      <button id="btn-resume" class="ld-cta ld-cta2" onclick="startMap()" style="display:none;">
+        <span id="lang-btn-resume">Continuar sesión</span>
+        <span class="ld-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></span>
+      </button>
+      <button id="btn-install" class="ld-install" onclick="triggerInstall()" style="display:block;">⊕ Instalar app</button>
+      <div class="ld-ver">Huella de Tapir v7.3</div>
     </div>
-    <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:var(--color-muted);letter-spacing:2px;margin-top:12px;">HUELLA DE TAPIR v7.0</p>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
 </div>
@@ -733,43 +798,44 @@ if('serviceWorker' in navigator){
   <div id="crosshair" style="isolation:isolate;">
     <img style="position:absolute;inset:0;width:45px;height:45px;mix-blend-mode:screen;opacity:0.9;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiIAAAIOCAYAAACF2mZnAAAABGNJQ1AMDQABbgPj7wAAAAlwSFlzAAAWJQAAFiUBSVIk8AAABmRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDEwLjAtYzAwMCA3OS5kMDRjYzE2OTgsIDIwMjUvMDcvMDItMTI6MTg6MTMgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgZXhpZjpQaXhlbFhEaW1lbnNpb249IjU0NiIgZXhpZjpQaXhlbFlEaW1lbnNpb249IjUyNiIgZXhpZjpVc2VyQ29tbWVudD0iU2NyZWVuc2hvdCIgeG1wOkNyZWF0ZURhdGU9IjIwMjYtMDUtMDhUMTM6Mjg6MzMtMDM6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDI2LTA1LTA4VDEzOjMxOjA4LTAzOjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI2LTA1LTA4VDEzOjMxOjA4LTAzOjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxOTkxY2QxYi03YjMyLTRjYmEtOWQwMS02MDE1NTE2NmJiYzMiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDozZThiNmZhYi1kYThjLTAwNDMtYjhkMy1kOThlNmNlM2I1YTAiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDplMWE1N2Q0OC02ZjJjLTQxNTEtOTIyOC02NjFhZTI2ZWIzNTciPiA8eG1wTU06SGlzdG9yeT4gPHJkZjpTZXE+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJzYXZlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDplMWE1N2Q0OC02ZjJjLTQxNTEtOTIyOC02NjFhZTI2ZWIzNTciIHN0RXZ0OndoZW49IjIwMjYtMDUtMDhUMTM6MzE6MDgtMDM6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyNy40ICgyMDI2MDEyNy5tLjMzOTIgM2I5ODVlYikgIChNYWNpbnRvc2gpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJzYXZlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDoxOTkxY2QxYi03YjMyLTRjYmEtOWQwMS02MDE1NTE2NmJiYzMiIHN0RXZ0OndoZW49IjIwMjYtMDUtMDhUMTM6MzE6MDgtMDM6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyNy40ICgyMDI2MDEyNy5tLjMzOTIgM2I5ODVlYikgIChNYWNpbnRvc2gpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDwvcmRmOlNlcT4gPC94bXBNTTpIaXN0b3J5PiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PrSn+LsAABuLSURBVHic7d1viFXnvejxnf6xExIqeKZ6GSqMkFPhVoi912C9SazDTQxtQGKJkDBF8ZozUOIfTjhDoK/yKpfDPlhqkvvCe6REKikoTRho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P4QIBIfJyMjI0+Pj44/EjYipqalfzszM7Oz+M+EBgyFEILEwabiUM9hLLQ3hATGECGQQJo277rrru5s3b57175jdoUOHXjl//vw/zvZ3wgPSIEQgEwJlbocPHz7x1ltvfWe2vxMckDYhAoUGSuPOO+986P77759ctWrVHa2Mvfbaa787c+bM/758+fKv5vr/CA7IkxCBikNlDncMDw8/Pjo6+j/HxsZGezmWc+fOvf/b3/72rd///vf//u677/7zrfy3QgPKJESAXgXMTREUQDchAgCE+VTctwYAaidEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQACCNEAIAwQgQAaEX5/1aRiD8qyu0+AAAAAElFTkSuQmCC" alt="">
     <svg style="position:absolute;inset:0;width:45px;height:45px;" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="32" cy="32" r="30" fill="none" stroke="var(--color-accent)" stroke-width="5" opacity="0.2"/>
-      <circle cx="32" cy="32" r="30" fill="none" stroke="var(--color-accent)" stroke-width="1.5" opacity="0.9"/>
+      <circle cx="32" cy="32" r="30" fill="none" stroke="#00C0D8" stroke-width="5" opacity="0.2"/>
+      <circle cx="32" cy="32" r="30" fill="none" stroke="#00C0D8" stroke-width="1.5" opacity="0.9"/>
     </svg>
   </div>
   <div id="topbar">
     <div style="display:flex;align-items:center;gap:7px;">
-      <svg width="22" height="22" viewBox="0 0 662 690" fill="var(--color-accent)" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 6px rgba(0,229,255,0.6));flex-shrink:0;"><g transform="translate(0,690) scale(0.1,-0.1)"><path d="M3375 6326 c-245 -61 -462 -296 -607 -660 -53 -132 -110 -359 -160 -636 -29 -157 -31 -482 -5 -580 53 -194 129 -326 271 -465 159 -157 322 -222 580 -232 291 -12 503 63 677 239 113 114 195 249 242 398 64 206 64 382 -3 730 -19 98 -27 132 -64 285 -54 220 -126 398 -221 540 -139 208 -231 290 -410 366 -70 30 -212 37 -300 15z"/><path d="M847 5174 c-182 -44 -325 -185 -372 -367 -50 -196 -33 -479 46 -777 17 -63 34 -128 39 -145 6 -25 34 -101 92 -260 29 -76 117 -240 183 -340 82 -124 206 -252 295 -302 256 -146 576 -155 797 -21 118 71 232 196 302 331 58 112 66 151 65 332 0 134 -4 173 -22 240 -69 246 -174 445 -387 730 -87 117 -103 136 -253 289 -99 101 -163 150 -265 204 -169 90 -368 123 -520 86z"/><path d="M5655 4756 c-5 -2 -37 -9 -70 -16 -126 -27 -264 -105 -376 -212 -95 -91 -137 -145 -254 -318 -173 -258 -273 -473 -337 -725 -26 -101 -31 -140 -31 -245 0 -108 3 -136 26 -210 37 -118 88 -200 182 -295 45 -44 88 -86 98 -93 54 -40 92 -62 111 -62 12 0 26 -4 31 -8 26 -22 202 -56 241 -46 12 3 30 2 39 -3 16 -9 129 8 170 26 11 5 36 15 55 22 139 50 254 122 320 201 90 107 177 288 244 503 20 66 43 140 51 165 20 64 51 216 70 350 23 159 24 459 1 555 -47 196 -158 329 -328 390 -39 15 -219 30 -243 21z"/><path d="M2579 3793 c-58 -49 -104 -178 -133 -373 -18 -119 -22 -138 -52 -228 -77 -229 -252 -415 -459 -487 -27 -10 -97 -28 -155 -40 -212 -46 -283 -78 -369 -164 -74 -74 -97 -138 -88 -250 16 -198 158 -415 468 -716 173 -167 315 -282 487 -391 432 -276 816 -394 1277 -394 301 0 534 43 805 150 412 162 887 541 1050 839 48 85 65 158 64 266 0 118 -18 166 -86 233 -61 61 -145 98 -264 117 -224 36 -291 53 -374 93 -132 63 -243 194 -295 347 -32 96 -64 272 -75 411 -28 367 -44 437 -108 482 -55 40 -117 27 -284 -55 -58 -29 -119 -58 -135 -64 -178 -70 -470 -77 -667 -14 -99 31 -144 55 -256 135 -136 98 -203 130 -266 130 -43 0 -59 -5 -85 -27z"/></g></svg>
-      <span class="topbar-title">HUELLA DE TAPIR</span>
+      <svg width="22" height="22" viewBox="0 0 662 690" fill="#00C0D8" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 6px rgba(0,192,216,0.6));flex-shrink:0;"><g transform="translate(0,690) scale(0.1,-0.1)"><path d="M3375 6326 c-245 -61 -462 -296 -607 -660 -53 -132 -110 -359 -160 -636 -29 -157 -31 -482 -5 -580 53 -194 129 -326 271 -465 159 -157 322 -222 580 -232 291 -12 503 63 677 239 113 114 195 249 242 398 64 206 64 382 -3 730 -19 98 -27 132 -64 285 -54 220 -126 398 -221 540 -139 208 -231 290 -410 366 -70 30 -212 37 -300 15z"/><path d="M847 5174 c-182 -44 -325 -185 -372 -367 -50 -196 -33 -479 46 -777 17 -63 34 -128 39 -145 6 -25 34 -101 92 -260 29 -76 117 -240 183 -340 82 -124 206 -252 295 -302 256 -146 576 -155 797 -21 118 71 232 196 302 331 58 112 66 151 65 332 0 134 -4 173 -22 240 -69 246 -174 445 -387 730 -87 117 -103 136 -253 289 -99 101 -163 150 -265 204 -169 90 -368 123 -520 86z"/><path d="M5655 4756 c-5 -2 -37 -9 -70 -16 -126 -27 -264 -105 -376 -212 -95 -91 -137 -145 -254 -318 -173 -258 -273 -473 -337 -725 -26 -101 -31 -140 -31 -245 0 -108 3 -136 26 -210 37 -118 88 -200 182 -295 45 -44 88 -86 98 -93 54 -40 92 -62 111 -62 12 0 26 -4 31 -8 26 -22 202 -56 241 -46 12 3 30 2 39 -3 16 -9 129 8 170 26 11 5 36 15 55 22 139 50 254 122 320 201 90 107 177 288 244 503 20 66 43 140 51 165 20 64 51 216 70 350 23 159 24 459 1 555 -47 196 -158 329 -328 390 -39 15 -219 30 -243 21z"/><path d="M2579 3793 c-58 -49 -104 -178 -133 -373 -18 -119 -22 -138 -52 -228 -77 -229 -252 -415 -459 -487 -27 -10 -97 -28 -155 -40 -212 -46 -283 -78 -369 -164 -74 -74 -97 -138 -88 -250 16 -198 158 -415 468 -716 173 -167 315 -282 487 -391 432 -276 816 -394 1277 -394 301 0 534 43 805 150 412 162 887 541 1050 839 48 85 65 158 64 266 0 118 -18 166 -86 233 -61 61 -145 98 -264 117 -224 36 -291 53 -374 93 -132 63 -243 194 -295 347 -32 96 -64 272 -75 411 -28 367 -44 437 -108 482 -55 40 -117 27 -284 -55 -58 -29 -119 -58 -135 -64 -178 -70 -470 -77 -667 -14 -99 31 -144 55 -256 135 -136 98 -203 130 -266 130 -43 0 -59 -5 -85 -27z"/></g></svg>
+      <span class="topbar-title">Huella<br>de Tapir</span>
     </div>
   <div id="offline-badge">SIN SEÑAL</div>
     <div style="display:flex;align-items:center;gap:8px;">
     <div style="display:flex;gap:5px;align-items:center;">
       <button class="roads-btn" id="roads-btn" onclick="loadOSMRoads()"><span id="lang-caminos">CAMINOS</span></button>
       <button class="water-btn" id="water-btn" onclick="loadOSMWater()">AGUA</button>
-      <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" style="background:transparent;border-color:#ffcc4444;color:#ffcc44;">☀</button>
+      <button class="gps-pill" id="weather-btn" onclick="toggleWeather()" >☀</button>
       <button class="gps-pill" id="theme-btn" onclick="toggleTheme()" title="Modo claro/oscuro">◑</button>
       <button class="gps-pill" id="gps-pill" onclick="centerGPS()">GPS</button>
     </div>
   </div>
+  </div><!-- /topbar -->
   <!-- Tapir Migrante button -->
   
 
   <!-- 3h Forecast strip — compact, top-left, below topbar -->
-  <div id="forecast-strip" style="position:fixed;top:58px;left:0;right:0;z-index:45;display:none;background:rgba(26,29,33,0.92);border-bottom:1px solid #2a2d32;padding:6px 14px;">
+  <div id="forecast-strip" style="position:fixed;top:58px;left:0;right:0;z-index:45;display:none;background:rgba(43,43,43,0.92);border-bottom:1px solid #3C6E71;padding:6px 14px;">
     <div style="display:flex;align-items:center;gap:12px;overflow-x:auto;">
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:8px;color:#7a8a99;letter-spacing:1.5px;flex-shrink:0;">PRÓX 3H</span>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:8px;color:#9AA8A5;letter-spacing:1.5px;flex-shrink:0;">PRÓX 3H</span>
       <div id="forecast-items" style="display:flex;gap:10px;align-items:center;"></div>
     </div>
   </div>
 
   <div id="side-btns">
-    <button id="btn-enlaces" onclick="toggleLinks()" title="Ver enlaces" style="width:44px;height:44px;border-radius:10px;background:var(--bg-topbar);border:1px solid var(--border-main);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#7a8a99;font-family:'Space Grotesk',sans-serif;font-size:7px;font-weight:700;letter-spacing:1px;flex-direction:column;gap:2px;">
+    <button id="btn-enlaces" onclick="toggleLinks()" title="Ver enlaces" style="width:44px;height:44px;border-radius:10px;background:var(--bg-topbar);border:1px solid var(--border-main);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#9AA8A5;font-family:'Space Grotesk',sans-serif;font-size:7px;font-weight:700;letter-spacing:1px;flex-direction:column;gap:2px;">
       <svg width="16" height="10" viewBox="0 0 20 12"><path d="M2 6 Q10 1 18 6 Q10 11 2 6Z" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="10" cy="6" r="2.5" fill="currentColor"/></svg>
       <span>ENL</span>
     </button>
 
-    <button class="side-btn" onclick="centerRace()" title="Centrar carrera" style="font-size:8px;letter-spacing:0.5px;color:var(--color-accent);">
+    <button class="side-btn" onclick="centerRace()" title="Centrar carrera" style="font-size:8px;letter-spacing:0.5px;color:#00C0D8;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="18" height="18" rx="2"/>
         <line x1="12" y1="3" x2="12" y2="21"/>
@@ -802,37 +868,37 @@ if('serviceWorker' in navigator){
   </div>
 
   <div id="weather-panel" style="display:none;position:fixed;top:50px;right:0;width:175px;bottom:290px;
-    background:rgba(4,10,18,0.97);border-left:1px solid #1a3040;z-index:53;
+    background:rgba(43,43,43,0.97);border-left:1px solid #3C6E71;z-index:53;
     flex-direction:column;overflow:hidden;">
-    <div style="padding:7px 10px 5px;border-bottom:1px solid var(--border-main);display:flex;align-items:center;justify-content:space-between;">
-      <span style="color:#ffcc44;font-size:9px;letter-spacing:2px;font-weight:700;">☀ CLIMA</span>
-      <button onclick="refreshWeather()" style="background:transparent;border:none;color:#4a8898;font-size:9px;cursor:pointer;letter-spacing:1px;">↻ ACT.</button>
+    <div style="padding:7px 10px 5px;border-bottom:1px solid #3C6E71;display:flex;align-items:center;justify-content:space-between;">
+      <span style="color:#D9A441;font-size:9px;letter-spacing:2px;font-weight:700;">☀ CLIMA</span>
+      <button onclick="refreshWeather()" style="background:transparent;border:none;color:#9AA8A5;font-size:9px;cursor:pointer;letter-spacing:1px;">↻ ACT.</button>
     </div>
-    <div style="padding:5px 10px;border-bottom:1px solid var(--border-main);display:flex;justify-content:space-between;align-items:center;">
+    <div style="padding:5px 10px;border-bottom:1px solid #3C6E71;display:flex;justify-content:space-between;align-items:center;">
       <div style="display:flex;flex-direction:column;align-items:center;">
-        <span id="wp-rise" style="color:#ffcc44;font-size:9px;font-weight:bold;">--:--</span>
-        <span style="color:#4a8898;font-size:6.5px;letter-spacing:1px;">SALE</span>
+        <span id="wp-rise" style="color:#D9A441;font-size:9px;font-weight:bold;">--:--</span>
+        <span style="color:#9AA8A5;font-size:6.5px;letter-spacing:1px;">SALE</span>
       </div>
-      <span style="color:#4a8898;font-size:8px;">—</span>
+      <span style="color:#9AA8A5;font-size:8px;">—</span>
       <div style="display:flex;flex-direction:column;align-items:center;">
         <span id="wp-set" style="color:#ff7744;font-size:9px;font-weight:bold;">--:--</span>
-        <span style="color:#4a8898;font-size:6.5px;letter-spacing:1px;">SE PONE</span>
+        <span style="color:#9AA8A5;font-size:6.5px;letter-spacing:1px;">SE PONE</span>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:2px 8px;border-bottom:1px solid #1a3040;">
-      <span style="color:#4a8898;font-size:6.5px;"></span>
-      <span style="color:#4a8898;font-size:6.5px;text-align:center;">°C</span>
-      <span style="color:#4a8898;font-size:6.5px;text-align:center;">mm</span>
-      <span style="color:#4a8898;font-size:6.5px;text-align:center;">km/h</span>
+    <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:2px 8px;border-bottom:1px solid #3C6E71;">
+      <span style="color:#9AA8A5;font-size:6.5px;"></span>
+      <span style="color:#9AA8A5;font-size:6.5px;text-align:center;">°C</span>
+      <span style="color:#9AA8A5;font-size:6.5px;text-align:center;">mm</span>
+      <span style="color:#9AA8A5;font-size:6.5px;text-align:center;">km/h</span>
     </div>
-    <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:2px 8px;border-bottom:1px solid #1a3040;border-top:1px solid #1a3040;">
-      <span style="color:#4a8898;font-size:6px;letter-spacing:1px;">HOY</span>
-      <span style="color:#4a8898;font-size:6px;text-align:center;"></span>
-      <span style="color:#4a8898;font-size:6px;text-align:center;"></span>
-      <span style="color:#4a8898;font-size:6px;text-align:center;"></span>
+    <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;padding:2px 8px;border-bottom:1px solid #3C6E71;border-top:1px solid #3C6E71;">
+      <span style="color:#9AA8A5;font-size:6px;letter-spacing:1px;">HOY</span>
+      <span style="color:#9AA8A5;font-size:6px;text-align:center;"></span>
+      <span style="color:#9AA8A5;font-size:6px;text-align:center;"></span>
+      <span style="color:#9AA8A5;font-size:6px;text-align:center;"></span>
     </div>
     <div id="wp-hours" style="flex:1;overflow-y:auto;"></div>
-    <div id="wp-3day" style="border-top:2px solid var(--border-main);overflow-y:auto;max-height:160px;"></div>
+    <div id="wp-3day" style="border-top:2px solid #3C6E71;overflow-y:auto;max-height:160px;"></div>
   </div>
 
   <!-- ODOMETER -->
@@ -841,11 +907,11 @@ if('serviceWorker' in navigator){
       <div style="display:flex;align-items:baseline;gap:4px;">
         <div class="odo-val" id="odo-val">0.0</div>
         <div class="odo-unit">KM</div>
-        <button onclick="resetOdo()" style="background:rgba(78,205,196,0.1);border:1px solid rgba(78,205,196,0.27);border-radius:20px;padding:4px 10px;color:var(--color-accent);font-size:11px;cursor:pointer;font-family:monospace;letter-spacing:1px;">↺ RESET</button>
+        <button onclick="resetOdo()" style="background:rgba(0,192,216,0.1);border:1px solid #00C0D844;border-radius:20px;padding:4px 10px;color:#00C0D8;font-size:11px;cursor:pointer;font-family:monospace;letter-spacing:1px;">↺ RESET</button>
       </div>
       <div class="odo-unit" style="letter-spacing:1.5px;" id="lang-recorrido">RECORRIDO</div>
     </div>
-    <div style="width:1px;background:#1a3040;align-self:stretch;margin:0 2px;"></div>
+    <div style="width:1px;background:#3C6E71;align-self:stretch;margin:0 2px;"></div>
     <div style="display:flex;flex-direction:column;align-items:flex-start;">
       <div style="display:flex;align-items:baseline;gap:4px;">
         <div class="odo-val" id="spd-val">0</div>
@@ -853,7 +919,7 @@ if('serviceWorker' in navigator){
       </div>
       <div class="odo-unit" style="letter-spacing:1.5px;" id="lang-velocidad">VELOCIDAD</div>
     </div>
-    <div style="width:1px;background:#1a3040;align-self:stretch;margin:0 2px;"></div>
+    <div style="width:1px;background:#3C6E71;align-self:stretch;margin:0 2px;"></div>
     <div style="display:flex;flex-direction:column;align-items:flex-start;">
       <div style="display:flex;align-items:baseline;gap:4px;">
         <div class="odo-val" id="dist-last-val" style="font-size:20px;">—</div>
@@ -868,45 +934,44 @@ if('serviceWorker' in navigator){
     <!-- Outer ring -->
     <circle cx="26" cy="26" r="24" fill="rgba(0,0,0,0.7)" stroke="#1a3a48" stroke-width="1"/>
     <!-- Cardinal tick marks -->
-    <line x1="26" y1="4"  x2="26" y2="9"  stroke="var(--color-accent)" stroke-width="1.5"/>
+    <line x1="26" y1="4"  x2="26" y2="9"  stroke="#00C0D8" stroke-width="1.5"/>
     <line x1="26" y1="43" x2="26" y2="48" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
     <line x1="4"  y1="26" x2="9"  y2="26" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
     <line x1="43" y1="26" x2="48" y2="26" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
     <!-- N arrow (points up = north, cyan) -->
-    <polygon points="26,8 29,22 26,19 23,22" fill="var(--color-accent)" opacity="0.95"/>
+    <polygon points="26,8 29,22 26,19 23,22" fill="#00C0D8" opacity="0.95"/>
     <!-- S arrow (points down, white faint) -->
     <polygon points="26,44 29,30 26,33 23,30" fill="rgba(255,255,255,0.3)"/>
     <!-- Cardinal labels -->
-    <text x="26" y="17" text-anchor="middle" fill="var(--color-accent)" font-size="7" font-family="monospace" font-weight="700">N</text>
+    <text x="26" y="17" text-anchor="middle" fill="#00C0D8" font-size="7" font-family="monospace" font-weight="700">N</text>
     <text x="26" y="39" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="6" font-family="monospace">S</text>
     <text x="13" y="29" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="6" font-family="monospace">O</text>
     <text x="39" y="29" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="6" font-family="monospace">E</text>
     <!-- Center dot -->
-    <circle cx="26" cy="26" r="2.5" fill="var(--color-accent)" opacity="0.8"/>
+    <circle cx="26" cy="26" r="2.5" fill="#00C0D8" opacity="0.8"/>
   </svg>
 
   <div id="bottombar" style="display:grid;grid-template-columns:1fr 1fr 72px 1fr 1fr;align-items:center;padding:0 8px;gap:0;">
     <button class="nav-btn" onclick="goHome()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a9aaa" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;"><span id="lang-home">HOME</span></span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA8A5" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#9AA8A5;letter-spacing:0.5px;"><span id="lang-home">HOME</span></span>
     </button>
-    <button class="nav-btn" id="tab-tramos" onclick="goHome()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(78,205,196,0.1);border:none;cursor:pointer;padding:8px 4px;width:100%;border-radius:8px;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:var(--color-accent);letter-spacing:0.5px;">TRAMOS</span>
+    <button class="nav-btn" id="tab-tramos" onclick="goHome()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(0,192,216,0.1);border:none;cursor:pointer;padding:8px 4px;width:100%;border-radius:8px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C0D8" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#00C0D8;letter-spacing:0.5px;">TRAMOS</span>
     </button>
-    <button id="mark-btn" onclick="markPoint()" style="width:56px;height:56px;background:var(--color-accent);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 24px rgba(0,229,255,0.5),0 0 48px rgba(78,205,196,0.2);margin:0 auto;">
+    <button id="mark-btn" onclick="markPoint()" style="width:56px;height:56px;background:#00C0D8;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 24px rgba(0,192,216,0.5),0 0 48px rgba(0,192,216,0.2);margin:0 auto;">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#131313" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </button>
     <button class="nav-btn" onclick="openScreen('list')" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a9aaa" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;"><span id="lang-spots">SPOTS</span></span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA8A5" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#9AA8A5;letter-spacing:0.5px;"><span id="lang-spots">SPOTS</span></span>
     </button>
     <button class="nav-btn" onclick="openScreen('pdf')" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:8px 4px;width:100%;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a9aaa" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#8a9aaa;letter-spacing:0.5px;"><span id="lang-export">EXPORT</span></span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA8A5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#9AA8A5;letter-spacing:0.5px;"><span id="lang-export">EXPORT</span></span>
     </button>
   </div>
-</div>
 
 <!-- SHEET -->
 <div id="overlay" onclick="closeSheet()"></div>
@@ -914,7 +979,7 @@ if('serviceWorker' in navigator){
   <div class="handle"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;padding:0 0 4px;">
     <div class="sh-num" id="sh-num">PUNTO #1</div>
-    <button onclick="closeSheet()" style="background:transparent;border:1px solid #1a3040;border-radius:8px;padding:6px 12px;color:#4a8898;font-size:10px;cursor:pointer;font-family:monospace;letter-spacing:1px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg><span data-i18n="volver">VOLVER</span></button>
+    <button onclick="closeSheet()" style="background:var(--glass-2);border:none;border-radius:99px;height:42px;padding:0 18px;color:var(--color-text);font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:0;display:flex;align-items:center;gap:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg><span data-i18n="volver">VOLVER</span></button>
   </div>
   <div id="sh-tramo-tag" class="sh-tramo-tag"></div>
   <div class="sh-coord" id="sh-coord">0.000000, 0.000000</div>
@@ -944,8 +1009,8 @@ if('serviceWorker' in navigator){
   </div>
   <label class="fl" data-i18n="fotoRef">Foto de referencia</label>
   <div id="photo-save-row" style="display:none;gap:6px;margin:0 0 8px;">
-    <button onclick="saveAndUsePhoto()" style="flex:1;background:var(--color-accent);color:#000;border:none;border-radius:8px;padding:10px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">GUARDAR Y USAR</button>
-    <button onclick="justUsePhoto()" style="flex:1;background:transparent;color:var(--color-accent);border:1px solid var(--color-accent);border-radius:8px;padding:10px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">SOLO USAR</button>
+    <button onclick="saveAndUsePhoto()" style="flex:1;background:#00C0D8;color:#000;border:none;border-radius:8px;padding:10px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">GUARDAR Y USAR</button>
+    <button onclick="justUsePhoto()" style="flex:1;background:transparent;color:#00C0D8;border:1px solid #00C0D8;border-radius:8px;padding:10px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;">SOLO USAR</button>
   </div>
   <div id="photo-opts-row" class="photo-opts">
     <div class="photo-opt-btn" onclick="document.getElementById('ci-camera').click()">
@@ -972,7 +1037,7 @@ if('serviceWorker' in navigator){
     <div class="obs-btn" data-obs="curva-der" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 18 Q6 4 22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 1.5 L22 4 L19 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CURVA<br>DER</span></div>
     <div class="obs-btn" data-obs="curva-izq" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 18 Q24 4 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 1.5 L8 4 L11 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CURVA<br>IZQ</span></div>
     <div class="obs-btn" data-obs="lomo" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 18 L8 18 Q15 4 22 18 L28 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>LOMO</span></div>
-    <div class="obs-btn" data-obs="vado" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8 L8 8 Q15 20 22 8 L28 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 15 Q15 11 22 15" stroke="#00a0c8" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/><path d="M10 19 Q15 16 20 19" stroke="#00a0c8" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg><span>VADO</span></div>
+    <div class="obs-btn" data-obs="vado" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8 L8 8 Q15 20 22 8 L28 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 15 Q15 11 22 15" stroke="#0099B0" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/><path d="M10 19 Q15 16 20 19" stroke="#0099B0" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg><span>VADO</span></div>
     <div class="obs-btn" data-obs="u-der" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 3 L9 14 Q9 20 15 20 Q21 20 21 14 L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M17 3 L17 14 Q17 17 15 17 Q13 17 13 14 L13 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/><path d="M18 0.5 L21 3 L24 0.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>U DER</span></div>
     <div class="obs-btn" data-obs="u-izq" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 3 L21 14 Q21 20 15 20 Q9 20 9 14 L9 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 3 L13 14 Q13 17 15 17 Q17 17 17 14 L17 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/><path d="M12 0.5 L9 3 L6 0.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>U IZQ</span></div>
     <div class="obs-btn" data-obs="ese" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 20 Q6 12 15 11 Q24 10 24 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M21 2 L24 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6 20 L9 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>ESE</span></div>
@@ -992,11 +1057,11 @@ if('serviceWorker' in navigator){
   </div>
   <label class="fl" data-i18n="relevancia">RELEVANCIA</label>
   <div class="stars-row" id="stars-row">
-    <div class="star-btn" data-star="1" onclick="setStar(1)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
-    <div class="star-btn" data-star="2" onclick="setStar(2)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
-    <div class="star-btn" data-star="3" onclick="setStar(3)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
-    <div class="star-btn" data-star="4" onclick="setStar(4)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
-    <div class="star-btn" data-star="5" onclick="setStar(5)"><svg viewBox="0 0 24 24" fill="none" stroke="#1a3a50" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="1" onclick="setStar(1)"><svg viewBox="0 0 24 24" fill="none" stroke="#3C6E71" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="2" onclick="setStar(2)"><svg viewBox="0 0 24 24" fill="none" stroke="#3C6E71" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="3" onclick="setStar(3)"><svg viewBox="0 0 24 24" fill="none" stroke="#3C6E71" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="4" onclick="setStar(4)"><svg viewBox="0 0 24 24" fill="none" stroke="#3C6E71" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+    <div class="star-btn" data-star="5" onclick="setStar(5)"><svg viewBox="0 0 24 24" fill="none" stroke="#3C6E71" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
   </div>
   <label class="fl" data-i18n="notaVoz">Nota de voz</label>
   <div class="rec-row">
@@ -1058,7 +1123,7 @@ if('serviceWorker' in navigator){
       </svg>
     </button>
     <span class="scr-title">PDF</span>
-    <button onclick="window.print()" style="margin-left:auto;background:var(--color-accent);color:#000;border:none;border-radius:6px;padding:6px 14px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;">IMPRIMIR</button>
+    <button onclick="window.print()" style="margin-left:auto;background:var(--glass-2);color:var(--color-text);border:none;border-radius:99px;height:42px;padding:0 18px;font-size:12px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;">IMPRIMIR</button>
   </div>
   <div class="pdf-body">
     <div id="pdf-content" style="flex:1;overflow-y:auto;padding:0;"></div>
@@ -1071,7 +1136,7 @@ if('serviceWorker' in navigator){
       <div class="stat-row"><span class="stat-key">Con voz</span><span class="stat-val" id="e-au">0</span></div>
     </div>
     <button class="btn-gen" id="btn-pdf-gen" onclick="window._pdfWin=window.open('about:blank','_blank','width=900,height=700');genPDF()">GENERAR PDF</button>
-    <button class="btn-gen" onclick="genKMZ()" style="background:#00ffaa;margin-top:0;">EXPORTAR KMZ</button>
+    <button class="btn-gen" onclick="genKMZ()" style="background:#D9A441;margin-top:0;">EXPORTAR KMZ</button>
     <button class="btn-new" onclick="newSession()">NUEVA SESIÓN</button>
   </div>
 </div>
@@ -1291,7 +1356,7 @@ async function unzipKML(buf) {
   throw new Error('Compresión no soportada');
 }
 
-const COLORS = ['var(--color-accent)','#00c8e0','#0099bb','#33ddff','#66eeff','#0077aa','#00aad4','#88ddff'];
+const COLORS = ['#00C0D8','#00c8e0','#0099bb','#33ddff','#66eeff','#0077aa','#00aad4','#88ddff'];
 const SKIP   = new Set(['Mapa sin nombre','Proyecto sin título','Rutas','']);
 
 function simplify(pts, tolerance) {
@@ -1558,7 +1623,7 @@ function loop() { draw(); requestAnimationFrame(loop); }
 function draw() {
   const ctx=M.ctx;
   ctx.clearRect(0,0,M.W,M.H);
-  ctx.fillStyle=document.body.classList.contains('light')?'#ffffff':'#060d14'; ctx.fillRect(0,0,M.W,M.H);
+  ctx.fillStyle=document.body.classList.contains('light')?'#F5F1E8':'#353535'; ctx.fillRect(0,0,M.W,M.H);
   // Subtle white grid
   ctx.strokeStyle=document.body.classList.contains('light')?'rgba(0,0,0,0.06)':'rgba(255,255,255,0.04)'; ctx.lineWidth=0.5;
   const gs=40;
@@ -1574,7 +1639,7 @@ function draw() {
     const dayLen  = setMs - riseMs;
     const tNow    = Math.max(0, Math.min(1, (nowMs - riseMs) / dayLen));
     const light   = document.body.classList.contains('light');
-    const col     = light ? '#8b4000' : '#ffcc44';
+    const col     = light ? '#8b4000' : '#D9A441';
     const fmt = d => d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
 
     // Centro del arco: centro de pantalla
@@ -1650,9 +1715,9 @@ function draw() {
       const sunPt = hourToXY(nowMs);
       ctx.globalAlpha = 1.0;
       ctx.beginPath(); ctx.arc(sunPt.x, sunPt.y, 16, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(255,204,68,0.08)'; ctx.fill();
+      ctx.fillStyle = 'rgba(217,164,65,0.08)'; ctx.fill();
       ctx.beginPath(); ctx.arc(sunPt.x, sunPt.y, 8, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(255,204,68,0.20)'; ctx.fill();
+      ctx.fillStyle = 'rgba(217,164,65,0.20)'; ctx.fill();
       ctx.beginPath(); ctx.arc(sunPt.x, sunPt.y, 5, 0, Math.PI*2);
       ctx.fillStyle = col; ctx.fill();
 
@@ -1665,7 +1730,7 @@ function draw() {
         ctx.font = p.isNow ? 'bold 10px monospace' : '8px monospace';
         const tw = ctx.measureText(label).width + 6;
         const lx = p.x, ly = p.y - (p.isNow ? 16 : 11);
-        ctx.fillStyle = light ? 'rgba(255,255,255,0.92)' : 'rgba(6,13,20,0.88)';
+        ctx.fillStyle = light ? 'rgba(255,255,255,0.92)' : 'rgba(53,53,53,0.88)';
         ctx.fillRect(lx-tw/2, ly-7, tw, 14);
         if(p.isNow){ ctx.strokeStyle=col; ctx.lineWidth=0.8; ctx.strokeRect(lx-tw/2,ly-7,tw,14); }
         ctx.fillStyle = col; ctx.textAlign='center'; ctx.textBaseline='middle';
@@ -1678,7 +1743,7 @@ function draw() {
         ctx.globalAlpha = 0.9; ctx.font = '8px monospace';
         const tw = ctx.measureText(lbl).width + 8;
         const lx = p.x, ly = p.y + 16;
-        ctx.fillStyle = light ? 'rgba(255,255,255,0.92)' : 'rgba(6,13,20,0.88)';
+        ctx.fillStyle = light ? 'rgba(255,255,255,0.92)' : 'rgba(53,53,53,0.88)';
         ctx.fillRect(lx-tw/2, ly-7, tw, 14);
         ctx.fillStyle = clr; ctx.textAlign='center'; ctx.textBaseline='middle';
         ctx.fillText(lbl, lx, ly);
@@ -1743,15 +1808,15 @@ function draw() {
       const p0lg=proj(t.route[0][0],t.route[0][1]);
       ctx.moveTo(p0lg.x,p0lg.y);
       for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
-      ctx.strokeStyle='rgba(255,204,68,0.2)'; ctx.lineWidth=14; ctx.stroke();
+      ctx.strokeStyle='rgba(217,164,65,0.2)'; ctx.lineWidth=14; ctx.stroke();
       // Mid glow
       ctx.beginPath(); ctx.moveTo(p0lg.x,p0lg.y);
       for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
-      ctx.strokeStyle='rgba(255,204,68,0.4)'; ctx.lineWidth=7; ctx.stroke();
+      ctx.strokeStyle='rgba(217,164,65,0.4)'; ctx.lineWidth=7; ctx.stroke();
       // Main line
       ctx.beginPath(); ctx.moveTo(p0lg.x,p0lg.y);
       for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
-      ctx.strokeStyle='#ffcc44'; ctx.lineWidth=2.5; ctx.stroke();
+      ctx.strokeStyle='#D9A441'; ctx.lineWidth=2.5; ctx.stroke();
       ctx.globalAlpha=1.0;
       return;
     }
@@ -1765,20 +1830,20 @@ function draw() {
       const p0g=proj(t.route[0][0],t.route[0][1]);
       ctx.moveTo(p0g.x,p0g.y);
       for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
-      ctx.strokeStyle = light ? 'rgba(0,120,255,0.18)' : 'rgba(0,229,255,0.18)';
+      ctx.strokeStyle = light ? 'rgba(0,120,255,0.18)' : 'rgba(0,192,216,0.18)';
       ctx.lineWidth = isActive ? 16 : 10;
       ctx.stroke();
       // Mid glow
       ctx.beginPath();
       ctx.moveTo(p0g.x,p0g.y);
       for(let i=1;i<t.route.length;i++){const pg=proj(t.route[i][0],t.route[i][1]);ctx.lineTo(pg.x,pg.y);}
-      ctx.strokeStyle = light ? 'rgba(0,80,200,0.28)' : 'rgba(0,229,255,0.35)';
+      ctx.strokeStyle = light ? 'rgba(0,80,200,0.28)' : 'rgba(0,192,216,0.35)';
       ctx.lineWidth = isActive ? 8 : 5;
       ctx.stroke();
     }
     ctx.beginPath();
     const light2 = document.body.classList.contains('light');
-    ctx.strokeStyle = isCron ? (light2 ? '#003399' : 'var(--color-accent)') : (light2 ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.5)');
+    ctx.strokeStyle = isCron ? (light2 ? '#007A8C' : '#00C0D8') : (light2 ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.5)');
     ctx.lineWidth = isActive ? 3 : (isCron ? 2 : 1);
     const p0=proj(t.route[0][0],t.route[0][1]);
     ctx.moveTo(p0.x,p0.y);
@@ -1797,7 +1862,7 @@ function draw() {
     if(midPt){
       const {x:mx, y:my} = proj(midPt[0], midPt[1]);
       ctx.font = 'bold 11px monospace';
-      ctx.fillStyle = document.body.classList.contains('light') ? '#003399' : '#ffffff';
+      ctx.fillStyle = document.body.classList.contains('light') ? '#007A8C' : '#F5F1E8';
       ctx.globalAlpha = 0.9;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
@@ -1831,8 +1896,8 @@ function draw() {
   // GPS
   if (ST.gpsPos) {
     const {x,y}=proj(ST.gpsPos.lat,ST.gpsPos.lng);
-    ctx.beginPath(); ctx.arc(x,y,11,0,Math.PI*2); ctx.fillStyle='rgba(0,229,255,0.15)'; ctx.fill();
-    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);  ctx.fillStyle=document.body.classList.contains('light')?'#0044cc':'var(--color-accent)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,11,0,Math.PI*2); ctx.fillStyle='rgba(0,192,216,0.15)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);  ctx.fillStyle=document.body.classList.contains('light')?'#007A8C':'#00C0D8'; ctx.fill();
     ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);  ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
   }
   NOM_drawRoute(ctx);
@@ -1847,7 +1912,7 @@ function drawFlag(lat, lng, isStart, ssLabel) {
   // Pole
   ctx.beginPath();
   const flagLight = document.body.classList.contains('light');
-  ctx.strokeStyle = flagLight ? '#111111' : '#ffffff';
+  ctx.strokeStyle = flagLight ? '#111111' : '#F5F1E8';
   ctx.lineWidth = 1.5;
   ctx.moveTo(x, y);
   ctx.lineTo(x, y - poleH);
@@ -1856,12 +1921,12 @@ function drawFlag(lat, lng, isStart, ssLabel) {
   // Base dot
   ctx.beginPath();
   ctx.arc(x, y, 2.5, 0, Math.PI*2);
-  ctx.fillStyle = flagLight ? '#111111' : '#ffffff';
+  ctx.fillStyle = flagLight ? '#111111' : '#F5F1E8';
   ctx.fill();
 
   if (isStart) {
     // Solid white flag
-    ctx.fillStyle = flagLight ? '#ffffff' : '#ffffff';
+    ctx.fillStyle = flagLight ? '#F5F1E8' : '#F5F1E8';
     ctx.fillRect(x, y - poleH, flagW, flagH);
   } else {
     // Checkered flag — 3x3 grid of squares
@@ -1869,18 +1934,18 @@ function drawFlag(lat, lng, isStart, ssLabel) {
     for (let row = 0; row < 3; row++) {
       for (let col = 0; col < 3; col++) {
         const dark = (row + col) % 2 === 0;
-        ctx.fillStyle = dark ? '#000000' : '#ffffff';
+        ctx.fillStyle = dark ? '#000000' : '#F5F1E8';
         ctx.fillRect(x + col*sq, y - poleH + row*(flagH/3), sq, flagH/3);
       }
     }
     // Border
-    ctx.strokeStyle = flagLight ? '#333' : '#ffffff';
+    ctx.strokeStyle = flagLight ? '#333' : '#F5F1E8';
     ctx.lineWidth = 0.5;
     ctx.strokeRect(x, y - poleH, flagW, flagH);
   }
 
   // SS label next to flag
-  ctx.fillStyle = flagLight ? '#111111' : '#ffffff';
+  ctx.fillStyle = flagLight ? '#111111' : '#F5F1E8';
   ctx.font = 'bold 8px monospace';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
@@ -1890,10 +1955,10 @@ function drawFlag(lat, lng, isStart, ssLabel) {
 function drawMarker(pt) {
   const {x,y}=proj(pt.lat,pt.lng);
   const lm=document.body.classList.contains('light');
-  const col=pt.type==='photo'?(lm?'#003399':'var(--color-accent)'):pt.type==='video'?(lm?'#0055cc':'#0080ff'):pt.type==='both'?(lm?'#006633':'#00ffaa'):(lm?'#334466':'#334466');
+  const col=pt.type==='photo'?(lm?'#007A8C':'#00C0D8'):pt.type==='video'?(lm?'#0055cc':'#4FA8AB'):pt.type==='both'?(lm?'#8A6212':'#D9A441'):(lm?'#3C6E71':'#3C6E71');
   const r=15;
   M.ctx.beginPath(); M.ctx.arc(x,y,r+2,0,Math.PI*2); M.ctx.strokeStyle=col; M.ctx.lineWidth=1.5; M.ctx.globalAlpha=0.3; M.ctx.stroke(); M.ctx.globalAlpha=1.0;
-  M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2); M.ctx.fillStyle='#ffffff'; M.ctx.fill();
+  M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2); M.ctx.fillStyle='#F5F1E8'; M.ctx.fill();
   M.ctx.beginPath(); M.ctx.arc(x,y,r,0,Math.PI*2); M.ctx.strokeStyle=col; M.ctx.lineWidth=2; M.ctx.stroke();
   M.ctx.fillStyle='#000000'; M.ctx.font='bold 10px monospace';
   M.ctx.textAlign='center'; M.ctx.textBaseline='middle';
@@ -2172,10 +2237,10 @@ function openSheet(pt) {
   if(sigEl){
     if(!pt.signal) pt.signal = captureSignal();
     const s = pt.signal;
-    const col = s.level===0?'#ff3355':s.level<=2?'#ffcc44':'#00ff88';
+    const col = s.level===0?'#ff3355':s.level<=2?'#D9A441':'var(--color-text)';
     sigEl.innerHTML = signalIconSVG(s.level)+
       '<span style="font-size:10px;font-weight:600;color:'+col+';letter-spacing:0.5px;font-family:system-ui;">'+s.label+'</span>'+
-      (s.mbps>0?'<span style="font-size:9px;color:#7a8a99;font-family:monospace;"> '+s.mbps+' Mbps</span>':'');
+      (s.mbps>0?'<span style="font-size:9px;color:var(--color-muted);font-family:monospace;"> '+s.mbps+' Mbps</span>':'');
   }
   document.getElementById('notes-ta').value       = pt.notes||'';
 
@@ -2251,7 +2316,7 @@ function renderPhotoGrid(){
   wrap.style.display='block';
   document.getElementById('photo-opts-row').style.display=photos.length<4?'grid':'none';
   grid.innerHTML=photos.map((src,i)=>
-    '<div style="position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:6px;background:#0a1520;">'+
+    '<div style="position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:6px;background:#404040;">'+
     '<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;">'+
     '<button onclick="removePhoto('+i+')" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.75);border:none;border-radius:50%;width:22px;height:22px;color:#ff3355;font-size:15px;cursor:pointer;line-height:1;padding:0;">×</button>'+
     '</div>'
@@ -2295,9 +2360,9 @@ function toggleLinks() {
   SHOW_LINKS = !SHOW_LINKS;
   const btn = document.getElementById('btn-enlaces');
   if(btn){
-    btn.style.color = SHOW_LINKS ? '#ffcc44' : '#7a8a99';
-    btn.style.borderColor = SHOW_LINKS ? 'rgba(255,204,68,0.4)' : 'var(--border-main)';
-    btn.style.background = SHOW_LINKS ? 'rgba(255,204,68,0.08)' : 'var(--bg-topbar)';
+    btn.style.color = SHOW_LINKS ? '#D9A441' : '#9AA8A5';
+    btn.style.borderColor = SHOW_LINKS ? 'rgba(217,164,65,0.4)' : 'var(--border-main)';
+    btn.style.background = SHOW_LINKS ? 'rgba(217,164,65,0.08)' : 'var(--bg-topbar)';
   }
   draw();
   toast(SHOW_LINKS ? 'Enlaces visibles' : 'Enlaces ocultos');
@@ -2547,7 +2612,7 @@ function renderTramoImage(tramo, pts, W, H) {
     }
     ctx.stroke();
     ctx.beginPath();
-    ctx.strokeStyle = '#ffcc44';
+    ctx.strokeStyle = '#D9A441';
     ctx.lineWidth = 5;
     const p0l=toXY(tramo.route[0][0],tramo.route[0][1]);
     ctx.moveTo(p0l.x,p0l.y);
@@ -2555,7 +2620,7 @@ function renderTramoImage(tramo, pts, W, H) {
       const p=toXY(tramo.route[i][0],tramo.route[i][1]);
       ctx.lineTo(p.x,p.y);
     }
-    ctx.shadowColor='rgba(255,204,68,0.6)';
+    ctx.shadowColor='rgba(217,164,65,0.6)';
     ctx.shadowBlur=12;
     ctx.stroke();
     ctx.shadowBlur=0;
@@ -2601,13 +2666,13 @@ function renderTramoImage(tramo, pts, W, H) {
     ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText(label,x,y);
   }
-  if (tramo.start) drawEndpoint(tramo.start.lat, tramo.start.lng, 'S', '#00ff88');
+  if (tramo.start) drawEndpoint(tramo.start.lat, tramo.start.lng, 'S', '#F5F1E8');
   if (tramo.end)   drawEndpoint(tramo.end.lat,   tramo.end.lng,   'F', '#ff4466');
 
   // Draw user points
   pts.forEach(pt => {
     const {x,y} = toXY(pt.lat,pt.lng);
-    const col = pt.type==='photo'?'var(--color-accent)':pt.type==='video'?'#0080ff':pt.type==='both'?'#00ffaa':'#aabbcc';
+    const col = pt.type==='photo'?'#00C0D8':pt.type==='video'?'#4FA8AB':pt.type==='both'?'#D9A441':'#aabbcc';
     const r = 14;
     // Shadow
     ctx.beginPath(); ctx.arc(x+1,y+1,r,0,Math.PI*2);
@@ -2618,7 +2683,7 @@ function renderTramoImage(tramo, pts, W, H) {
     ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
     ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.stroke();
     // Number
-    ctx.fillStyle=document.body.classList.contains('light')?'#0a0a08':'#ffffff'; ctx.font='bold 11px monospace';
+    ctx.fillStyle=document.body.classList.contains('light')?'#0a0a08':'#F5F1E8'; ctx.font='bold 11px monospace';
     ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText(pt.number,x,y);
   });
@@ -2633,7 +2698,7 @@ function renderTramoImage(tramo, pts, W, H) {
     ctx.roundRect(legX,legY,legW,legH,6);
     ctx.fill();
     pts.forEach((pt,i) => {
-      const col=pt.type==='photo'?'var(--color-accent)':pt.type==='video'?'#0080ff':pt.type==='both'?'#00ffaa':'#778899';
+      const col=pt.type==='photo'?'#00C0D8':pt.type==='video'?'#4FA8AB':pt.type==='both'?'#D9A441':'#778899';
       const ty=legY+14+i*lineH;
       ctx.beginPath(); ctx.arc(legX+12,ty,6,0,Math.PI*2);
       ctx.fillStyle=col+'33'; ctx.fill();
@@ -2692,7 +2757,7 @@ async function genPDF(){
     const pts = groups[key].slice(0,20);
     const mapImg = tramoImgs[key]
       ? `<img src="${tramoImgs[key]}" style="width:100%;height:100%;object-fit:contain;display:block;">`
-      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#336677;font-size:12px;">SIN MAPA</div>';
+      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#6F8A8C;font-size:12px;">SIN MAPA</div>';
 
     const allPhotos=[]; pts.forEach(pt=>{ const srcs=pt.photos&&pt.photos.length?pt.photos:(pt.photo?[pt.photo]:[]); srcs.forEach(src=>allPhotos.push({src,num:pt.number})); }); const photos=allPhotos.slice(0,20);
     const n = photos.length;
@@ -2701,15 +2766,15 @@ async function genPDF(){
     const photoGrid = n
       ? `<div style="display:grid;grid-template-columns:repeat(${cols},1fr);grid-template-rows:repeat(${rows},1fr);gap:4px;width:100%;height:100%;">${
           photos.map(p=>`
-            <div style="position:relative;overflow:hidden;border-radius:3px;border:1px solid #1a3040;">
+            <div style="position:relative;overflow:hidden;border-radius:3px;border:1px solid #3C6E71;">
               <img src="${p.src}" style="width:100%;height:100%;object-fit:cover;display:block;">
-              <div style="position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,0.75);color:var(--color-accent);font-size:9px;font-family:monospace;font-weight:700;padding:1px 4px;border-radius:2px;">#${p.num}</div>
+              <div style="position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,0.75);color:#00C0D8;font-size:9px;font-family:monospace;font-weight:700;padding:1px 4px;border-radius:2px;">#${p.num}</div>
             </div>`).join('')
         }</div>`
-      : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#336677;font-size:12px;">SIN FOTOS</div>';
+      : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6F8A8C;font-size:12px;">SIN FOTOS</div>';
 
     const ptInfo = pts.map(pt=>{
-      const col = pt.type==='photo'?'#00a0c8':pt.type==='video'?'#4488ff':pt.type==='both'?'#00cc88':'#556677';
+      const col = pt.type==='photo'?'#0099B0':pt.type==='video'?'#4FA8AB':pt.type==='both'?'#00cc88':'#556677';
       const tl = pt.type==='photo'?'FOTO':pt.type==='video'?'VIDEO':pt.type==='both'?'F+V':'—';
       const dist = (pt.distFromStart!=null) ? `↑${pt.distFromStart}km ↓${pt.distToEnd}km` : '';
       return `<div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0;border-bottom:1px solid #0a2030;">
@@ -2718,19 +2783,19 @@ async function genPDF(){
           <span style="color:${col};font-weight:700;">${tl}</span>
           ${dist?` <span style="color:#4499bb;font-family:monospace;">${dist}</span>`:''}
           ${pt.notes?`<div style="color:#a0b8c8;font-style:italic;">${pt.notes}</div>`:''}
-          <div style="color:#336677;font-family:monospace;">${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)}</div>
-          ${pt.stars ? `<div style="color:#ffcc44;font-size:10px;margin:2px 0;">${'★'.repeat(pt.stars)}${'☆'.repeat(5-pt.stars)}</div>` : ''}
-          ${pt.tags&&pt.tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0;">${pt.tags.map(t=>{const ic=OBS_ICONS[t];return ic?`<div style="display:inline-flex;flex-direction:column;align-items:center;gap:1px;background:rgba(78,205,196,0.06);border:1px solid rgba(0,229,255,0.25);border-radius:5px;padding:3px 4px;"><img src="${ic.src}" style="width:24px;height:18px;"/><span style="font-size:6px;color:var(--color-accent);font-family:monospace;letter-spacing:0.3px;">${ic.label}</span></div>`:`<span style="font-size:7px;color:var(--color-accent);">${t}</span>`}).join('')}</div>` : ''}
-          <a href="geo:${pt.lat.toFixed(6)},${pt.lng.toFixed(6)}" style="color:var(--color-accent);font-size:8px;">📍 Maps.me</a>
+          <div style="color:#6F8A8C;font-family:monospace;">${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)}</div>
+          ${pt.stars ? `<div style="color:#D9A441;font-size:10px;margin:2px 0;">${'★'.repeat(pt.stars)}${'☆'.repeat(5-pt.stars)}</div>` : ''}
+          ${pt.tags&&pt.tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:3px 0;">${pt.tags.map(t=>{const ic=OBS_ICONS[t];return ic?`<div style="display:inline-flex;flex-direction:column;align-items:center;gap:1px;background:rgba(0,192,216,0.06);border:1px solid rgba(0,192,216,0.25);border-radius:5px;padding:3px 4px;"><img src="${ic.src}" style="width:24px;height:18px;"/><span style="font-size:6px;color:#00C0D8;font-family:monospace;letter-spacing:0.3px;">${ic.label}</span></div>`:`<span style="font-size:7px;color:#00C0D8;">${t}</span>`}).join('')}</div>` : ''}
+          <a href="geo:${pt.lat.toFixed(6)},${pt.lng.toFixed(6)}" style="color:#00C0D8;font-size:8px;">📍 Maps.me</a>
         </div>
       </div>`;
     }).join('');
 
     return `<div style="page-break-before:always;width:100%;height:190mm;display:flex;flex-direction:column;padding:12px;box-sizing:border-box;">
-      <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--color-accent);border-bottom:1px solid rgba(78,205,196,0.27);padding-bottom:6px;margin-bottom:8px;flex-shrink:0;">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00C0D8;border-bottom:1px solid #00C0D844;padding-bottom:6px;margin-bottom:8px;flex-shrink:0;">${key} · ${pts.length} punto${pts.length!==1?'s':''}</div>
       <div style="display:flex;gap:10px;flex:1;min-height:0;">
         <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;">
-          <div style="height:85mm;flex-shrink:0;background:#060d14;border:1px solid #1a3040;border-radius:6px;overflow:hidden;">${mapImg}</div>
+          <div style="height:85mm;flex-shrink:0;background:#353535;border:1px solid #3C6E71;border-radius:6px;overflow:hidden;">${mapImg}</div>
           <div style="flex:1;min-height:0;overflow:hidden;">${photoGrid}</div>
         </div>
         <div style="width:180px;flex-shrink:0;overflow-y:auto;">${ptInfo}</div>
@@ -2764,16 +2829,16 @@ async function genPDF(){
   --bg-roads: rgba(0,0,0,0.88);
   --bg-obs: #0a1520;
   --bg-map: #060d14;
-  --border-main: var(--border-main);
-  --border-card: var(--border-main);
-  --color-accent: var(--color-accent);
+  --border-main: #0a2530;
+  --border-card: #0a2530;
+  --color-accent: #00e5ff;
   --color-text: #ffffff;
   --color-muted: #4a8898;
   --color-dim: #1a5a6a;
   --color-sub: #c8e8f0;
-  --color-handle: var(--border-main);
+  --color-handle: #0a2530;
   --color-grid: rgba(255,255,255,0.04);
-  --color-route: var(--color-accent);
+  --color-route: #00e5ff;
   --roseta-bg: rgba(0,0,0,0.5);
 }
 body.light {
@@ -2806,11 +2871,11 @@ body.light {
     @page{size:A4 landscape;margin:6mm;}
     body{background:#0a0e14;color:#c8dce8;font-family:sans-serif;}
     .cover{padding:24px;}
-    h1{font-size:28px;letter-spacing:4px;color:var(--color-accent);text-transform:uppercase;margin-bottom:4px;}
+    h1{font-size:28px;letter-spacing:4px;color:#00e5ff;text-transform:uppercase;margin-bottom:4px;}
     h2{font-size:10px;color:#336677;letter-spacing:2px;margin-bottom:16px;}
     .stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
     .stat{background:#0f1a24;border:1px solid #1a3040;border-radius:6px;padding:8px 12px;}
-    .stat-n{font-size:18px;font-weight:700;color:var(--color-accent);font-family:monospace;}
+    .stat-n{font-size:18px;font-weight:700;color:#00e5ff;font-family:monospace;}
     .stat-l{font-size:8px;color:#336677;text-transform:uppercase;letter-spacing:2px;}
     .btn-row{display:flex;gap:10px;margin-bottom:8px;}
     @media print{.btn-row{display:none;}}
@@ -2821,7 +2886,6 @@ body.light .tramo-panel-hdr { color: #333328 !important; }
 body.light .topbar-title { color: #003399 !important; }
 body.light .sh-num { color: #003399 !important; }
 body.light .fl { color: #003399 !important; }
-body.light .sh-tramo-tag { border-color: #003399 !important; color: #003399 !important; }
 body.light .dist-pill span { color: #003399 !important; }
 body.light .dist-pill { color: #333328 !important; background: #e8e8e0 !important; border-color: #8a8a7a !important; }
 body.light .notes-ta { color: #0a0a08 !important; background: #f0f0ea !important; }
@@ -2835,16 +2899,8 @@ body.light .pt-num { color: #0044cc !important; }
 body.light .odo-val { color: #0044cc !important; text-shadow: none !important; }
 body.light .rec-t { color: #0044cc !important; }
 body.light .toast { background: #ffffff !important; color: #0044cc !important; border-color: #8a8a7a !important; }
-body.light .type-chip.sp { border-color: #0044cc !important; color: #0044cc !important; background: #e8eeff !important; }
-body.light .type-chip.sv { border-color: #0055aa !important; color: #0055aa !important; background: #e8f0ff !important; }
-body.light .type-chip.sb { border-color: #006633 !important; color: #006633 !important; background: #e8fff0 !important; }
-body.light .obs-btn { background: #e8e8e0 !important; border-color: #8a8a7a !important; }
 body.light .obs-btn svg { color: #333328 !important; }
 body.light .obs-btn span { color: #555548 !important; }
-body.light .obs-btn.sel { background: rgba(0,68,204,0.1) !important; border-color: #0044cc !important; }
-body.light .obs-btn.sel svg { color: #0044cc !important; }
-body.light .obs-btn.sel span { color: #0044cc !important; }
-body.light #mark-btn { background: #ffffff !important; border-color: #0044cc !important; color: #0044cc !important; }
 body.light .nav-btn svg { color: #333328 !important; }
 body.light .nav-btn { color: #333328 !important; }
 body.light .back-btn { color: #0a0a08 !important; }
@@ -2856,13 +2912,12 @@ body.light .pt-note { color: #0a0a08 !important; }
 body.light .tag-n { color: #333328 !important; border-color: #8a8a7a !important; }
 body.light .scr-hdr { background: rgba(255,255,253,0.97) !important; }
 body.light .save-bar { background: rgba(0,150,60,0.08) !important; color: #006633 !important; }
-body.light .roads-btn.done { color: #006633 !important; border-color: #00884488 !important; }
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
 /* ════════════════════════════════════════
    NOCTURNAL NAVIGATOR — Design System v4.12
-   Space Grotesk · #131313 · var(--color-accent)
+   Space Grotesk · #131313 · #00e5ff
 ════════════════════════════════════════ */
 
 /* Base */
@@ -2911,10 +2966,10 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
 #bottombar .nav-btn:has(span) { }
 #tab-tramos {
   background:rgba(0,229,255,0.12) !important;
-  color:var(--color-accent) !important;
+  color:#00e5ff !important;
 }
-#tab-tramos svg { color:var(--color-accent) !important; stroke:var(--color-accent) !important; }
-#tab-tramos span { color:var(--color-accent) !important; }
+#tab-tramos svg { color:#00e5ff !important; stroke:#00e5ff !important; }
+#tab-tramos span { color:#00e5ff !important; }
 
 /* Mark btn */
 
@@ -2922,7 +2977,7 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
 /* Sheet */
 #sheet {
   background:#1c1b1b !important;
-  border-top:2px solid var(--color-accent) !important;
+  border-top:2px solid #00e5ff !important;
   border-radius:12px 12px 0 0 !important;
   box-shadow:0 -8px 32px rgba(0,0,0,0.8) !important;
 }
@@ -2931,17 +2986,17 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
   font-family:'Space Grotesk',sans-serif !important;
   font-size:18px !important;
   font-weight:700 !important;
-  color:var(--color-accent) !important;
-  text-shadow:0 0 12px rgba(78,205,196,0.3) !important;
+  color:#00e5ff !important;
+  text-shadow:0 0 12px rgba(0,229,255,0.3) !important;
 }
 .sh-tramo-tag {
   background:rgba(0,229,255,0.08) !important;
-  border:1px solid rgba(78,205,196,0.2) !important;
+  border:1px solid rgba(0,229,255,0.2) !important;
   border-radius:8px !important;
   font-family:'Space Grotesk',sans-serif !important;
   font-size:10px !important;
   letter-spacing:1px !important;
-  color:var(--color-accent) !important;
+  color:#00e5ff !important;
 }
 .sh-coord {
   font-family:'Space Grotesk',monospace !important;
@@ -2983,7 +3038,7 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
 }
 .type-chip svg { color:#8a9aaa !important; }
 .type-chip.sel {
-  background:var(--color-accent) !important;
+  background:#00e5ff !important;
   border:none !important;
 }
 .type-chip.sel svg { color:#131313 !important; }
@@ -3015,10 +3070,10 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
 }
 .obs-btn.sel {
   background:#1c1b1b !important;
-  border:1.5px solid var(--color-accent) !important;
+  border:1.5px solid #00e5ff !important;
 }
-.obs-btn.sel svg { color:var(--color-accent) !important; }
-.obs-btn.sel span { color:var(--color-accent) !important; }
+.obs-btn.sel svg { color:#00e5ff !important; }
+.obs-btn.sel span { color:#00e5ff !important; }
 
 /* Stars */
 .star {
@@ -3044,7 +3099,7 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
   padding:12px 16px !important;
 }
 .btn-save {
-  background:var(--color-accent) !important;
+  background:#00e5ff !important;
   color:#131313 !important;
   border:none !important;
   border-radius:8px !important;
@@ -3070,8 +3125,8 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
   font-family:'Space Grotesk',monospace !important;
   font-size:28px !important;
   font-weight:700 !important;
-  color:var(--color-accent) !important;
-  text-shadow:0 0 16px rgba(78,205,196,0.4) !important;
+  color:#00e5ff !important;
+  text-shadow:0 0 16px rgba(0,229,255,0.4) !important;
   letter-spacing:0 !important;
 }
 .odo-unit {
@@ -3101,16 +3156,16 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
 /* Nomade button */
 .nomade-btn {
   background:#1c1b1b !important;
-  border:1.5px solid var(--color-accent) !important;
+  border:1.5px solid #00e5ff !important;
   border-radius:24px !important;
-  box-shadow:0 0 16px rgba(78,205,196,0.2) !important;
+  box-shadow:0 0 16px rgba(0,229,255,0.2) !important;
 }
 .nomade-btn span {
   font-family:'Space Grotesk',sans-serif !important;
   font-size:12px !important;
   font-weight:700 !important;
   letter-spacing:2px !important;
-  color:var(--color-accent) !important;
+  color:#00e5ff !important;
 }
 
 /* Toast */
@@ -3182,8 +3237,8 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
       <div class="stat"><div class="stat-n">${ST.points.filter(p=>p.photo).length}</div><div class="stat-l">Con foto</div></div>
     </div>
     <div class="btn-row">
-      <button onclick="window.print()" style="background:var(--color-accent);color:#000;border:none;border-radius:6px;padding:10px 24px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:2px;">IMPRIMIR / GUARDAR PDF</button>
-      <button onclick="window.close()" style="background:transparent;color:var(--color-accent);border:1px solid rgba(78,205,196,0.27);border-radius:6px;padding:10px 24px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:2px;">CERRAR</button>
+      <button onclick="window.print()" style="background:#00C0D8;color:#000;border:none;border-radius:6px;padding:10px 24px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:2px;">IMPRIMIR / GUARDAR PDF</button>
+      <button onclick="window.close()" style="background:transparent;color:#00C0D8;border:1px solid #00C0D844;border-radius:6px;padding:10px 24px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:2px;">CERRAR</button>
     </div>
   </div>
   ${pages}
@@ -3191,25 +3246,25 @@ body { background:#131313 !important; font-family:'Space Grotesk',-apple-system,
 
 <!-- ══ NÓMADE ══ -->
 <div id="nom-pin" style="display:none;position:fixed;z-index:999;transform:translate(-50%,-100%);pointer-events:all;">
-  <div style="background:#060d14;border:1.5px solid #00ffaa;border-radius:10px;padding:8px 14px;text-align:center;box-shadow:0 0 16px rgba(0,255,170,0.3);">
-    <div id="nom-pin-coords" style="color:#4a8898;font-size:8px;letter-spacing:1px;margin-bottom:5px;"></div>
-    <button onclick="NOM_navigate()" style="background:#00ffaa;color:#000;border:none;border-radius:7px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;">&#x1F9ED; MIGRAR AQU&#205;</button>
+  <div style="background:#353535;border:1.5px solid #D9A441;border-radius:10px;padding:8px 14px;text-align:center;box-shadow:0 0 16px rgba(217,164,65,0.3);">
+    <div id="nom-pin-coords" style="color:#9AA8A5;font-size:8px;letter-spacing:1px;margin-bottom:5px;"></div>
+    <button onclick="NOM_navigate()" style="background:#D9A441;color:#000;border:none;border-radius:7px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;">&#x1F9ED; MIGRAR AQU&#205;</button>
   </div>
-  <div style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid #00ffaa;margin:0 auto;"></div>
+  <div style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid #D9A441;margin:0 auto;"></div>
 </div>
-<div id="nom-bar" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;z-index:190;background:#060d14;border:1.5px solid #00ffaa;border-radius:12px;padding:10px 14px;">
+<div id="nom-bar" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;z-index:190;background:#353535;border:1.5px solid #D9A441;border-radius:12px;padding:10px 14px;">
   <div style="display:flex;align-items:center;gap:10px;">
     <div id="nom-bar-arrow" style="font-size:28px;min-width:36px;text-align:center;">&#x2191;</div>
     <div style="flex:1;">
-      <div id="nom-bar-instr" style="color:#ffffff;font-size:12px;font-weight:700;">Calculando...</div>
-      <div id="nom-bar-dist-step" style="color:#00ffaa;font-size:10px;margin-top:1px;font-family:monospace;"></div>
+      <div id="nom-bar-instr" style="color:#F5F1E8;font-size:12px;font-weight:700;">Calculando...</div>
+      <div id="nom-bar-dist-step" style="color:#D9A441;font-size:10px;margin-top:1px;font-family:monospace;"></div>
     </div>
     <button onclick="NOM_stop()" style="background:transparent;border:1px solid #ff3355;border-radius:8px;padding:6px 10px;color:#ff3355;font-size:9px;cursor:pointer;letter-spacing:1px;flex-shrink:0;">&#x2715; SALIR DEL MODO</button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;border-top:1px solid var(--border-main);padding-top:8px;">
-    <div style="text-align:center;"><div id="nom-bar-dist" style="color:#00ffaa;font-size:16px;font-weight:700;font-family:monospace;">--</div><div style="color:#4a8898;font-size:7px;letter-spacing:1px;">DISTANCIA</div></div>
-    <div style="text-align:center;"><div id="nom-bar-eta" style="color:#00ffaa;font-size:16px;font-weight:700;font-family:monospace;">--:--</div><div style="color:#4a8898;font-size:7px;letter-spacing:1px;">LLEGADA</div></div>
-    <div style="text-align:center;"><div id="nom-bar-time" style="color:#00ffaa;font-size:16px;font-weight:700;font-family:monospace;">--</div><div style="color:#4a8898;font-size:7px;letter-spacing:1px;">TIEMPO</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;border-top:1px solid #3C6E71;padding-top:8px;">
+    <div style="text-align:center;"><div id="nom-bar-dist" style="color:#D9A441;font-size:16px;font-weight:700;font-family:monospace;">--</div><div style="color:#9AA8A5;font-size:7px;letter-spacing:1px;">DISTANCIA</div></div>
+    <div style="text-align:center;"><div id="nom-bar-eta" style="color:#D9A441;font-size:16px;font-weight:700;font-family:monospace;">--:--</div><div style="color:#9AA8A5;font-size:7px;letter-spacing:1px;">LLEGADA</div></div>
+    <div style="text-align:center;"><div id="nom-bar-time" style="color:#D9A441;font-size:16px;font-weight:700;font-family:monospace;">--</div><div style="color:#9AA8A5;font-size:7px;letter-spacing:1px;">TIEMPO</div></div>
   </div>
 </div>
 </body></html>`);
@@ -3418,7 +3473,7 @@ function buildTramoPanel() {
   container.innerHTML = sorted.map(({t, i}) => {
     const pts = ST.points.filter(p => p.tramo === t.name).length;
     return `<div class="tramo-panel-item" id="tpi-${i}" onclick="selectTramo(${i})">
-      <div class="tramo-panel-name" style="color:#ffffff;">${t.name}</div>
+      <div class="tramo-panel-name" style="color:#F5F1E8;">${t.name}</div>
       <div class="tramo-panel-pts">${pts} pto${pts!==1?'s':''}</div>
     </div>`;
   }).join('');
@@ -3651,8 +3706,8 @@ function toggleWeather() {
   const btn   = document.getElementById('weather-btn');
   const open  = panel.style.display === 'flex';
   panel.style.display = open ? 'none' : 'flex';
-  btn.style.color      = open ? '#ffcc44' : '#000';
-  btn.style.background = open ? 'transparent' : '#ffcc44';
+  btn.style.color      = open ? '#D9A441' : '#000';
+  btn.style.background = open ? 'transparent' : '#D9A441';
   if(!open && !WX.hourly.length) refreshWeather();
 }
 
@@ -3706,12 +3761,12 @@ function renderForecastStrip() {
   items.innerHTML = next3.map(h => {
     const icon = h.rain > 2 ? '🌧' : h.rain > 0.5 ? '🌦' : h.wind > 40 ? '💨' : '☀';
     return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;">' +
-      '<span style="font-family:monospace;font-size:8px;color:#7a8a99;">' + String(h.hour).padStart(2,'0') + ':00</span>' +
+      '<span style="font-family:monospace;font-size:8px;color:#9AA8A5;">' + String(h.hour).padStart(2,'0') + ':00</span>' +
       '<span style="font-size:14px;line-height:1.2;">' + icon + '</span>' +
       '<span style="font-size:11px;font-weight:700;color:#f0f4f8;">' + h.temp + '°</span>' +
-      '<span style="font-family:monospace;font-size:8px;color:var(--color-accent);">' + h.wind + 'km/h</span>' +
+      '<span style="font-family:monospace;font-size:8px;color:#00C0D8;">' + h.wind + 'km/h</span>' +
       '</div>';
-  }).join('<div style="width:1px;height:36px;background:#2a2d32;margin:0 2px;"></div>');
+  }).join('<div style="width:1px;height:36px;background:#3C6E71;margin:0 2px;"></div>');
 }
 
 function renderHours() {
@@ -3719,7 +3774,7 @@ function renderHours() {
   if(!el) return;
   const nowH = new Date().getHours();
   if(!WX.hourly.length){
-    el.innerHTML = '<div style="padding:12px;color:#4a8898;font-size:8px;text-align:center;">Sin conexión</div>';
+    el.innerHTML = '<div style="padding:12px;color:#9AA8A5;font-size:8px;text-align:center;">Sin conexión</div>';
     return;
   }
   // Render 3-day summary
@@ -3730,28 +3785,28 @@ function renderHours() {
     d3el.innerHTML = WX.daily.map((d,i) => {
       const name = i===0 ? 'HOY' : i===1 ? 'MAÑANA' : dayNames[d.date.getDay()].toUpperCase();
       const dateStr = d.date.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
-      return `<div style="border-bottom:1px solid rgba(26,48,64,0.4);">
+      return `<div style="border-bottom:1px solid rgba(60,110,113,0.4);">
         <div onclick="toggleDay(${i})" style="display:flex;justify-content:space-between;align-items:center;
           padding:7px 10px;cursor:pointer;">
           <div>
-            <span style="color:#ffcc44;font-size:9px;font-weight:bold;letter-spacing:1px;">${name}</span>
-            <span style="color:#4a8898;font-size:7.5px;margin-left:6px;">${dateStr}</span>
+            <span style="color:#D9A441;font-size:9px;font-weight:bold;letter-spacing:1px;">${name}</span>
+            <span style="color:#9AA8A5;font-size:7.5px;margin-left:6px;">${dateStr}</span>
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
-            <span style="color:#ffffff;font-size:11px;font-weight:bold;">${d.tmax}°</span>
-            <span style="color:#4a8898;font-size:10px;">${d.tmin}°</span>
-            <span style="color:#4a8898;font-size:10px;" id="day-arrow-${i}">›</span>
+            <span style="color:#F5F1E8;font-size:11px;font-weight:bold;">${d.tmax}°</span>
+            <span style="color:#9AA8A5;font-size:10px;">${d.tmin}°</span>
+            <span style="color:#9AA8A5;font-size:10px;" id="day-arrow-${i}">›</span>
           </div>
         </div>
         <div id="day-detail-${i}" style="display:${i===0?'block':'none'};padding:0 10px 8px;">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-            <div style="background:rgba(0,229,255,0.05);border:1px solid var(--border-main);border-radius:6px;padding:6px 8px;">
-              <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">LLUVIA</div>
-              <div style="color:#00a0c8;font-size:14px;font-weight:bold;margin-top:2px;">${d.rain}<span style="font-size:9px;color:#4a8898;"> mm</span></div>
+            <div style="background:rgba(0,192,216,0.05);border:1px solid #3C6E71;border-radius:6px;padding:6px 8px;">
+              <div style="color:#9AA8A5;font-size:7px;letter-spacing:1px;">LLUVIA</div>
+              <div style="color:#0099B0;font-size:14px;font-weight:bold;margin-top:2px;">${d.rain}<span style="font-size:9px;color:#9AA8A5;"> mm</span></div>
             </div>
-            <div style="background:rgba(0,229,255,0.05);border:1px solid var(--border-main);border-radius:6px;padding:6px 8px;">
-              <div style="color:#4a8898;font-size:7px;letter-spacing:1px;">VIENTO</div>
-              <div style="color:#c8dce8;font-size:14px;font-weight:bold;margin-top:2px;">${d.wind}<span style="font-size:9px;color:#4a8898;"> km/h</span></div>
+            <div style="background:rgba(0,192,216,0.05);border:1px solid #3C6E71;border-radius:6px;padding:6px 8px;">
+              <div style="color:#9AA8A5;font-size:7px;letter-spacing:1px;">VIENTO</div>
+              <div style="color:#D8D0C0;font-size:14px;font-weight:bold;margin-top:2px;">${d.wind}<span style="font-size:9px;color:#9AA8A5;"> km/h</span></div>
             </div>
           </div>
         </div>
@@ -3763,14 +3818,14 @@ function renderHours() {
   }
   el.innerHTML = WX.hourly.map(h => {
     const cur = h.hour === nowH;
-    const s = cur ? 'background:rgba(255,204,68,0.07);' : '';
-    const tc = cur ? '#ffcc44' : '';
+    const s = cur ? 'background:rgba(217,164,65,0.07);' : '';
+    const tc = cur ? '#D9A441' : '';
     return `<div style="display:grid;grid-template-columns:30px 1fr 1fr 1fr;padding:5px 8px;
-              align-items:center;border-bottom:1px solid rgba(26,48,64,0.5);${s}">
-      <span style="color:${tc||'#4a8898'};font-size:9px;">${h.hour.toString().padStart(2,'0')}h</span>
+              align-items:center;border-bottom:1px solid rgba(60,110,113,0.5);${s}">
+      <span style="color:${tc||'#9AA8A5'};font-size:9px;">${h.hour.toString().padStart(2,'0')}h</span>
       <span style="color:${tc||'#fff'};font-size:11px;font-weight:bold;text-align:center;">${h.temp}°</span>
-      <span style="color:#00a0c8;font-size:9px;text-align:center;">${h.rain}</span>
-      <span style="color:#c8dce8;font-size:9px;text-align:center;">${h.wind}</span>
+      <span style="color:#0099B0;font-size:9px;text-align:center;">${h.rain}</span>
+      <span style="color:#D8D0C0;font-size:9px;text-align:center;">${h.wind}</span>
     </div>`;
   }).join('');
 }
@@ -4092,8 +4147,8 @@ function NOM_drawRoute(ctx){
   ctx.save();
   ctx.beginPath();
   NOM.routeCoords.forEach(function(p,i){ const s=proj(p[0],p[1]); i===0?ctx.moveTo(s.x,s.y):ctx.lineTo(s.x,s.y); });
-  ctx.strokeStyle='#00ffaa'; ctx.lineWidth=5; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.globalAlpha=0.75; ctx.stroke();
-  if(NOM.dest){ const dp=proj(NOM.dest.lat,NOM.dest.lng); ctx.beginPath(); ctx.arc(dp.x,dp.y,10,0,Math.PI*2); ctx.fillStyle='rgba(0,255,170,0.2)'; ctx.fill(); ctx.beginPath(); ctx.arc(dp.x,dp.y,5,0,Math.PI*2); ctx.fillStyle='#00ffaa'; ctx.fill(); ctx.globalAlpha=0.7; ctx.strokeStyle='#00ffaa'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(dp.x,dp.y,14,0,Math.PI*2); ctx.stroke(); }
+  ctx.strokeStyle='#D9A441'; ctx.lineWidth=5; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.globalAlpha=0.75; ctx.stroke();
+  if(NOM.dest){ const dp=proj(NOM.dest.lat,NOM.dest.lng); ctx.beginPath(); ctx.arc(dp.x,dp.y,10,0,Math.PI*2); ctx.fillStyle='rgba(217,164,65,0.2)'; ctx.fill(); ctx.beginPath(); ctx.arc(dp.x,dp.y,5,0,Math.PI*2); ctx.fillStyle='#D9A441'; ctx.fill(); ctx.globalAlpha=0.7; ctx.strokeStyle='#D9A441'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(dp.x,dp.y,14,0,Math.PI*2); ctx.stroke(); }
   ctx.globalAlpha=1.0; ctx.restore();
 }
 
@@ -4182,20 +4237,20 @@ function MIG_resizeCanvas() {
 function MIG_buildLists() {
   function makeItem(name, sub, onTap, container) {
     const d = document.createElement('div');
-    d.style.cssText = 'background:#0a1520;border:1px solid var(--border-main);border-radius:10px;padding:13px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;';
-    d.ontouchstart = function(){ d.style.background='rgba(78,205,196,0.06)'; d.style.borderColor='rgba(78,205,196,0.3)'; };
-    d.ontouchend   = function(){ d.style.background='#0a1520'; d.style.borderColor='var(--border-main)'; onTap(); };
+    d.style.cssText = 'background:#404040;border:1px solid #3C6E71;border-radius:10px;padding:13px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;';
+    d.ontouchstart = function(){ d.style.background='rgba(0,192,216,0.06)'; d.style.borderColor='rgba(0,192,216,0.3)'; };
+    d.ontouchend   = function(){ d.style.background='#404040'; d.style.borderColor='#3C6E71'; onTap(); };
     d.onclick      = onTap;
     const info = document.createElement('div');
     const t1 = document.createElement('div');
     t1.style.cssText = 'color:#fff;font-size:14px;font-weight:700;letter-spacing:0.3px;';
     t1.textContent = name;
     const t2 = document.createElement('div');
-    t2.style.cssText = 'color:#4a8898;font-size:9px;margin-top:3px;';
+    t2.style.cssText = 'color:#9AA8A5;font-size:9px;margin-top:3px;';
     t2.textContent = sub;
     info.appendChild(t1); info.appendChild(t2);
     const arr = document.createElement('div');
-    arr.style.cssText = 'color:var(--color-accent);font-size:20px;';
+    arr.style.cssText = 'color:#00C0D8;font-size:20px;';
     arr.textContent = '›';
     d.appendChild(info); d.appendChild(arr);
     container.appendChild(d);
@@ -4215,7 +4270,7 @@ function MIG_buildLists() {
   if(pl) {
     pl.innerHTML = '';
     if(!ST.points.length) {
-      pl.innerHTML = '<div style="color:#4a8898;font-size:9px;text-align:center;padding:16px;">Sin puntos marcados</div>';
+      pl.innerHTML = '<div style="color:#9AA8A5;font-size:9px;text-align:center;padding:16px;">Sin puntos marcados</div>';
       return;
     }
     const tagL = {'curva-der':'CD','curva-izq':'CI','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P','guadal':'Gu','multipunto':'MP','cruce':'Cr','contraluz':'CL','publico':'Pub'};
@@ -4333,10 +4388,10 @@ function MIG_onGPS(lat, lng, spd) {
   const spdEl = document.getElementById('mig-speed');
   if(spdEl) {
     spdEl.textContent = spd;
-    spdEl.style.color = spd > 110 ? '#ffcc44' : '#00ff88';
+    spdEl.style.color = spd > 110 ? '#D9A441' : '#F5F1E8';
     spdEl.style.textShadow = spd > 110
-      ? '0 0 12px rgba(255,204,68,0.6)'
-      : '0 0 12px rgba(0,255,136,0.4)';
+      ? '0 0 12px rgba(217,164,65,0.6)'
+      : '0 0 12px rgba(245,241,232,0.4)';
   }
   if(!MIG.active || !MIG.dest) return;
 
@@ -4380,12 +4435,12 @@ function MIG_draw() {
   const W = cvs.width/dpr, H = cvs.height/dpr;
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.fillStyle = '#060d14';
+  ctx.fillStyle = '#353535';
   ctx.fillRect(0, 0, W, H);
 
   const gps = ST.gpsPos;
   if(!gps || !MIG.dest) {
-    ctx.fillStyle = '#4a8898';
+    ctx.fillStyle = '#9AA8A5';
     ctx.font = '11px monospace';
     ctx.textAlign = 'center';
     ctx.fillText('Esperando GPS...', W/2, H/2);
@@ -4422,7 +4477,7 @@ function MIG_draw() {
       const pt = proj(p[0], p[1]);
       i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
     });
-    ctx.strokeStyle = 'rgba(0,255,136,0.18)';
+    ctx.strokeStyle = 'rgba(245,241,232,0.18)';
     ctx.lineWidth = 10; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
     ctx.stroke();
     ctx.beginPath();
@@ -4430,41 +4485,41 @@ function MIG_draw() {
       const pt = proj(p[0], p[1]);
       i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
     });
-    ctx.strokeStyle = '#00ff88';
+    ctx.strokeStyle = '#F5F1E8';
     ctx.lineWidth = 3.5;
     ctx.stroke();
   } else if(MIG.dest) {
     // Straight line fallback
     const dp = proj(MIG.dest.lat, MIG.dest.lng);
     ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(dp.x, dp.y);
-    ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2;
+    ctx.strokeStyle = '#F5F1E8'; ctx.lineWidth = 2;
     ctx.setLineDash([8,6]); ctx.stroke(); ctx.setLineDash([]);
   }
 
   // Destination
   const dp = proj(MIG.dest.lat, MIG.dest.lng);
   ctx.beginPath(); ctx.arc(dp.x, dp.y, 10, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(0,255,136,0.12)'; ctx.fill();
+  ctx.fillStyle = 'rgba(245,241,232,0.12)'; ctx.fill();
   ctx.beginPath(); ctx.arc(dp.x, dp.y, 5, 0, Math.PI*2);
-  ctx.fillStyle = '#00ff88'; ctx.fill();
-  ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 1.5;
+  ctx.fillStyle = '#F5F1E8'; ctx.fill();
+  ctx.strokeStyle = '#F5F1E8'; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.arc(dp.x, dp.y, 13, 0, Math.PI*2); ctx.stroke();
   // Dest label
   ctx.font = 'bold 8px monospace';
   const lw = ctx.measureText(MIG.dest.name).width + 10;
   ctx.fillStyle = 'rgba(0,0,0,0.88)';
   ctx.fillRect(dp.x - lw/2, dp.y - 26, lw, 14);
-  ctx.fillStyle = '#00ff88';
+  ctx.fillStyle = '#F5F1E8';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(MIG.dest.name, dp.x, dp.y - 19);
 
   // GPS dot
   ctx.beginPath(); ctx.arc(cx, cy, 16, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(0,229,255,0.07)'; ctx.fill();
+  ctx.fillStyle = 'rgba(0,192,216,0.07)'; ctx.fill();
   ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(78,205,196,0.2)'; ctx.fill();
+  ctx.fillStyle = 'rgba(0,192,216,0.2)'; ctx.fill();
   ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI*2);
-  ctx.fillStyle = 'var(--color-accent)'; ctx.fill();
+  ctx.fillStyle = '#00C0D8'; ctx.fill();
 
   // North
   ctx.fillStyle = 'rgba(255,255,255,0.2)';
@@ -4483,22 +4538,22 @@ function MIG_drawRoute(ctx) {
   if(MIG.routeCoords && MIG.routeCoords.length > 1){
     ctx.beginPath();
     MIG.routeCoords.forEach(function(p,i){var s=proj(p[0],p[1]);i===0?ctx.moveTo(s.x,s.y):ctx.lineTo(s.x,s.y);});
-    ctx.strokeStyle='rgba(0,255,136,0.15)';ctx.lineWidth=14;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+    ctx.strokeStyle='rgba(245,241,232,0.15)';ctx.lineWidth=14;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
     ctx.beginPath();
     MIG.routeCoords.forEach(function(p,i){var s=proj(p[0],p[1]);i===0?ctx.moveTo(s.x,s.y):ctx.lineTo(s.x,s.y);});
-    ctx.strokeStyle='rgba(0,255,136,0.35)';ctx.lineWidth=6;ctx.stroke();
+    ctx.strokeStyle='rgba(245,241,232,0.35)';ctx.lineWidth=6;ctx.stroke();
     ctx.beginPath();
     MIG.routeCoords.forEach(function(p,i){var s=proj(p[0],p[1]);i===0?ctx.moveTo(s.x,s.y):ctx.lineTo(s.x,s.y);});
-    ctx.strokeStyle='#00ff88';ctx.lineWidth=3.5;ctx.stroke();
+    ctx.strokeStyle='#F5F1E8';ctx.lineWidth=3.5;ctx.stroke();
   }
   if(MIG.dest){
     var dp=proj(MIG.dest.lat,MIG.dest.lng);
-    ctx.beginPath();ctx.arc(dp.x,dp.y,16,0,Math.PI*2);ctx.strokeStyle='rgba(0,255,136,0.25)';ctx.lineWidth=2;ctx.stroke();
-    ctx.beginPath();ctx.arc(dp.x,dp.y,6,0,Math.PI*2);ctx.fillStyle='#00ff88';ctx.fill();
+    ctx.beginPath();ctx.arc(dp.x,dp.y,16,0,Math.PI*2);ctx.strokeStyle='rgba(245,241,232,0.25)';ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.arc(dp.x,dp.y,6,0,Math.PI*2);ctx.fillStyle='#F5F1E8';ctx.fill();
     ctx.font='bold 9px monospace';
     var lw=ctx.measureText(MIG.dest.name).width+12;
     ctx.fillStyle='rgba(0,20,10,0.9)';ctx.fillRect(dp.x-lw/2,dp.y-30,lw,16);
-    ctx.fillStyle='#00ff88';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='#F5F1E8';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(MIG.dest.name,dp.x,dp.y-22);
   }
   ctx.restore();
@@ -4520,8 +4575,8 @@ function captureSignal() {
   return {level:2, label:'ONLINE', mbps};
 }
 function signalIconSVG(level){
-  const c0='#2a2d32';
-  const col=level===0?'#ff3355':level===1?'#ffcc44':level===2?'#ffcc44':'#00ff88';
+  const c0='#3C6E71';
+  const col=level===0?'#ff3355':level===1?'#D9A441':level===2?'#D9A441':(document.body.classList.contains('light')?'#1F2423':'#F5F1E8');
   const b=[level>=1?col:c0,level>=2?col:c0,level>=3?col:c0,level>=3?col:c0];
   return '<svg width="18" height="14" viewBox="0 0 20 16">'+
     '<rect x="0" y="11" width="4" height="5" rx="1" fill="'+b[0]+'"/>'+
@@ -4537,11 +4592,11 @@ function signalIconSVG(level){
 const I18N = {
   es: {
     // Screen load
-    tagline: 'Registro de tramos<br><span style="color:var(--color-accent);">para producción.</span>',
+    tagline: 'Registro de tramos<br><span style="color:#00C0D8;">para producción.</span>',
     desc: 'Documentá cada punto del recorrido con coordenadas precisas, fotos de referencia y condiciones del terreno. Exportá en PDF o KMZ para coordinación en carrera.',
-    btnKmz: 'CARGAR KMZ',
-    btnResume: 'CONTINUAR SESIÓN',
-    btnInstall: '⊕ INSTALAR APP',
+    btnKmz: 'Cargar KMZ',
+    btnResume: 'Continuar sesión',
+    btnInstall: '⊕ Instalar app',
     gpsLabel: 'SISTEMA GPS:',
     gpsBuscando: 'BUSCANDO',
     precision: 'PRECISIÓN',
@@ -4553,7 +4608,7 @@ const I18N = {
     // Odometer
     recorrido: 'RECORRIDO', velocidad: 'VELOCIDAD', desde: 'DESDE #',
     // Sheet
-    punto: 'PUNTO #', volver: 'VOLVER',
+    punto: 'PUNTO #', volver: 'Volver',
     largada: 'largada', llegada: 'llegada',
     tipoPunto: 'Tipo de punto',
     fotoRef: 'Foto de referencia',
@@ -4595,11 +4650,11 @@ const I18N = {
     listo: 'LISTO',
   },
   en: {
-    tagline: 'Stage tracking<br><span style="color:var(--color-accent);">for production.</span>',
+    tagline: 'Stage tracking<br><span style="color:#00C0D8;">for production.</span>',
     desc: 'Document each point on the route with precise coordinates, reference photos and terrain conditions. Export to PDF or KMZ for race coordination.',
-    btnKmz: 'LOAD KMZ',
-    btnResume: 'CONTINUE SESSION',
-    btnInstall: '⊕ INSTALL APP',
+    btnKmz: 'Load KMZ',
+    btnResume: 'Continue session',
+    btnInstall: '⊕ Install app',
     gpsLabel: 'GPS SYSTEM:',
     gpsBuscando: 'SEARCHING',
     precision: 'ACCURACY',
@@ -4607,7 +4662,7 @@ const I18N = {
     home: 'HOME', tramos: 'STAGES', spots: 'SPOTS', export: 'EXPORT',
     caminos: 'ROADS',
     recorrido: 'DISTANCE', velocidad: 'SPEED', desde: 'FROM #',
-    punto: 'POINT #', volver: 'BACK',
+    punto: 'POINT #', volver: 'Back',
     largada: 'start', llegada: 'finish',
     tipoPunto: 'Point type',
     fotoRef: 'Reference photo',
@@ -4770,23 +4825,23 @@ document.addEventListener('DOMContentLoaded', () => { updateOnlineStatus(); appl
   <!-- PANTALLA A: Selector de destino -->
   <div id="mig-selector" style="display:flex;flex-direction:column;height:100%;pointer-events:none;">
     <!-- Top bar: title + close -->
-    <div style="background:rgba(6,13,20,0.92);border-bottom:1px solid #00ff88;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;pointer-events:all;">
+    <div style="background:rgba(53,53,53,0.92);border-bottom:1px solid #F5F1E8;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;pointer-events:all;">
       <div>
-        <div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:2px;">&#x1F9ED; TAPIR MIGRANTE</div>
-        <div style="color:#4a8898;font-size:8px;letter-spacing:1px;margin-top:1px;">Mantén presionado el mapa para elegir destino</div>
+        <div style="color:#F5F1E8;font-size:12px;font-weight:700;letter-spacing:2px;">&#x1F9ED; TAPIR MIGRANTE</div>
+        <div style="color:#9AA8A5;font-size:8px;letter-spacing:1px;margin-top:1px;">Mantén presionado el mapa para elegir destino</div>
       </div>
       <button onclick="MIG_close()" style="background:transparent;border:1px solid #ff3355;border-radius:8px;padding:7px 12px;color:#ff3355;font-size:10px;cursor:pointer;letter-spacing:1px;font-family:monospace;pointer-events:all;">&#x2715; SALIR</button>
     </div>
     <!-- Spacer: map is visible here -->
     <div style="flex:1;"></div>
     <!-- Bottom: destination list -->
-    <div style="background:rgba(6,13,20,0.95);border-top:1px solid var(--border-main);max-height:55%;overflow-y:auto;pointer-events:all;">
+    <div style="background:rgba(53,53,53,0.95);border-top:1px solid #3C6E71;max-height:55%;overflow-y:auto;pointer-events:all;">
       <div style="padding:10px 14px 4px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="color:var(--color-accent);font-size:8px;letter-spacing:2px;">O ELEGÍ DE LA LISTA</div>
+        <div style="color:#00C0D8;font-size:8px;letter-spacing:2px;">O ELEGÍ DE LA LISTA</div>
       </div>
-      <div style="padding:0 14px 4px;color:var(--color-accent);font-size:8px;letter-spacing:1.5px;">LARGADAS DE TRAMO</div>
+      <div style="padding:0 14px 4px;color:#00C0D8;font-size:8px;letter-spacing:1.5px;">LARGADAS DE TRAMO</div>
       <div id="mig-tramo-list" style="padding:0 14px 8px;"></div>
-      <div style="padding:0 14px 4px;color:var(--color-accent);font-size:8px;letter-spacing:1.5px;">PUNTOS MARCADOS</div>
+      <div style="padding:0 14px 4px;color:#00C0D8;font-size:8px;letter-spacing:1.5px;">PUNTOS MARCADOS</div>
       <div id="mig-point-list" style="padding:0 14px 12px;"></div>
     </div>
   </div>
@@ -4795,57 +4850,57 @@ document.addEventListener('DOMContentLoaded', () => { updateOnlineStatus(); appl
   <div id="mig-nav" style="display:none;flex-direction:column;height:100%;">
 
     <!-- Instrucción -->
-    <div id="mig-instr-bar" style="background:var(--color-accent-dim);border-bottom:2px solid var(--color-accent);padding:14px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0;min-height:88px;">
+    <div id="mig-instr-bar" style="background:#2F3A3B;border-bottom:2px solid #00C0D8;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0;min-height:88px;">
       <div id="mig-arrow" style="font-size:44px;min-width:52px;text-align:center;line-height:1;">&#x2191;</div>
       <div>
         <div id="mig-instr-text" style="color:#fff;font-size:15px;font-weight:700;letter-spacing:0.3px;">Calculando ruta...</div>
-        <div id="mig-instr-dist" style="color:var(--color-accent);font-size:13px;margin-top:5px;letter-spacing:1px;"></div>
-        <div id="mig-instr-street" style="color:#4a8898;font-size:9px;margin-top:3px;"></div>
+        <div id="mig-instr-dist" style="color:#00C0D8;font-size:13px;margin-top:5px;letter-spacing:1px;"></div>
+        <div id="mig-instr-street" style="color:#9AA8A5;font-size:9px;margin-top:3px;"></div>
       </div>
     </div>
 
     <!-- Stats principales -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border-main);flex-shrink:0;">
-      <div style="padding:14px 16px;border-right:1px solid var(--border-main);">
-        <div id="mig-dist-rem" style="color:var(--color-accent);font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(78,205,196,0.4);">--</div>
-        <div style="color:#4a8898;font-size:7.5px;letter-spacing:2px;margin-top:5px;">DISTANCIA RESTANTE</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #3C6E71;flex-shrink:0;">
+      <div style="padding:14px 16px;border-right:1px solid #3C6E71;">
+        <div id="mig-dist-rem" style="color:#00C0D8;font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(0,192,216,0.4);">--</div>
+        <div style="color:#9AA8A5;font-size:7.5px;letter-spacing:2px;margin-top:5px;">DISTANCIA RESTANTE</div>
       </div>
       <div style="padding:14px 16px;">
-        <div id="mig-time-rem" style="color:var(--color-accent);font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(78,205,196,0.4);">--</div>
-        <div style="color:#4a8898;font-size:7.5px;letter-spacing:2px;margin-top:5px;">TIEMPO RESTANTE</div>
+        <div id="mig-time-rem" style="color:#00C0D8;font-size:30px;font-weight:700;font-family:monospace;line-height:1;text-shadow:0 0 12px rgba(0,192,216,0.4);">--</div>
+        <div style="color:#9AA8A5;font-size:7.5px;letter-spacing:2px;margin-top:5px;">TIEMPO RESTANTE</div>
       </div>
     </div>
 
     <!-- Mini mapa -->
-    <div style="flex:1;position:relative;background:#060d14;overflow:hidden;">
+    <div style="flex:1;position:relative;background:#353535;overflow:hidden;">
       <canvas id="mig-canvas" style="width:100%;height:100%;display:block;"></canvas>
-      <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.88);border:1px solid var(--color-accent);border-radius:9px;padding:7px 12px;text-align:center;">
-        <div id="mig-eta" style="color:var(--color-accent);font-size:18px;font-weight:700;font-family:monospace;">--:--</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:1px;">LLEGADA EST.</div>
+      <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.88);border:1px solid #00C0D8;border-radius:9px;padding:7px 12px;text-align:center;">
+        <div id="mig-eta" style="color:#00C0D8;font-size:18px;font-weight:700;font-family:monospace;">--:--</div>
+        <div style="color:#9AA8A5;font-size:7px;letter-spacing:1.5px;margin-top:1px;">LLEGADA EST.</div>
       </div>
-      <button onclick="MIG_recalc()" style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.85);border:1px solid var(--border-main);border-radius:8px;padding:7px 10px;color:#4a8898;font-size:9px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x21BB; RECALC</button>
+      <button onclick="MIG_recalc()" style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.85);border:1px solid #3C6E71;border-radius:8px;padding:7px 10px;color:#9AA8A5;font-size:9px;cursor:pointer;letter-spacing:1px;font-family:monospace;">&#x21BB; RECALC</button>
     </div>
 
     <!-- Stats secundarios -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border-main);flex-shrink:0;">
-      <div style="padding:11px 8px;text-align:center;border-right:1px solid var(--border-main);">
-        <div id="mig-speed" style="font-size:22px;font-weight:700;font-family:monospace;line-height:1;color:#00ff88;transition:color 0.3s;">0</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM/H</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #3C6E71;flex-shrink:0;">
+      <div style="padding:11px 8px;text-align:center;border-right:1px solid #3C6E71;">
+        <div id="mig-speed" style="font-size:22px;font-weight:700;font-family:monospace;line-height:1;color:#F5F1E8;transition:color 0.3s;">0</div>
+        <div style="color:#9AA8A5;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM/H</div>
       </div>
-      <div style="padding:11px 8px;text-align:center;border-right:1px solid var(--border-main);">
+      <div style="padding:11px 8px;text-align:center;border-right:1px solid #3C6E71;">
         <div id="mig-dist-rec" style="color:#fff;font-size:22px;font-weight:700;font-family:monospace;line-height:1;">0.0</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM RECORRIDOS</div>
+        <div style="color:#9AA8A5;font-size:7px;letter-spacing:1.5px;margin-top:3px;">KM RECORRIDOS</div>
       </div>
       <div style="padding:11px 8px;text-align:center;">
-        <div id="mig-recalc-status" style="color:#00ffaa;font-size:11px;font-weight:700;font-family:monospace;line-height:1;">&#x21BB; AUTO</div>
-        <div style="color:#4a8898;font-size:7px;letter-spacing:1.5px;margin-top:3px;">RECALCULA 200M</div>
+        <div id="mig-recalc-status" style="color:#D9A441;font-size:11px;font-weight:700;font-family:monospace;line-height:1;">&#x21BB; AUTO</div>
+        <div style="color:#9AA8A5;font-size:7px;letter-spacing:1.5px;margin-top:3px;">RECALCULA 200M</div>
       </div>
     </div>
 
     <!-- Botón salir -->
     <!-- EMPEZAR A MIGRAR button -->
-    <div id="mig-start-bar" style="background:#060d14;border-top:1px solid var(--border-main);padding:10px 14px;flex-shrink:0;display:block;">
-      <button onclick="MIG_startNav()" id="mig-start-btn" style="width:100%;padding:14px;background:rgba(0,255,136,0.12);border:1.5px solid #00ff88;border-radius:12px;color:#00ff88;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:monospace;">
+    <div id="mig-start-bar" style="background:#353535;border-top:1px solid #3C6E71;padding:10px 14px;flex-shrink:0;display:block;">
+      <button onclick="MIG_startNav()" id="mig-start-btn" style="width:100%;padding:14px;background:rgba(245,241,232,0.12);border:1.5px solid #F5F1E8;border-radius:12px;color:#F5F1E8;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:monospace;">
         &#x1F9ED; EMPEZAR A MIGRAR
       </button>
     </div>
@@ -4857,31 +4912,31 @@ document.addEventListener('DOMContentLoaded', () => { updateOnlineStatus(); appl
 
 <!-- iOS Install Modal -->
 <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);align-items:flex-end;justify-content:center;">
-  <div style="background:#1a1d21;border-radius:16px 16px 0 0;padding:24px 24px 40px;width:100%;max-width:480px;border-top:2px solid rgba(78,205,196,0.3);">
+  <div style="background:#404040;border-radius:16px 16px 0 0;padding:24px 24px 40px;width:100%;max-width:480px;border-top:2px solid rgba(0,192,216,0.3);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#ffffff;letter-spacing:1px;">INSTALAR APP</span>
-      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="background:transparent;border:none;color:#7a8a99;font-size:22px;cursor:pointer;padding:0;">×</button>
+      <span style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#F5F1E8;letter-spacing:1px;">INSTALAR APP</span>
+      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="background:transparent;border:none;color:#9AA8A5;font-size:22px;cursor:pointer;padding:0;">×</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:16px;">
       <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:36px;height:36px;background:var(--color-accent);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">1</div>
+        <div style="width:36px;height:36px;background:#00C0D8;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">1</div>
         <div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#ffffff;font-weight:600;">Tocá el botón Compartir</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#7a8a99;margin-top:2px;">El ícono de cuadrado con flecha hacia arriba ↑ en Safari</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#F5F1E8;font-weight:600;">Tocá el botón Compartir</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#9AA8A5;margin-top:2px;">El ícono de cuadrado con flecha hacia arriba ↑ en Safari</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:36px;height:36px;background:var(--color-accent);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">2</div>
+        <div style="width:36px;height:36px;background:#00C0D8;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">2</div>
         <div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#ffffff;font-weight:600;">Elegí "Agregar a pantalla de inicio"</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#7a8a99;margin-top:2px;">Deslizá hacia abajo en el menú de opciones</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#F5F1E8;font-weight:600;">Elegí "Agregar a pantalla de inicio"</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#9AA8A5;margin-top:2px;">Deslizá hacia abajo en el menú de opciones</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:36px;height:36px;background:var(--color-accent);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">3</div>
+        <div style="width:36px;height:36px;background:#00C0D8;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">3</div>
         <div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#ffffff;font-weight:600;">Tocá "Agregar"</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#7a8a99;margin-top:2px;">La app aparece en tu pantalla de inicio como nativa</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#F5F1E8;font-weight:600;">Tocá "Agregar"</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#9AA8A5;margin-top:2px;">La app aparece en tu pantalla de inicio como nativa</div>
         </div>
       </div>
     </div>
