@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Huella de Tapir v7.3</title>
+<title>Huella de Tapir v7.5</title>
 <!-- Rajdhani loaded from Google Fonts when online, falls back to system font -->
 <link rel="manifest" href="/huellas-de-tapir/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +18,7 @@
 <style>
 
 :root {
-  /* Paleta v7.3: #353535 base · #3C6E71 teal · #00C0D8 cyan · #F5F1E8 crema · #D9A441 dorado */
+  /* Paleta v7.5: #353535 base · #3C6E71 teal · #00C0D8 cyan · #F5F1E8 crema · #D9A441 dorado */
   --bg-primary: #353535;
   --bg-screen: #353535;
   --bg-topbar: #2B2B2B;
@@ -538,7 +538,7 @@ body.light .save-bar { background: rgba(0,150,60,0.08) !important; color: #8A621
 body.light #overlay { background: rgba(0,0,0,0.45) !important; }
 
 
-/* ══ LOOK v7.3 — tarjetas grandes sin bordes · píldoras · barras flotantes ══ */
+/* ══ LOOK v7.5 — tarjetas grandes sin bordes · píldoras · barras flotantes ══ */
 #screen-map { background:var(--bg-map); }
 .glass { -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
 
@@ -786,7 +786,7 @@ if('serviceWorker' in navigator){
         <span class="ld-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></span>
       </button>
       <button id="btn-install" class="ld-install" onclick="triggerInstall()" style="display:block;">⊕ Instalar app</button>
-      <div class="ld-ver">Huella de Tapir v7.3</div>
+      <div class="ld-ver">Huella de Tapir v7.5</div>
     </div>
   </div>
   <input type="file" id="kf" accept=".kmz,.kml" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" onchange="onKMZ(event)">
@@ -1036,12 +1036,12 @@ if('serviceWorker' in navigator){
   <div class="obs-grid" id="obs-grid">
     <div class="obs-btn" data-obs="curva-der" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 18 Q6 4 22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 1.5 L22 4 L19 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CURVA<br>DER</span></div>
     <div class="obs-btn" data-obs="curva-izq" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 18 Q24 4 8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 1.5 L8 4 L11 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CURVA<br>IZQ</span></div>
+    <div class="obs-btn" data-obs="curva-rapida" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 19 Q13 18 19 11 Q22 7 27 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M24 2.5 L27 5 L24 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13 L8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><path d="M4 9 L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/></svg><span>CURVA<br>RÁPIDA</span></div>
     <div class="obs-btn" data-obs="lomo" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 18 L8 18 Q15 4 22 18 L28 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>LOMO</span></div>
     <div class="obs-btn" data-obs="vado" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8 L8 8 Q15 20 22 8 L28 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 15 Q15 11 22 15" stroke="#0099B0" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/><path d="M10 19 Q15 16 20 19" stroke="#0099B0" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg><span>VADO</span></div>
     <div class="obs-btn" data-obs="u-der" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 3 L9 14 Q9 20 15 20 Q21 20 21 14 L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M17 3 L17 14 Q17 17 15 17 Q13 17 13 14 L13 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/><path d="M18 0.5 L21 3 L24 0.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>U DER</span></div>
     <div class="obs-btn" data-obs="u-izq" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 3 L21 14 Q21 20 15 20 Q9 20 9 14 L9 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 3 L13 14 Q13 17 15 17 Q17 17 17 14 L17 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/><path d="M12 0.5 L9 3 L6 0.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>U IZQ</span></div>
     <div class="obs-btn" data-obs="ese" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 20 Q6 12 15 11 Q24 10 24 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M21 2 L24 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6 20 L9 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>ESE</span></div>
-    <div class="obs-btn" data-obs="paisaje" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="24" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 15 L9 9 L14 13 L19 8 L27 15" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2"/></svg><span>PAISAJE</span></div>
     <div class="obs-btn" data-obs="panoramica" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 11 Q2 3 15 3 Q28 3 28 11 Q28 19 15 19 Q2 19 2 11Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M6 11 Q6 6 15 6 Q24 6 24 11" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" fill="none" opacity="0.5"/><circle cx="15" cy="11" r="2" fill="currentColor" opacity="0.6"/></svg><span>PANORÁM.</span></div>
     <div class="obs-btn" data-obs="guadal" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="10" cy="14" rx="4" ry="3.5" fill="currentColor" opacity="0.35"/><ellipse cx="16" cy="10" rx="5" ry="4" fill="currentColor" opacity="0.45"/><ellipse cx="22" cy="14" rx="4" ry="3.5" fill="currentColor" opacity="0.35"/><ellipse cx="15" cy="7" rx="3.5" ry="3" fill="currentColor" opacity="0.55"/><line x1="5" y1="19" x2="25" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg><span>GUADAL</span></div>
     <div class="obs-btn" data-obs="multipunto" onclick="toggleObs(this)"><svg viewBox="0 0 30 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 18 Q6 12 15 11 Q24 10 24 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="6" cy="18" r="2.5" fill="currentColor"/><circle cx="15" cy="11" r="2.5" fill="currentColor"/><circle cx="24" cy="4" r="2.5" fill="currentColor"/></svg><span>MULTI<br>PTO</span></div>
@@ -1203,8 +1203,9 @@ async function persist() {
       start:t.start, end:t.end, bbox:t.bbox
     }));
     const pointsMeta = ST.points.map(p => {
-      const {photo, audio, ...rest} = p;
-      return {...rest, hasPhoto: !!photo, hasAudio: !!audio};
+      const {photo, photos, _photos, audio, ...rest} = p;
+      const n = photos && photos.length ? photos.length : (photo ? 1 : 0);
+      return {...rest, hasPhoto: n>0, photoCount: n, hasAudio: !!audio};
     });
     const data = { points:pointsMeta, nextN:ST.nextN, tramos:light, kmzName:ST.kmzName };
     // Primary: IndexedDB (not blocked by Safari ITP)
@@ -1257,7 +1258,18 @@ async function loadStored() {
     ST.tramos  = d.tramos.map(t => ({...t, route:t.route, routeSimple:t.route}));
     const pts  = d.points  || [];
     for (const p of pts) {
-      if (p.hasPhoto) p.photo = await loadPhoto('photo_'+p.id);
+      if (p.photos && p.photos.length) {
+        // sesión guardada con una versión anterior: las fotos venían dentro del meta; se pasan a su propia clave
+        try { await persistPhoto(p); } catch(_) {}
+      } else {
+        const n = p.photoCount || (p.hasPhoto ? 1 : 0), arr = [];
+        for (let i = 0; i < n; i++) {
+          const ph = await loadPhoto('photo_' + (i ? i + '_' : '') + p.id);
+          if (ph) arr.push(ph);
+        }
+        if (arr.length) p.photos = arr;
+      }
+      if (p.hasPhoto) p.photo = (p.photos && p.photos[0]) || await loadPhoto('photo_'+p.id);
       if (p.hasAudio) p.audio = await loadPhoto('audio_'+p.id);
     }
     ST.points = pts;
@@ -1314,7 +1326,7 @@ async function onKMZ(e) {
     const tramos = parseTramos(kmlText);
     if (!tramos.length) { setStatus('No se encontraron tramos con ruta'); return; }
     ST.tramos = tramos; ST.kmzName = file.name; ST.points = []; ST.nextN = 1;
-    ST.roads = []; ST.waters = []; // clear roads/water from previous event — will download for new location
+    ST.roads = []; ST.waters = []; ST.lakes = []; ST.fords = []; // clear roads/water from previous event — will download for new location
     await saveRoads([]);
     persist();
     setStatus(tramos.length + ' tramos cargados');
@@ -1570,15 +1582,22 @@ function startMap() {
   const odoDiv = document.getElementById('odometer');
   if(odoDiv) odoDiv.style.display = 'flex';
   // Load saved OSM roads
-  loadRoads().then(({roads, waters}) => {
+  loadRoads().then(({roads, waters, lakes, fords}) => {
     if(roads && roads.length){ ST.roads=roads; }
     if(waters && waters.length){ ST.waters=waters; }
+    if(lakes && lakes.length){ ST.lakes=lakes; }
+    if(fords && fords.length){ ST.fords=fords; }
+    const rb2=document.getElementById('roads-btn'), wb2=document.getElementById('water-btn');
+    if(rb2 && ST.roads && ST.roads.length){ rb2.classList.add('done'); rb2.textContent=ST.roads.length+' CAMINOS'; }
+    const wn=(ST.waters||[]).length+(ST.lakes||[]).length;
+    if(wb2 && wn){ wb2.classList.add('done'); wb2.textContent=wn+' AGUA'; }
+    try{ draw(); }catch(_){}
   });
   // Show roads button if online
   const rb = document.getElementById('roads-btn');
-  if(rb){ rb.style.display = 'inline-block'; if(ST.roads&&ST.roads.length){ rb.classList.add('done'); rb.textContent=ST.roads.length+' CAMINOS OK'; } }
+  if(rb){ rb.style.display = 'inline-block'; if(ST.roads&&ST.roads.length){ rb.classList.add('done'); rb.textContent=ST.roads.length+' CAMINOS'; } }
   const wb = document.getElementById('water-btn');
-  if(wb){ wb.style.display = 'inline-block'; if(ST.waters&&ST.waters.length){ wb.classList.add('done'); wb.textContent=ST.waters.length+' AGUA OK'; } }
+  if(wb){ wb.style.display = 'inline-block'; if(ST.waters&&ST.waters.length){ wb.classList.add('done'); wb.textContent=ST.waters.length+' AGUA'; } }
   initTouch();
   NOM_initLongPress();
   startGPS();
@@ -1754,32 +1773,44 @@ function draw() {
     }
   }
 
-  // OSM roads — grey, very faint
+  // OSM roads
   ctx.globalAlpha=1.0; ctx.shadowBlur=0; ctx.setLineDash([]);
   const isLight = document.body.classList.contains('light');
+  const strokeLines=(arr)=>{ arr.forEach(line=>{
+    if(line.length < 2) return;
+    ctx.beginPath();
+    const r0=proj(line[0][0],line[0][1]); ctx.moveTo(r0.x,r0.y);
+    for(let i=1;i<line.length;i++){const rp=proj(line[i][0],line[i][1]);ctx.lineTo(rp.x,rp.y);}
+    ctx.stroke();
+  }); };
   if(ST.roads && ST.roads.length){
-    ctx.strokeStyle=isLight?'rgba(0,0,0,0.10)':'rgba(255,255,255,0.14)'; ctx.lineWidth=0.9; ctx.globalAlpha=1;
-    ST.roads.forEach(road => {
-      if(road.length < 2) return;
+    ctx.strokeStyle=isLight?'rgba(0,0,0,0.30)':'rgba(255,255,255,0.32)'; ctx.lineWidth=1.2;
+    strokeLines(ST.roads);
+  }
+  // OSM water: lagos rellenos + cursos + vados
+  if(ST.lakes && ST.lakes.length){
+    ctx.fillStyle=isLight?'rgba(30,120,230,0.28)':'rgba(40,150,255,0.30)';
+    ctx.strokeStyle=isLight?'rgba(20,90,200,0.85)':'rgba(70,170,255,0.90)'; ctx.lineWidth=1.2;
+    ST.lakes.forEach(line=>{
       ctx.beginPath();
-      const r0=proj(road[0][0],road[0][1]); ctx.moveTo(r0.x,r0.y);
-      for(let i=1;i<road.length;i++){const rp=proj(road[i][0],road[i][1]);ctx.lineTo(rp.x,rp.y);}
-      ctx.stroke();
+      const r0=proj(line[0][0],line[0][1]); ctx.moveTo(r0.x,r0.y);
+      for(let i=1;i<line.length;i++){const rp=proj(line[i][0],line[i][1]);ctx.lineTo(rp.x,rp.y);}
+      ctx.closePath(); ctx.fill(); ctx.stroke();
     });
   }
-  // OSM waterways — neon blue, more prominent than roads
   if(ST.waters && ST.waters.length){
-    ctx.globalAlpha=1;
-    ctx.shadowBlur=4; ctx.shadowColor='rgba(0,160,255,0.6)';
-    ctx.strokeStyle=isLight?'rgba(0,100,220,0.75)':'rgba(0,180,255,0.80)'; ctx.lineWidth=1.8;
-    ST.waters.forEach(w => {
-      if(w.length < 2) return;
-      ctx.beginPath();
-      const w0=proj(w[0][0],w[0][1]); ctx.moveTo(w0.x,w0.y);
-      for(let i=1;i<w.length;i++){const wp=proj(w[i][0],w[i][1]);ctx.lineTo(wp.x,wp.y);}
-      ctx.stroke();
-    });
+    ctx.shadowBlur=4; ctx.shadowColor='rgba(40,150,255,0.6)';
+    ctx.strokeStyle=isLight?'rgba(20,90,200,0.90)':'rgba(70,170,255,0.95)'; ctx.lineWidth=2.2;
+    strokeLines(ST.waters);
     ctx.shadowBlur=0;
+  }
+  if(ST.fords && ST.fords.length){
+    ST.fords.forEach(f=>{
+      const fp=proj(f[0],f[1]);
+      ctx.beginPath(); ctx.arc(fp.x,fp.y,5,0,Math.PI*2);
+      ctx.fillStyle='rgba(40,150,255,0.35)'; ctx.fill();
+      ctx.lineWidth=2; ctx.strokeStyle=isLight?'#1456b8':'#7cc4ff'; ctx.stroke();
+    });
   }
 
   // Draw each tramo
@@ -2284,27 +2315,57 @@ function refreshTypes(t) {
 }
 function selType(t){shType=t;refreshTypes(t);}
 
-function onPhoto(e){
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    const original=ev.target.result;
+// Reduce la foto en el propio equipo. createImageBitmap/objectURL (sin FileReader) soporta fotos de 48 MP sin explotar la memoria.
+async function photoToDataURL(file, maxSide, quality){
+  let src=null, w=0, h=0, done=()=>{};
+  if(window.createImageBitmap){
+    try{
+      const bmp=await createImageBitmap(file,{imageOrientation:'from-image'});
+      src=bmp; w=bmp.width; h=bmp.height; done=()=>{ try{bmp.close();}catch(_){} };
+    }catch(_){ src=null; }
+  }
+  if(!src){
+    const url=URL.createObjectURL(file);
+    done=()=>URL.revokeObjectURL(url);
     const img=new Image();
-    img.onload=()=>{
-      if(!ST.curPt) return;
-      if(!ST.curPt._photos) ST.curPt._photos=[...(ST.curPt.photos||[])];
-      if(ST.curPt._photos.length>=4){ toast(t('t_max4fotos')); return; }
-      const cv=document.createElement('canvas');
-      cv.width=Math.round(img.naturalWidth*0.15);
-      cv.height=Math.round(img.naturalHeight*0.15);
-      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
-      ST.curPt._photos.push(cv.toDataURL('image/jpeg',0.40));
-      window._photoOriginal=original;
-      renderPhotoGrid();
-    };
-    img.src=original;
-  };
-  r.readAsDataURL(f); e.target.value='';
+    try{
+      await new Promise((res,rej)=>{ img.onload=res; img.onerror=()=>rej(new Error('decode')); img.src=url; });
+    }catch(er){ done(); throw er; }
+    src=img; w=img.naturalWidth; h=img.naturalHeight;
+  }
+  try{
+    if(!w||!h) throw new Error('decode');
+    const k=Math.min(1,maxSide/Math.max(w,h));
+    const cv=document.createElement('canvas');
+    cv.width=Math.max(1,Math.round(w*k)); cv.height=Math.max(1,Math.round(h*k));
+    cv.getContext('2d').drawImage(src,0,0,cv.width,cv.height);
+    const out=cv.toDataURL('image/jpeg',quality);
+    if(!out||out.length<200) throw new Error('encode');
+    return out;
+  } finally { done(); }
+}
+
+async function onPhoto(e){
+  const input=e.target;
+  const f=input.files && input.files[0];
+  if(!f) return;
+  const pt=ST.curPt;
+  try{
+    if(!pt){ toast(t('t_fotoNoPunto')); return; }
+    if(!pt._photos) pt._photos=[...(pt.photos||[])];
+    if(pt._photos.length>=4){ toast(t('t_max4fotos')); return; }
+    toast(t('t_fotoCargando'));
+    const dataUrl=await photoToDataURL(f,1280,0.7);   // el archivo se lee ANTES de vaciar el selector
+    if(ST.curPt!==pt){ toast(t('t_fotoNoPunto')); return; }
+    pt._photos.push(dataUrl);
+    renderPhotoGrid();
+    toast(t('t_fotoOk')+' ('+pt._photos.length+'/4)');
+  }catch(err){
+    console.warn('onPhoto error:',err);
+    toast(t('t_fotoErr'));
+  }finally{
+    try{ input.value=''; }catch(_){}
+  }
 }
 
 function renderPhotoGrid(){
@@ -3324,7 +3385,7 @@ function genKMZ(){
       const tl=pt.type==='photo'?'Foto':pt.type==='video'?'Video':pt.type==='both'?'Foto+Video':'Sin tipo';
       const distDesc=(pt.distFromStart!==null&&pt.distFromStart!==undefined)
         ? `${pt.distFromStart}km desde largada · ${pt.distToEnd}km hasta llegada` : '';
-      const tagLabels={'curva-der':'Curva Der','curva-izq':'Curva Izq','lomo':'Lomo','vado':'Vado','u-der':'U Der','u-izq':'U Izq','ese':'Ese','paisaje':'Paisaje','panoramica':'Panorámica','parking':'Parking','guadal':'Guadal','multipunto':'Multi Pto','cruce':'Cruce','contraluz':'Contraluz','publico':'Público'};
+      const tagLabels={'curva-der':'Curva Der','curva-izq':'Curva Izq','curva-rapida':'Curva Rápida','lomo':'Lomo','vado':'Vado','u-der':'U Der','u-izq':'U Izq','ese':'Ese','paisaje':'Paisaje','panoramica':'Panorámica','parking':'Parking','guadal':'Guadal','multipunto':'Multi Pto','cruce':'Cruce','contraluz':'Contraluz','publico':'Público'};
       const tagsStr = (pt.tags||[]).map(t=>tagLabels[t]||t).join(', ');
       const starsStr = pt.stars ? '★'.repeat(pt.stars)+'☆'.repeat(5-pt.stars) : '';
       const desc=[tl, starsStr, tagsStr, distDesc, pt.notes].filter(Boolean).join(' | ');
@@ -3521,7 +3582,7 @@ function initTheme(){
 }
 
 // ══ OBSTACLE TAGS & STARS ══
-const OBS_ICONS = {'curva-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMTggUTYgNCAyMiA0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE5IDEuNSBMMjIgNCBMMTkgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA D'},'curva-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTI0IDE4IFEyNCA0IDggNCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSAxLjUgTDggNCBMMTEgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA I'},'lomo':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTggTDggMTggUTE1IDQgMjIgMTggTDI4IDE4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+',label:'LOMO'},'vado':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgOCBMOCA4IFExNSAyMCAyMiA4IEwyOCA4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTggMTUgUTE1IDExIDIyIDE1IiBzdHJva2U9IiMwMGEwYzgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOCIvPjxwYXRoIGQ9Ik0xMCAxOSBRMTUgMTYgMjAgMTkiIHN0cm9rZT0iIzAwYTBjOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+',label:'VADO'},'u-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkgMyBMOSAxNCBROSAyMCAxNSAyMCBRMjEgMjAgMjEgMTQgTDIxIDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNyAzIEwxNyAxNCBRMTcgMTcgMTUgMTcgUTEzIDE3IDEzIDE0IEwxMyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xOCAwLjUgTDIxIDMgTDI0IDAuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+',label:'U DER'},'u-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIxIDMgTDIxIDE0IFEyMSAyMCAxNSAyMCBROSAyMCA5IDE0IEw5IDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMyAzIEwxMyAxNCBRMTMgMTcgMTUgMTcgUTE3IDE3IDE3IDE0IEwxNyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xMiAwLjUgTDkgMyBMNiAwLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==',label:'U IZQ'},'ese':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMjAgUTYgMTIgMTUgMTEgUTI0IDEwIDI0IDIiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMjEgMiBMMjQgMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTYgMjAgTDkgMjAiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',label:'ESE'},'paisaje':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiByeD0iMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0zIDE1IEw5IDkgTDE0IDEzIEwxOSA4IEwyNyAxNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMjIiIGN5PSI3IiByPSIyLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjIiLz48L3N2Zz4=',label:'PAISAJE'},'panoramica':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTEgUTIgMyAxNSAzIFEyOCAzIDI4IDExIFEyOCAxOSAxNSAxOSBRMiAxOSAyIDExWiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02IDExIFE2IDYgMTUgNiBRMjQgNiAyNCAxMSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjIsMS41IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjUiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjExIiByPSIyIiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=',label:'PANOR.'},'guadal':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGVsbGlwc2UgY3g9IjEwIiBjeT0iMTQiIHJ4PSI0IiByeT0iMy41IiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjM1Ii8+PGVsbGlwc2UgY3g9IjE2IiBjeT0iMTAiIHJ4PSI1IiByeT0iNCIgZmlsbD0iIzAwZTVmZiIgb3BhY2l0eT0iMC40NSIvPjxlbGxpcHNlIGN4PSIyMiIgY3k9IjE0IiByeD0iNCIgcnk9IjMuNSIgZmlsbD0iIzAwZTVmZiIgb3BhY2l0eT0iMC4zNSIvPjxlbGxpcHNlIGN4PSIxNSIgY3k9IjciIHJ4PSIzLjUiIHJ5PSIzIiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjU1Ii8+PGxpbmUgeDE9IjUiIHkxPSIxOSIgeDI9IjI1IiB5Mj0iMTkiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+',label:'Guadal'},'multipunto':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMTggUTYgMTIgMTUgMTEgUTI0IDEwIDI0IDQiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSI2IiBjeT0iMTgiIHI9IjIuNSIgZmlsbD0iIzAwZTVmZiIvPjxjaXJjbGUgY3g9IjE1IiBjeT0iMTEiIHI9IjIuNSIgZmlsbD0iIzAwZTVmZiIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iNCIgcj0iMi41IiBmaWxsPSIjMDBlNWZmIi8+PC9zdmc+',label:'Multi Pto'},'cruce':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGxpbmUgeDE9IjIiIHkxPSI4IiB4Mj0iMjgiIHkyPSI4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iMTUiIHkxPSI4IiB4Mj0iMTUiIHkyPSIyMCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjEwIiB5MT0iMjAiIHgyPSIyMCIgeTI9IjIwIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==',label:'Cruce'},'contraluz':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTUiIGN5PSIxMSIgcj0iNCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxsaW5lIHgxPSIxNSIgeTE9IjIiIHgyPSIxNSIgeTI9IjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIxNSIgeTE9IjE3IiB4Mj0iMTUiIHkyPSIyMCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjYiIHkxPSIxMSIgeDI9IjMiIHkyPSIxMSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjI0IiB5MT0iMTEiIHgyPSIyNyIgeTI9IjExIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iOC41IiB5MT0iNC41IiB4Mj0iMTAuNSIgeTI9IjYuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjIxLjUiIHkxPSIxNy41IiB4Mj0iMTkuNSIgeTI9IjE1LjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIyMS41IiB5MT0iNC41IiB4Mj0iMTkuNSIgeTI9IjYuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjguNSIgeTE9IjE3LjUiIHgyPSIxMC41IiB5Mj0iMTUuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDExIEw0IDExIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBtYXJrZXItZW5kPSJ1cmwoI2EpIi8+PGRlZnM+PG1hcmtlciBpZD0iYSIgbWFya2VyV2lkdGg9IjQiIG1hcmtlckhlaWdodD0iNCIgcmVmWD0iMyIgcmVmWT0iMiIgb3JpZW50PSJhdXRvIj48cGF0aCBkPSJNMCAwIEw0IDIgTDAgNCBaIiBmaWxsPSIjMDBlNWZmIi8+PC9tYXJrZXI+PC9kZWZzPjwvc3ZnPg==',label:'Contraluz'},'publico':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTAiIGN5PSI2IiByPSIzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41Ii8+PHBhdGggZD0iTTUgMjAgUTUgMTMgMTAgMTMgUTE1IDEzIDE1IDIwIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjYiIHI9IjMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48cGF0aCBkPSJNMTUgMjAgUTE1IDEzIDIwIDEzIFEyNSAxMyAyNSAyMCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGNpcmNsZSBjeD0iMTUiIGN5PSI1IiByPSIyLjUiIGZpbGw9IiMwMGU1ZmYiIG9wYWNpdHk9IjAuNCIvPjwvc3ZnPg==',label:'Público'},'parking':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iNCIgeT0iMiIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0xMSA2IEwxMSAxNiBNMTEgNiBMMTYgNiBRMjAgNiAyMCAxMCBRMjAgMTQgMTYgMTQgTDExIDE0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'PARKING'}};
+const OBS_ICONS = {'curva-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMTggUTYgNCAyMiA0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE5IDEuNSBMMjIgNCBMMTkgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA D'},'curva-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTI0IDE4IFEyNCA0IDggNCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSAxLjUgTDggNCBMMTEgNi41IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'CURVA I'},'curva-rapida':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMgMTkgUTEzIDE4IDE5IDExIFEyMiA3IDI3IDUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMjQgMi41IEwyNyA1IEwyNCA3LjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0yIDEzIEw4IDEzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNiIvPjxwYXRoIGQ9Ik00IDkgTDkgOSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4=',label:'CURVA R.'},'lomo':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTggTDggMTggUTE1IDQgMjIgMTggTDI4IDE4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+',label:'LOMO'},'vado':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgOCBMOCA4IFExNSAyMCAyMiA4IEwyOCA4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTggMTUgUTE1IDExIDIyIDE1IiBzdHJva2U9IiMwMGEwYzgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOCIvPjxwYXRoIGQ9Ik0xMCAxOSBRMTUgMTYgMjAgMTkiIHN0cm9rZT0iIzAwYTBjOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+',label:'VADO'},'u-der':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkgMyBMOSAxNCBROSAyMCAxNSAyMCBRMjEgMjAgMjEgMTQgTDIxIDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNyAzIEwxNyAxNCBRMTcgMTcgMTUgMTcgUTEzIDE3IDEzIDE0IEwxMyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xOCAwLjUgTDIxIDMgTDI0IDAuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+',label:'U DER'},'u-izq':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIxIDMgTDIxIDE0IFEyMSAyMCAxNSAyMCBROSAyMCA5IDE0IEw5IDMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMyAzIEwxMyAxNCBRMTMgMTcgMTUgMTcgUTE3IDE3IDE3IDE0IEwxNyAzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNCIvPjxwYXRoIGQ9Ik0xMiAwLjUgTDkgMyBMNiAwLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==',label:'U IZQ'},'ese':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMjAgUTYgMTIgMTUgMTEgUTI0IDEwIDI0IDIiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMjEgMiBMMjQgMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTYgMjAgTDkgMjAiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',label:'ESE'},'paisaje':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiByeD0iMiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0zIDE1IEw5IDkgTDE0IDEzIEwxOSA4IEwyNyAxNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMjIiIGN5PSI3IiByPSIyLjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjIiLz48L3N2Zz4=',label:'PAISAJE'},'panoramica':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTEgUTIgMyAxNSAzIFEyOCAzIDI4IDExIFEyOCAxOSAxNSAxOSBRMiAxOSAyIDExWiIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik02IDExIFE2IDYgMTUgNiBRMjQgNiAyNCAxMSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjIsMS41IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjUiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjExIiByPSIyIiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=',label:'PANOR.'},'guadal':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGVsbGlwc2UgY3g9IjEwIiBjeT0iMTQiIHJ4PSI0IiByeT0iMy41IiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjM1Ii8+PGVsbGlwc2UgY3g9IjE2IiBjeT0iMTAiIHJ4PSI1IiByeT0iNCIgZmlsbD0iIzAwZTVmZiIgb3BhY2l0eT0iMC40NSIvPjxlbGxpcHNlIGN4PSIyMiIgY3k9IjE0IiByeD0iNCIgcnk9IjMuNSIgZmlsbD0iIzAwZTVmZiIgb3BhY2l0eT0iMC4zNSIvPjxlbGxpcHNlIGN4PSIxNSIgY3k9IjciIHJ4PSIzLjUiIHJ5PSIzIiBmaWxsPSIjMDBlNWZmIiBvcGFjaXR5PSIwLjU1Ii8+PGxpbmUgeDE9IjUiIHkxPSIxOSIgeDI9IjI1IiB5Mj0iMTkiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+',label:'Guadal'},'multipunto':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgMTggUTYgMTIgMTUgMTEgUTI0IDEwIDI0IDQiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSI2IiBjeT0iMTgiIHI9IjIuNSIgZmlsbD0iIzAwZTVmZiIvPjxjaXJjbGUgY3g9IjE1IiBjeT0iMTEiIHI9IjIuNSIgZmlsbD0iIzAwZTVmZiIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iNCIgcj0iMi41IiBmaWxsPSIjMDBlNWZmIi8+PC9zdmc+',label:'Multi Pto'},'cruce':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGxpbmUgeDE9IjIiIHkxPSI4IiB4Mj0iMjgiIHkyPSI4IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iMTUiIHkxPSI4IiB4Mj0iMTUiIHkyPSIyMCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjEwIiB5MT0iMjAiIHgyPSIyMCIgeTI9IjIwIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==',label:'Cruce'},'contraluz':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTUiIGN5PSIxMSIgcj0iNCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxsaW5lIHgxPSIxNSIgeTE9IjIiIHgyPSIxNSIgeTI9IjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIxNSIgeTE9IjE3IiB4Mj0iMTUiIHkyPSIyMCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjYiIHkxPSIxMSIgeDI9IjMiIHkyPSIxMSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjI0IiB5MT0iMTEiIHgyPSIyNyIgeTI9IjExIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iOC41IiB5MT0iNC41IiB4Mj0iMTAuNSIgeTI9IjYuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjIxLjUiIHkxPSIxNy41IiB4Mj0iMTkuNSIgeTI9IjE1LjUiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIyMS41IiB5MT0iNC41IiB4Mj0iMTkuNSIgeTI9IjYuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjguNSIgeTE9IjE3LjUiIHgyPSIxMC41IiB5Mj0iMTUuNSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDExIEw0IDExIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBtYXJrZXItZW5kPSJ1cmwoI2EpIi8+PGRlZnM+PG1hcmtlciBpZD0iYSIgbWFya2VyV2lkdGg9IjQiIG1hcmtlckhlaWdodD0iNCIgcmVmWD0iMyIgcmVmWT0iMiIgb3JpZW50PSJhdXRvIj48cGF0aCBkPSJNMCAwIEw0IDIgTDAgNCBaIiBmaWxsPSIjMDBlNWZmIi8+PC9tYXJrZXI+PC9kZWZzPjwvc3ZnPg==',label:'Contraluz'},'publico':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTAiIGN5PSI2IiByPSIzIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41Ii8+PHBhdGggZD0iTTUgMjAgUTUgMTMgMTAgMTMgUTE1IDEzIDE1IDIwIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjYiIHI9IjMiIHN0cm9rZT0iIzAwZTVmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48cGF0aCBkPSJNMTUgMjAgUTE1IDEzIDIwIDEzIFEyNSAxMyAyNSAyMCIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGNpcmNsZSBjeD0iMTUiIGN5PSI1IiByPSIyLjUiIGZpbGw9IiMwMGU1ZmYiIG9wYWNpdHk9IjAuNCIvPjwvc3ZnPg==',label:'Público'},'parking':{src:'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iNCIgeT0iMiIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwYXRoIGQ9Ik0xMSA2IEwxMSAxNiBNMTEgNiBMMTYgNiBRMjAgNiAyMCAxMCBRMjAgMTQgMTYgMTQgTDExIDE0IiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=',label:'PARKING'}};
 
 
 function toggleObs(btn){
@@ -3842,6 +3903,7 @@ async function saveRoads(roads) {
 }
 
 async function loadRoads() {
+  const empty = {roads:[], waters:[], lakes:[], fords:[]};
   try {
     const d = await openDB();
     return new Promise((res) => {
@@ -3849,67 +3911,113 @@ async function loadRoads() {
       const req = tx.objectStore(ROADS_STORE).get('roads');
       req.onsuccess = () => {
         const val = req.result;
-        // Handle both old format (array) and new format ({roads, waters})
-        if (!val) { res({roads:[], waters:[]}); return; }
-        if (Array.isArray(val)) { res({roads:val, waters:[]}); return; }
-        res({roads: val.roads||[], waters: val.waters||[]});
+        if (!val) { res(empty); return; }
+        if (Array.isArray(val)) { res({...empty, roads:val}); return; }
+        res({roads: val.roads||[], waters: val.waters||[], lakes: val.lakes||[], fords: val.fords||[]});
       };
-      req.onerror = () => res({roads:[], waters:[]});
+      req.onerror = () => res(empty);
     });
-  } catch(e) { return {roads:[], waters:[]}; }
+  } catch(e) { return empty; }
 }
+
+function persistMapData() {
+  return saveRoads({roads: ST.roads||[], waters: ST.waters||[], lakes: ST.lakes||[], fords: ST.fords||[]});
+}
+
+// ── Overpass helper: POST, varios servidores, reintentos ──
+const OVERPASS_EPS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter'
+];
+async function overpassQuery(query, onTry) {
+  let lastErr = null;
+  for (let round = 0; round < 2; round++) {
+    for (let i = 0; i < OVERPASS_EPS.length; i++) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 55000);
+      try {
+        if (onTry) onTry(i, round);
+        const resp = await fetch(OVERPASS_EPS[i], {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+          body: 'data=' + encodeURIComponent(query),
+          signal: ctrl.signal
+        });
+        clearTimeout(timer);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        if (data && data.remark && /error|timed out|out of memory/i.test(data.remark) && !(data.elements && data.elements.length)) {
+          throw new Error('overpass: ' + data.remark);
+        }
+        return data;
+      } catch(e) {
+        clearTimeout(timer);
+        lastErr = e;
+        console.warn('Overpass fallo en', OVERPASS_EPS[i], e);
+      }
+    }
+    await new Promise(r => setTimeout(r, 1500 * (round + 1)));
+  }
+  throw lastErr || new Error('overpass');
+}
+
+// Corredor alrededor de los tramos: puntos cada ~stepM metros, agrupados en cláusulas around
+function corridorClauses(filter, radiusM, stepM) {
+  const pts = [];
+  ST.tramos.forEach(tr => {
+    let last = null;
+    tr.route.forEach((p, i) => {
+      if (!last || i === tr.route.length - 1) { pts.push(p); last = p; return; }
+      const dLat = (p[0]-last[0]) * 111320;
+      const dLng = (p[1]-last[1]) * 111320 * Math.cos(p[0]*Math.PI/180);
+      if (Math.hypot(dLat, dLng) >= stepM) { pts.push(p); last = p; }
+    });
+  });
+  const clauses = [];
+  const CH = 40;
+  for (let i = 0; i < pts.length; i += CH - 1) {
+    const chunk = pts.slice(i, i + CH);
+    if (chunk.length < 2) { if (chunk.length === 1) chunk.push(chunk[0]); else continue; }
+    const coords = chunk.map(p => p[0].toFixed(5) + ',' + p[1].toFixed(5)).join(',');
+    clauses.push(filter.replace(/\$A/g, '(around:' + radiusM + ',' + coords + ')'));
+  }
+  return clauses.join('');
+}
+
+function geomLine(g) { return g.map(pt => [pt.lat, pt.lon]); }
 
 async function loadOSMRoads() {
   const btn = document.getElementById('roads-btn');
   if (!navigator.onLine) { toast(t('t_sinConex')); return; }
   if (!ST.tramos.length) { toast(t('t_sinKmz')); return; }
+  if (btn.classList.contains('loading')) return;
 
   btn.classList.add('loading');
   btn.textContent = 'DESCARGANDO...';
-
-  // Bounding box justo sobre los tramos + buffer mínimo ~2km
-  const allLats = ST.tramos.flatMap(tr => tr.route.map(p=>p[0]));
-  const allLngs = ST.tramos.flatMap(tr => tr.route.map(p=>p[1]));
-  const BUF = 0.05;  // ~5km para caminos
-  const WBUF = 0.12; // ~12km para agua — ríos grandes pueden estar al borde del tramo
-  const S = (Math.min(...allLats) - BUF).toFixed(5);
-  const N = (Math.max(...allLats) + BUF).toFixed(5);
-  const W = (Math.min(...allLngs) - BUF).toFixed(5);
-  const E = (Math.max(...allLngs) + BUF).toFixed(5);
-  const WS = (Math.min(...allLats) - WBUF).toFixed(5);
-  const WN = (Math.max(...allLats) + WBUF).toFixed(5);
-  const WW = (Math.min(...allLngs) - WBUF).toFixed(5);
-  const WE = (Math.max(...allLngs) + WBUF).toFixed(5);
-
-  const overpass = async (query, timeoutMs) => {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
-    try {
-      const resp = await fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query), {signal: ctrl.signal});
-      clearTimeout(timer);
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      return await resp.json();
-    } catch(e) { clearTimeout(timer); throw e; }
-  };
-
   try {
-    toast('Descargando caminos...');
-    const roadQuery = `[out:json][timeout:25];(way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road)$"](${S},${W},${N},${E}););out geom;`;
-    const roadData = await overpass(roadQuery, 30000);
-    const roads = (roadData.elements || [])
-      .filter(el => el.type==='way' && el.geometry && el.geometry.length>1)
-      .map(el => el.geometry.map(pt => [pt.lat, pt.lon]));
-
+    toast('Descargando caminos…');
+    const body = corridorClauses('way["highway"~"^(primary|secondary|tertiary|unclassified|track|residential|road|service|path)$"]$A;', 2500, 1200);
+    const query = '[out:json][timeout:50];(' + body + ');out geom qt;';
+    const data = await overpassQuery(query, (i, r) => { if (i > 0 || r > 0) toast('Reintentando con otro servidor…'); });
+    const roads = (data.elements || [])
+      .filter(el => el.type === 'way' && el.geometry && el.geometry.length > 1)
+      .map(el => geomLine(el.geometry));
     ST.roads = roads;
-    await saveRoads({roads, waters: ST.waters||[]});
-
+    await persistMapData();
     btn.classList.remove('loading');
-    btn.classList.add('done');
-    btn.textContent = roads.length + ' CAMINOS OK';
-    toast(roads.length + ' caminos cargados');
+    if (roads.length) {
+      btn.classList.add('done');
+      btn.textContent = roads.length + ' CAMINOS';
+      toast(roads.length + ' caminos cargados');
+    } else {
+      btn.textContent = 'CARGAR CAMINOS';
+      toast('OSM no tiene caminos en esta zona');
+    }
+    draw();
   } catch(e) {
     btn.classList.remove('loading');
-    btn.textContent = 'CARGAR CAMINOS';
+    btn.textContent = ST.roads && ST.roads.length ? ST.roads.length + ' CAMINOS' : 'CARGAR CAMINOS';
     toast(t('t_errCaminos'));
     console.error(e);
   }
@@ -3919,51 +4027,72 @@ async function loadOSMWater() {
   const btn = document.getElementById('water-btn');
   if (!navigator.onLine) { toast(t('t_sinConex')); return; }
   if (!ST.tramos.length) { toast(t('t_sinKmz')); return; }
+  if (btn.classList.contains('loading')) return;
 
   btn.classList.add('loading');
   btn.textContent = 'BUSCANDO...';
-
-  const allLats = ST.tramos.flatMap(tr => tr.route.map(p=>p[0]));
-  const allLngs = ST.tramos.flatMap(tr => tr.route.map(p=>p[1]));
-  const WBUF = 0.12; // ~12km para capturar ríos que bordean el tramo
-  const S = (Math.min(...allLats) - WBUF).toFixed(5);
-  const N = (Math.max(...allLats) + WBUF).toFixed(5);
-  const W = (Math.min(...allLngs) - WBUF).toFixed(5);
-  const E = (Math.max(...allLngs) + WBUF).toFixed(5);
-
-  const query = `[out:json][timeout:25];(way["waterway"~"^(river|stream|canal|drain|ditch)$"](${S},${W},${N},${E});relation["waterway"~"^(river|stream|canal)$"](${S},${W},${N},${E}););out geom;`;
-
   try {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 30000);
-    const resp = await fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query), {signal: ctrl.signal});
-    clearTimeout(timer);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
+    toast('Buscando ríos y agua…');
+    const f =
+      'way["waterway"~"^(river|stream|canal|drain|ditch|riverbank|brook|wadi)$"]$A;' +
+      'way["natural"="water"]$A;' +
+      'way["natural"="wetland"]["water"]$A;' +
+      'relation["natural"="water"]$A;' +
+      'relation["waterway"="riverbank"]$A;' +
+      'node["ford"="yes"]$A;' +
+      'way["ford"="yes"]$A;';
+    const query = '[out:json][timeout:50];(' + corridorClauses(f, 4000, 1500) + ');out geom qt;';
+    const data = await overpassQuery(query, (i, r) => { if (i > 0 || r > 0) toast('Reintentando con otro servidor…'); });
 
-    const waters = (data.elements || [])
-      .filter(el => el.geometry && el.geometry.length > 1)
-      .map(el => el.geometry.map(pt => [pt.lat, pt.lon]));
+    const waters = [], lakes = [], fords = [];
+    const isCloseable = (el) => {
+      const tg = el.tags || {};
+      return tg.natural === 'water' || tg.waterway === 'riverbank' || tg.natural === 'wetland';
+    };
+    (data.elements || []).forEach(el => {
+      const tg = el.tags || {};
+      if (el.type === 'node') {
+        if (tg.ford === 'yes' && el.lat != null) fords.push([el.lat, el.lon]);
+        return;
+      }
+      if (el.type === 'way' && el.geometry && el.geometry.length > 1) {
+        if (tg.ford === 'yes' && !tg.waterway && !isCloseable(el)) {
+          const m = el.geometry[Math.floor(el.geometry.length/2)];
+          fords.push([m.lat, m.lon]);
+          return;
+        }
+        const line = geomLine(el.geometry);
+        const closed = line.length > 3 && line[0][0] === line[line.length-1][0] && line[0][1] === line[line.length-1][1];
+        if (closed && isCloseable(el)) lakes.push(line); else waters.push(line);
+      } else if (el.type === 'relation' && el.members) {
+        el.members.forEach(m => {
+          if (m.type === 'way' && m.geometry && m.geometry.length > 1) {
+            const line = geomLine(m.geometry);
+            const closed = line.length > 3 && line[0][0] === line[line.length-1][0] && line[0][1] === line[line.length-1][1];
+            if (closed) lakes.push(line); else waters.push(line); // bordes de lagos/ríos anchos
+          }
+        });
+      }
+    });
 
-    ST.waters = waters;
-    // Persist junto con roads existentes
-    const roads = ST.roads || [];
-    await saveRoads({roads, waters});
+    ST.waters = waters; ST.lakes = lakes; ST.fords = fords;
+    await persistMapData();
 
     btn.classList.remove('loading');
-    if (waters.length) {
+    const total = waters.length + lakes.length;
+    if (total) {
       btn.classList.add('done');
-      btn.textContent = waters.length + ' AGUA OK';
-      toast(waters.length + ' cursos de agua cargados');
+      btn.textContent = total + ' AGUA';
+      toast(waters.length + ' cursos, ' + lakes.length + ' espejos de agua' + (fords.length ? ', ' + fords.length + ' vados' : ''));
     } else {
       btn.textContent = 'AGUA';
-      toast('No se encontraron cursos de agua en OSM');
+      toast('OSM no tiene cursos de agua cerca de los tramos');
     }
-    redraw();
+    draw();
   } catch(e) {
     btn.classList.remove('loading');
-    btn.textContent = 'AGUA';
-    toast('Error al cargar agua');
+    btn.textContent = ST.waters && ST.waters.length ? ST.waters.length + ' AGUA' : 'AGUA';
+    toast('Error al cargar agua — reintentá');
     console.error(e);
   }
 }
@@ -4273,7 +4402,7 @@ function MIG_buildLists() {
       pl.innerHTML = '<div style="color:#9AA8A5;font-size:9px;text-align:center;padding:16px;">Sin puntos marcados</div>';
       return;
     }
-    const tagL = {'curva-der':'CD','curva-izq':'CI','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P','guadal':'Gu','multipunto':'MP','cruce':'Cr','contraluz':'CL','publico':'Pub'};
+    const tagL = {'curva-der':'CD','curva-izq':'CI','curva-rapida':'CR','lomo':'Lo','vado':'Va','u-der':'UD','u-izq':'UI','ese':'S','paisaje':'Pa','panoramica':'Pn','parking':'P','guadal':'Gu','multipunto':'MP','cruce':'Cr','contraluz':'CL','publico':'Pub'};
     ST.points.forEach(function(pt) {
       const tags  = (pt.tags||[]).map(function(t){ return tagL[t]||t; }).join(' · ');
       const stars = pt.stars ? '★'.repeat(pt.stars) : '';
@@ -4619,7 +4748,7 @@ const I18N = {
     guardar: 'GUARDAR PUNTO',
     foto: 'FOTO', video: 'VIDEO', ambos: 'AMBOS',
     // Obstacles
-    curvaDer: 'CURVA<br>DER', curvaIzq: 'CURVA<br>IZQ', lomo: 'LOMO',
+    curvaDer: 'CURVA<br>DER', curvaIzq: 'CURVA<br>IZQ', curvaRapida: 'CURVA<br>RÁPIDA', lomo: 'LOMO',
     vado: 'VADO', uDer: 'U DER', uIzq: 'U IZQ', ese: 'ESE',
     paisaje: 'PAISAJE', panoramica: 'PANORÁM.', guadal: 'GUADAL',
     multiPto: 'MULTI<br>PTO', cruce: 'CRUCE', contraluz: 'CONTRA<br>LUZ',
@@ -4634,6 +4763,7 @@ const I18N = {
     t_puntoGuardado: 'Punto guardado',
     t_puntoEliminado: 'Punto eliminado',
     t_max4fotos: 'Máximo 4 fotos',
+    t_fotoCargando: 'Cargando foto…', t_fotoOk: 'Foto agregada', t_fotoNoPunto: 'Abrí un punto antes de cargar la foto', t_fotoErr: 'No se pudo leer la foto. Probá con otra o usá Sacar foto',
     t_kmzExport: 'KMZ exportado ✓',
     t_sinTramos: 'Sin tramos cargados',
     t_instalada: 'Ya está instalada ✓',
@@ -4672,7 +4802,7 @@ const I18N = {
     notas: 'Notes',
     guardar: 'SAVE POINT',
     foto: 'PHOTO', video: 'VIDEO', ambos: 'BOTH',
-    curvaDer: 'CURVE<br>R', curvaIzq: 'CURVE<br>L', lomo: 'CREST',
+    curvaDer: 'CURVE<br>R', curvaIzq: 'CURVE<br>L', curvaRapida: 'FAST<br>CURVE', lomo: 'CREST',
     vado: 'DITCH', uDer: 'U RIGHT', uIzq: 'U LEFT', ese: 'S-BEND',
     paisaje: 'SCENERY', panoramica: 'PANORAM.', guadal: 'GRAVEL',
     multiPto: 'MULTI<br>PT', cruce: 'JUNCTION', contraluz: 'BACK<br>LIT',
@@ -4686,6 +4816,7 @@ const I18N = {
     t_puntoGuardado: 'Point saved',
     t_puntoEliminado: 'Point deleted',
     t_max4fotos: 'Maximum 4 photos',
+    t_fotoCargando: 'Loading photo…', t_fotoOk: 'Photo added', t_fotoNoPunto: 'Open a point before adding a photo', t_fotoErr: 'Could not read the photo. Try another or use Take photo',
     t_kmzExport: 'KMZ exported ✓',
     t_sinTramos: 'No stages loaded',
     t_instalada: 'Already installed ✓',
@@ -4746,7 +4877,7 @@ function applyLang(){
   document.querySelectorAll('.obs-btn[data-obs]').forEach(btn => {
     const key = btn.dataset.obs;
     const map = {
-      'curva-der':'curvaDer','curva-izq':'curvaIzq','lomo':'lomo','vado':'vado',
+      'curva-der':'curvaDer','curva-izq':'curvaIzq','curva-rapida':'curvaRapida','lomo':'lomo','vado':'vado',
       'u-der':'uDer','u-izq':'uIzq','ese':'ese','paisaje':'paisaje',
       'panoramica':'panoramica','guadal':'guadal','multipunto':'multiPto',
       'cruce':'cruce','contraluz':'contraluz','publico':'publico','parking':'parking'
